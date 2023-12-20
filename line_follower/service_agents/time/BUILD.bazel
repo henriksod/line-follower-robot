@@ -1,0 +1,51 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "time_agent_api",
+    hdrs = ["time_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "time_agent_simulation",
+    srcs = ["simulation/time_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":time_agent_api",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "time_agent_hardware",
+    srcs = ["hardware/time_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":time_agent_api",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "time_agent_stub",
+    srcs = ["stub/time_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":time_agent_api",
+        "//line_follower/types",
+    ],
+)
+
+alias(
+    name = "time_agent",
+    visibility = ["//visibility:public"],
+    actual = select({
+        "//bazel/flags/agents:simulation": ":time_agent_simulation",
+        "//bazel/flags/agents:hardware": ":time_agent_hardware",
+        "//bazel/flags/agents:stub": ":time_agent_stub",
+        "//conditions:default": ":time_agent_simulation",
+    }),
+)

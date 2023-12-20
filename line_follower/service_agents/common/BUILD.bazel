@@ -1,0 +1,10 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "common",
+    hdrs = ["common.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/common"
+    ],
+)

@@ -1,3 +1,8 @@
+bazel-*
+bazelisk
+.vscode
+MODULE.bazel*
+
 # Prerequisites
 *.d
 

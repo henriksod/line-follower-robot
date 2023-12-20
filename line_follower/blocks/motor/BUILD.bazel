@@ -1,0 +1,21 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "motor_interface",
+    hdrs = ["motor_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "motor_model",
+    hdrs = ["motor_model.h"],
+    srcs = ["motor_model.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":motor_interface",
+        "//line_follower/types",
+    ],
+)

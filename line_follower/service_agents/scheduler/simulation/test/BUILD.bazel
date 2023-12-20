@@ -1,0 +1,12 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_test(
+  name = "test",
+  size = "small",
+  srcs = ["test_scheduler_agent_simulation.cpp"],
+  deps = [
+    "//line_follower/service_agents/scheduler:scheduler_agent_api",
+    "//line_follower/service_agents/scheduler:scheduler_agent_simulation",
+    "@com_google_googletest//:gtest_main"
+  ],
+)
