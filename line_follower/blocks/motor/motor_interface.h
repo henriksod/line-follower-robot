@@ -13,7 +13,7 @@ class MotorInterface
  public:
     MotorInterface() {}
 
-    virtual ~MotorInterface() = default;
+    virtual ~MotorInterface() noexcept = default;
 
     MotorInterface(MotorInterface const&)            = delete;
     MotorInterface(MotorInterface&&)                 = delete;

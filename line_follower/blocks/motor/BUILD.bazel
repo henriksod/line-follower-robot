@@ -17,5 +17,6 @@ cc_library(
     deps = [
         ":motor_interface",
         "//line_follower/types",
+        "//line_follower/blocks/common",
     ],
 )

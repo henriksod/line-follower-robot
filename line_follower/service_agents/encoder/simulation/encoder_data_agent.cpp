@@ -11,21 +11,20 @@
 #include "line_follower/blocks/encoder/encoder_interface.h"
 #include "line_follower/blocks/encoder/encoder_model.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
+#include "line_follower/service_agents/scheduler/schedulable_base.h"
 
 namespace line_follower
 {
 
-class EncoderDataProducerAgent::Impl final
+class EncoderDataProducerAgent::Impl final : public SchedulableBase
 {
  public:
     explicit Impl(EncoderCharacteristics encoder_characteristics)
-        : encoder_interface_{std::make_unique<EncoderModel>(encoder_characteristics)},
-          scheduler_consumer_{std::make_unique<SchedulerConsumerAgent>()}
+        : encoder_interface_{std::make_unique<EncoderModel>(encoder_characteristics)}
     {}
 
     explicit Impl(std::unique_ptr<EncoderInterface> encoder_interface)
-        : encoder_interface_{std::move(encoder_interface)},
-          scheduler_consumer_{std::make_unique<SchedulerConsumerAgent>()}
+        : encoder_interface_{std::move(encoder_interface)}
     {}
 
     bool getEncoderData(EncoderData& output) const
@@ -34,18 +33,8 @@ class EncoderDataProducerAgent::Impl final
         return encoder_interface_->getEncoderData(output);
     }
 
-    template <typename FunctorT>
-    void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,
-                  uint32_t time_interval_us,
-                  FunctorT&& func)
-    {
-        scheduler_consumer_->onReceiveData(std::move(func));
-        scheduler->registerScheduler(*scheduler_consumer_, time_interval_us);
-    }
-
  private:
     std::unique_ptr<EncoderInterface> encoder_interface_;
-    std::unique_ptr<SchedulerConsumerAgent> scheduler_consumer_;
 };
 
 EncoderDataProducerAgent::EncoderDataProducerAgent(EncoderCharacteristics encoder_characteristics)

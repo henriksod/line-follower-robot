@@ -1,0 +1,63 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "ir_sensor_array_data_agent_api",
+    hdrs = ["ir_sensor_array_data_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/types",
+        "//line_follower/service_agents/common",
+        "//line_follower/blocks/ir_sensor_array:ir_sensor_array_interface",
+        "//line_follower/service_agents/scheduler:scheduler_agent_api",
+    ],
+)
+
+cc_library(
+    name = "ir_sensor_array_data_agent_simulation",
+    srcs = ["simulation/ir_sensor_array_data_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":ir_sensor_array_data_agent_api",
+        "//line_follower/types",
+        "//line_follower/service_agents/common",
+        "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/scheduler:schedulable_base",
+    ],
+)
+
+cc_library(
+    name = "ir_sensor_array_data_agent_hardware",
+    srcs = ["hardware/ir_sensor_array_data_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":ir_sensor_array_data_agent_api",
+        "//line_follower/types",
+        "//line_follower/service_agents/common",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/scheduler:schedulable_base",
+    ],
+)
+
+cc_library(
+    name = "ir_sensor_array_data_agent_stub",
+    srcs = ["stub/ir_sensor_array_data_agent.cpp"],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":ir_sensor_array_data_agent_api",
+        "//line_follower/types",
+        "//line_follower/service_agents/common",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+    ],
+)
+
+alias(
+    name = "ir_sensor_array_data_agent",
+    visibility = ["//visibility:public"],
+    actual = select({
+        "//bazel/flags/agents:simulation": ":ir_sensor_array_data_agent_simulation",
+        "//bazel/flags/agents:hardware": ":ir_sensor_array_data_agent_hardware",
+        "//bazel/flags/agents:stub": ":ir_sensor_array_data_agent_stub",
+        "//conditions:default": ":ir_sensor_array_data_agent_simulation",
+    }),
+)

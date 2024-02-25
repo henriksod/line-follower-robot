@@ -27,6 +27,11 @@ class SchedulerProducerAgent::Impl final
         uint32_t time_interval_us;
         /// System time when this item was last notified, in microseconds
         uint64_t system_time_on_last_update;
+
+        bool operator==(ScheduledItem const& other) const
+        {
+            return unique_id.id == other.unique_id.id;
+        }
     };
 
  public:
@@ -38,12 +43,13 @@ class SchedulerProducerAgent::Impl final
     {
         SystemTime system_time{time_agent_->getSystemTime()};
 
-        for (ScheduledItem const& item : scheduled_items_)
+        for (ScheduledItem& item : scheduled_items_)
         {
             if (system_time.system_time_us - item.system_time_on_last_update
                 > item.time_interval_us)
             {
                 sender_queue_.push(item.unique_id);
+                item.system_time_on_last_update = system_time.system_time_us;
             }
         }
 
@@ -59,8 +65,12 @@ class SchedulerProducerAgent::Impl final
 
     UniqueID registerScheduler(uint32_t time_interval_us)
     {
-        scheduled_items_.push_back(ScheduledItem{next_unique_id, time_interval_us, 0U});
+        UniqueID unique_id{next_unique_id};
+        scheduled_items_.push_back(ScheduledItem{unique_id,
+                                                 time_interval_us,
+                                                 time_agent_->getSystemTime().system_time_us});
         ++next_unique_id.id;
+        return unique_id;
     }
 
     void deregisterScheduler(Maybe<UniqueID> maybe_unique_id)
@@ -98,8 +108,7 @@ SchedulerProducerAgent::~SchedulerProducerAgent() {}
 
 void SchedulerProducerAgent::tick()
 {
-    Maybe<UniqueID> maybe_unique_id{pimpl_->getNextToNotify()};
-    if (!maybe_unique_id.isNothing)
+    while (Maybe<UniqueID> maybe_unique_id{pimpl_->getNextToNotify()})
     {
         sendData(maybe_unique_id.value);
     }

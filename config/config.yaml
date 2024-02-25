@@ -1,0 +1,3 @@
+arduino:
+  serial: '/dev/ttyACM0'
+  platform: 'teensy:avr:teensy41'

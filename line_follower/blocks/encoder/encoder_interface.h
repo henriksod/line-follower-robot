@@ -13,7 +13,7 @@ class EncoderInterface
  public:
     EncoderInterface() {}
 
-    virtual ~EncoderInterface() = default;
+    virtual ~EncoderInterface() noexcept = default;
 
     EncoderInterface(EncoderInterface const&)            = delete;
     EncoderInterface(EncoderInterface&&)                 = delete;

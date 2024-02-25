@@ -28,7 +28,7 @@ class EncoderDataProducerAgent final : public ProducerAgent<EncoderData>
     EncoderDataProducerAgent& operator=(EncoderDataProducerAgent&&)      = delete;
 
     /// @brief Schedule this producer at a fixed time interval. Encoder readings will
-    ///        occur each tick determined by the give ntime interval.
+    ///        occur each tick determined by the given time interval.
     /// @param scheduler The global scheduler
     /// @param time_interval_us Time interval to get ticks from the scheduler.
     void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us);

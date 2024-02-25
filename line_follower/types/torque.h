@@ -6,11 +6,11 @@
 namespace line_follower
 {
 
-/// A torque
+/// A torque in newtonmillimeters
 struct Torque final
 {
-    /// A torque in newtonmeters
-    double newtonmeters;
+    /// Torque in newtonmillimeters
+    double newtonmillimeters;
 };
 
 }  // namespace line_follower

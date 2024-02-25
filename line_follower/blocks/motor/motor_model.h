@@ -18,14 +18,14 @@ class MotorModel final : public MotorInterface
         : motor_characteristics_{motor_characteristics}
     {}
 
-    ~MotorModel() final = default;
+    ~MotorModel() noexcept final = default;
 
     MotorModel(MotorModel const&)            = delete;
     MotorModel(MotorModel&&)                 = delete;
     MotorModel& operator=(MotorModel const&) = delete;
     MotorModel& operator=(MotorModel&&)      = delete;
 
-    void tick();
+    Torque getMotorTorque() const;
     void setMotorSpeed(RotorSpeed const& input) override;
 
  private:

@@ -56,3 +56,12 @@ alias(
         "//conditions:default": ":scheduler_agent_simulation",
     }),
 )
+
+cc_library(
+    name = "schedulable_base",
+    hdrs = ["schedulable_base.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":scheduler_agent",
+    ],
+)

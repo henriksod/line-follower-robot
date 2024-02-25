@@ -1,0 +1,120 @@
+load("@com_github_mvukov_rules_ros2//third_party:expand_template.bzl", "expand_template")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier_test")
+load("//bazel/cpp/uncrustify:defs.bzl", "uncrustify_test")
+load("@rules_yaml//:defs.bzl", "yaml_excerpt")
+
+buildifier_test(
+    name = "buildifier_check",
+    lint_mode = "warn",
+    mode = "check",
+    verbose = True,
+)
+
+buildifier_test(
+    name = "buildifier_fix",
+    mode = "fix",
+)
+
+uncrustify_test(
+    name = "uncrustify_check",
+    check = True,
+)
+
+uncrustify_test(
+    name = "uncrustify_fix",
+)
+
+compile_pip_requirements(
+    name = "python_requirements",
+    extra_args = ["--allow-unsafe"],
+    requirements_in = ":requirements.txt",
+    requirements_txt = ":requirements_lock.txt",
+    tags = ["manual"],
+)
+
+exports_files([
+    "requirements.txt",
+    "requirements_lock.txt",
+])
+
+# Config
+filegroup(
+    name = "project_config",
+    srcs = ["config/config.yaml"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "upload_sketch_template",
+    srcs = ["support/tools/upload_arduino_sketch.sh.template"],
+    visibility = ["//visibility:public"],
+)
+
+# Arduino
+yaml_excerpt(
+    name = "arduino_config_data",
+    src = ":project_config",
+    path = "arduino",
+)
+
+filegroup(
+    name = "blink_ino",
+    srcs = ["arduino/blink/blink.ino"],
+)
+
+filegroup(
+    name = "micro_ros_publisher_ino",
+    srcs = ["arduino/micro_ros_publisher/micro_ros_publisher.ino"],
+)
+
+CONFIG = ":arduino_config_data"
+
+SKETCH = ":micro_ros_publisher_ino"
+
+LIBRARIES = [
+    "@com_github_henriksod_micro_ros_arduino-cortex_m3-arm-none-eabi-gcc-7-2017q4//:micro_ros_arduino_zip",
+]
+
+LOCAL_LIBRARIES = [lib for lib in LIBRARIES if lib.startswith(("@", "//", ":")) or lib.endswith(".zip")]
+
+expand_template(
+    name = "upload_sketch_script",
+    out = "upload_sketch.sh",
+    data = [
+        CONFIG,
+        SKETCH,
+    ] + LOCAL_LIBRARIES,
+    is_executable = True,
+    substitutions = {
+        "@@@CONFIG@@@": "$(rootpath {})".format(CONFIG),
+        "@@@SKETCH@@@": "$(rootpath {})".format(SKETCH),
+        "@@@LIBRARIES@@@": " ".join(["$(rootpath {})".format(lib) if (lib.startswith(("@", "//", ":")) or lib.endswith(".zip")) else lib for lib in LIBRARIES]),
+    },
+    template = ":upload_sketch_template",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "upload_sketch_packed",
+    srcs = [
+        ":upload_sketch_script",
+        "@com_github_arduino_arduino_cli//:arduino_cli_install",
+        CONFIG,
+        SKETCH,
+    ] + LOCAL_LIBRARIES,
+    visibility = ["//visibility:public"],
+)
+
+sh_binary(
+    name = "upload_sketch",
+    srcs = [":upload_sketch_script"],
+    data = [
+        CONFIG,
+        SKETCH,
+    ] + [lib for lib in LIBRARIES if lib.startswith(("@", "//", ":"))],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_arduino_arduino_cli//:arduino_cli_install",
+    ],
+)

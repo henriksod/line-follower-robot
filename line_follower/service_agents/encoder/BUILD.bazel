@@ -22,6 +22,7 @@ cc_library(
         "//line_follower/service_agents/common",
         "//line_follower/blocks/encoder:encoder_model",
         "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/scheduler:schedulable_base",
     ],
 )
 
@@ -34,6 +35,7 @@ cc_library(
         "//line_follower/types",
         "//line_follower/service_agents/common",
         "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/scheduler:schedulable_base",
     ],
 )
 

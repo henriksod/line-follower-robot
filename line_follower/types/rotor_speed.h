@@ -6,7 +6,7 @@
 namespace line_follower
 {
 
-/// A rotor speed
+/// A rotor speed in revolutions per second
 struct RotorSpeed final
 {
     /// Rotor speed in revolutions per second

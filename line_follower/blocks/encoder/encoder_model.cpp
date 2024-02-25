@@ -28,7 +28,7 @@ bool EncoderModel::getEncoderData(EncoderData& output) const
     return true;
 }
 
-void EncoderModel::setRotorSpeed(RotorSpeed rotor_speed)
+void EncoderModel::setRotorSpeed(RotorSpeed const& rotor_speed)
 {
     rotor_speed_ = rotor_speed;
 }

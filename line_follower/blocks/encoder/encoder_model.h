@@ -19,7 +19,7 @@ class EncoderModel final : public EncoderInterface
         : encoder_characteristics_{encoder_characteristics}
     {}
 
-    ~EncoderModel() final = default;
+    ~EncoderModel() noexcept final = default;
 
     EncoderModel(EncoderModel const&)            = delete;
     EncoderModel(EncoderModel&&)                 = delete;
@@ -28,7 +28,7 @@ class EncoderModel final : public EncoderInterface
 
     void tick() override;
     bool getEncoderData(EncoderData& output) const override;
-    void setRotorSpeed(RotorSpeed rotor_speed);
+    void setRotorSpeed(RotorSpeed const& rotor_speed);
 
  private:
     EncoderCharacteristics encoder_characteristics_;

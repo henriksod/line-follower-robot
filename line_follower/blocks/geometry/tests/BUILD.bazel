@@ -1,0 +1,11 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_test(
+  name = "test_line",
+  size = "small",
+  srcs = ["test_line.cpp"],
+  deps = [
+    "//line_follower/blocks/geometry:line",
+    "@com_google_googletest//:gtest_main"
+  ],
+)

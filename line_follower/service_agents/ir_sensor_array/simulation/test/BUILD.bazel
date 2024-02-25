@@ -1,0 +1,14 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_test(
+  name = "test",
+  size = "small",
+  srcs = ["test_ir_sensor_array_data_agent_simulation.cpp"],
+  deps = [
+    "//line_follower/types",
+    "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent_simulation",
+    "//line_follower/service_agents/scheduler:scheduler_agent",
+    "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
+    "@com_google_googletest//:gtest_main"
+  ],
+)

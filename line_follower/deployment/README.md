@@ -1,3 +1,3 @@
 # Deployment
 
-Deployment to hardware.
+Deployment to hardware and simulation.

@@ -7,41 +7,33 @@
 #include <cstdint>
 #include <array>
 
-#include "line_follower/types/ir_sensor_data.h"
-
 namespace line_follower
 {
 
-/// The number of infrared emitter/receiver pairs on the
-/// high resolution infrared sensor array
-constexpr size_t kHighResIrSensorArrayNumberOfLeds{15U};
+/// The maximum value of a digital reading of an ir sensor
+constexpr size_t kDigitalReadingMaxValue{1024U};
 
-/// The horizontal spacing between infrared sensors on the
-/// high resolution infrared sensor array. In millimeters.
-constexpr double kHighResIrSensorArraySpacing{4.0};
+/// The maximum number of infrared sensors on an infrared
+/// sensor array
+constexpr size_t kMaxIrSensorArrayNumberOfLeds{15U};
 
-/// The number of infrared emitter/receiver pairs on the
-/// low resolution infrared sensor array
-constexpr size_t kLowResIrSensorArrayNumberOfLeds{8U};
-
-/// The horizontal spacing between infrared sensors on the
-/// low resolution infrared sensor array. In millimeters.
-constexpr double kLowResIrSensorArraySpacing{8.0};
-
-/// Data from the high resolution infrared sensor array
-struct HighResIrSensorArrayData final
+/// Data of one infrared receiver
+struct IrSensorData final
 {
-    /// The readings of each infrared sensor in the high resolution
-    /// infrared sensor array.
-    std::array<IrSensorData, kHighResIrSensorArrayNumberOfLeds> ir_sensor_readings;
+    /// Detection of a white surface. True if
+    /// the surface was detected as white.
+    bool detected_white_surface;
+
+    /// The raw digital reading of the infrared receiver.
+    uint16_t digital_reading;
 };
 
-/// Data from the low resolution infrared sensor array
-struct LowResIrSensorArrayData final
+/// Data from an infrared sensor array
+struct IrSensorArrayData final
 {
-    /// The readings of each infrared sensor in the low resolution
+    /// The readings of each infrared sensor in the
     /// infrared sensor array.
-    std::array<IrSensorData, kLowResIrSensorArrayNumberOfLeds> ir_sensor_readings;
+    std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> ir_sensor_readings;
 };
 
 }  // namespace line_follower
