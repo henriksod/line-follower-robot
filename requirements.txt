@@ -1,3 +1,0 @@
-python-can==4.2.2
-pyyaml==6.0
-pyserial==3.4
