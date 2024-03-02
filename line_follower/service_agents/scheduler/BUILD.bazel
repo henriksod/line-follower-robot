@@ -13,7 +13,7 @@ cc_library(
 cc_library(
     name = "scheduler_agent_simulation",
     srcs = ["simulation/scheduler_agent.cpp"],
-    visibility = [":__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":scheduler_agent_api",
         "//line_follower/service_agents/common",
@@ -25,7 +25,7 @@ cc_library(
 cc_library(
     name = "scheduler_agent_hardware",
     srcs = ["hardware/scheduler_agent.cpp"],
-    visibility = [":__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":scheduler_agent_api",
         "//line_follower/service_agents/common",
@@ -37,7 +37,7 @@ cc_library(
 cc_library(
     name = "scheduler_agent_stub",
     srcs = ["stub/scheduler_agent.cpp"],
-    visibility = [":__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":scheduler_agent_api",
         "//line_follower/service_agents/common",

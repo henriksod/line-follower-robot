@@ -22,11 +22,11 @@ class MotorModel final : public MotorInterface {
   MotorModel& operator=(MotorModel&&)      = delete;
 
   Torque      getMotorTorque() const;
+  RotorSpeed  getMotorSpeed() const;
   void        setMotorSpeed(RotorSpeed const& input) override;
 
  private:
   MotorCharacteristics motor_characteristics_;
-  RotorSpeed rotor_speed_{};
   RotorSpeed target_rotor_speed_{};
   Torque rotor_torque_{};
 };

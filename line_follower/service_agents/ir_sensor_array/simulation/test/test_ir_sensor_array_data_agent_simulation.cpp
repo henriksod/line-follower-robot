@@ -12,8 +12,7 @@
 #include "line_follower/types/line.h"
 #include "line_follower/types/track_lines.h"
 #include "line_follower/types/ir_sensor_array_characteristics.h"
-#include \
-  "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
+#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
 

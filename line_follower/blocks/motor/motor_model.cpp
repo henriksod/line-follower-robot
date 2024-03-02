@@ -15,6 +15,10 @@ Torque MotorModel::getMotorTorque() const {
   return rotor_torque_;
 }
 
+RotorSpeed MotorModel::getMotorSpeed() const {
+  return target_rotor_speed_;
+}
+
 void MotorModel::setMotorSpeed(RotorSpeed const& input) {
   target_rotor_speed_.revolutions_per_second = input.revolutions_per_second;
   rotor_torque_.newtonmillimeters            =

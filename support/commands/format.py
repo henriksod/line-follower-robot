@@ -89,7 +89,7 @@ def check(all_files):
         ),
         msg_on_error=(
             "\nRun the following command to mix most issues with formatting:\n\t"
-            "./run.py format fix"
+            "./run.py format fix --all"
         ),
         msg_on_success="Formatting checks passed!",
         exit_on_failure=True,
