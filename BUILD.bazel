@@ -1,20 +1,8 @@
-load("//bazel/cpp/uncrustify:defs.bzl", "uncrustify_test")
 load("@rules_yaml//:defs.bzl", "yaml_excerpt")
 load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
 
 buildifier(
     name = "buildifier",
-)
-
-uncrustify_test(
-    name = "uncrustify_check",
-    check = True,
-    tags = ["manual"],
-)
-
-uncrustify_test(
-    name = "uncrustify_fix",
-    tags = ["manual"],
 )
 
 # Config

@@ -6,10 +6,10 @@
 namespace line_follower {
 /// @brief A badge that can only be constructed by class of type T.
 /// @tparam T The class which is allowed to construct the badge.
-template<class T>
+template <class T>
 class Badge final {
-  friend T;
-  Badge() {}
+    friend T;
+    Badge() {}
 };
 }  // namespace line_follower
 

@@ -8,8 +8,8 @@
 namespace line_follower {
 /// A signal to a motor
 struct MotorSignal final {
-  /// Rotor speed in revolutions per second
-  RotorSpeed speed;
+    /// Rotor speed in revolutions per second
+    RotorSpeed speed;
 };
 }  // namespace line_follower
 

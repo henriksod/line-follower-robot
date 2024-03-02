@@ -6,8 +6,8 @@
 namespace line_follower {
 /// A gear ratio
 struct GearRatio final {
-  /// The conversion ratio of a gearbox
-  double ratio;
+    /// The conversion ratio of a gearbox
+    double ratio;
 };
 }  // namespace line_follower
 

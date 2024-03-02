@@ -8,8 +8,8 @@
 namespace line_follower {
 /// A unique identifier
 struct UniqueID final {
-  /// Identifier value
-  uint32_t id;
+    /// Identifier value
+    uint32_t id;
 };
 }  // namespace line_follower
 

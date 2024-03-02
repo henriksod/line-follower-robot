@@ -8,9 +8,9 @@
 namespace line_follower {
 /// The characteristics of an encoder
 struct EncoderCharacteristics final {
-  /// The number of encoder counts for one
-  /// revolution of the rotor shaft
-  uint16_t counts_per_revolution;
+    /// The number of encoder counts for one
+    /// revolution of the rotor shaft
+    uint16_t counts_per_revolution;
 };
 }  // namespace line_follower
 

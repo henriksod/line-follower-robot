@@ -25,13 +25,13 @@ namespace line_follower {
 
 /// Data from the high resolution infrared sensor array
 struct IrSensorArrayCharacteristics final {
-  /// The number of infrared emitter/receiver pairs on the
-  /// infrared sensor array
-  size_t number_of_leds;
+    /// The number of infrared emitter/receiver pairs on the
+    /// infrared sensor array
+    size_t number_of_leds;
 
-  /// The horizontal spacing between infrared sensors on the
-  /// infrared sensor array. In millimeters.
-  double array_spacing;
+    /// The horizontal spacing between infrared sensors on the
+    /// infrared sensor array. In millimeters.
+    double array_spacing;
 };
 }  // namespace line_follower
 

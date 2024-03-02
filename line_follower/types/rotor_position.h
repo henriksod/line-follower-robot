@@ -8,8 +8,8 @@
 namespace line_follower {
 /// A rotor position
 struct RotorPosition final {
-  /// Rotor position in steps from initial configuration
-  int64_t step_position;
+    /// Rotor position in steps from initial configuration
+    int64_t step_position;
 };
 }  // namespace line_follower
 

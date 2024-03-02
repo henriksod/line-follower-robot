@@ -59,7 +59,7 @@ def check(all_files):
         logger.info("Staged cxx files:\n%s" % ("\n".join(cxx_files)))
         cmd_cpplint = (
             (
-                f"{sys.executable} -m cpplint --filter=-build/c++11 --linelength=100"
+                f"{sys.executable} -m cpplint --filter=-build/c++11,-runtime/references --linelength=100"
                 f" {' '.join(cxx_files)}"
             )
             if cxx_files
@@ -69,22 +69,18 @@ def check(all_files):
         cmd_flake8 = f"{sys.executable} -m flake8 {os.getcwd()}"
         cmd_cpplint = (
             f"find {os.getcwd()} -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
-            f" | xargs {sys.executable} -m cpplint --filter=-build/c++11 --linelength=100"
+            f" | xargs {sys.executable} -m cpplint"
+            " --filter=-build/c++11,-runtime/references --linelength=100"
         )
 
-    # TODO: cpplint and uncrustify do not compy with each other, disabling cpplint
-    cmd_cpplint = "true"
-
     cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=warn"
-    cmd_uncrustify = f"{run_entrypoint} bazel run //:uncrustify_check"
     cmd_codespell = "codespell --count"
     exec_subprocess(
-        "%s && %s && %s && %s && %s"
+        "%s && %s && %s && %s"
         % (
             cmd_flake8,
             cmd_cpplint,
             cmd_buildifier,
-            cmd_uncrustify,
             cmd_codespell,
         ),
         msg_on_error=(
@@ -112,23 +108,28 @@ def fix(all_files):
     if not all_files:
         files = get_staged_files()
         python_files = [f for f in files if is_python_file(f)]
+        cxx_files = [f for f in files if is_cxx_file(f)]
         logger.info("Staged python files:\n%s" % ("\n".join(python_files)))
         cmd_black = (
             (f"{sys.executable} -m black --line-length=100" f" {' '.join(python_files)}")
             if python_files
             else "true"
         )
+        cmd_clangformat = (f"clang-format --files={' '.join(cxx_files)}") if cxx_files else "true"
     else:
         cmd_black = f"{sys.executable} -m black --line-length=100 {os.getcwd()}"
+        cmd_clangformat = (
+            f"find {os.getcwd()} -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
+            f" | xargs clang-format -i"
+        )
 
-    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=fiz"
-    cmd_uncrustify = f"{run_entrypoint} bazel run //:uncrustify_fix"
+    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=fix"
     exec_subprocess(
         "%s && %s && %s"
         % (
             cmd_black,
             cmd_buildifier,
-            cmd_uncrustify,
+            cmd_clangformat,
         ),
         msg_on_error="Auto formatting failed!",
         msg_on_success="Auto formatting complete!",

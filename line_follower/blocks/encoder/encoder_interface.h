@@ -8,17 +8,17 @@
 namespace line_follower {
 class EncoderInterface {
  public:
-  EncoderInterface() {}
+    EncoderInterface() {}
 
-  virtual ~EncoderInterface() noexcept = default;
+    virtual ~EncoderInterface() noexcept = default;
 
-  EncoderInterface(EncoderInterface const&)            = delete;
-  EncoderInterface(EncoderInterface&&)                 = delete;
-  EncoderInterface& operator=(EncoderInterface const&) = delete;
-  EncoderInterface& operator=(EncoderInterface&&)      = delete;
+    EncoderInterface(EncoderInterface const&) = delete;
+    EncoderInterface(EncoderInterface&&) = delete;
+    EncoderInterface& operator=(EncoderInterface const&) = delete;
+    EncoderInterface& operator=(EncoderInterface&&) = delete;
 
-  virtual void      tick()                                    = 0;
-  virtual bool      getEncoderData(EncoderData& output) const = 0;
+    virtual void tick() = 0;
+    virtual bool getEncoderData(EncoderData& output) const = 0;
 };
 }  // namespace line_follower
 

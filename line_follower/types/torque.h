@@ -6,9 +6,9 @@
 namespace line_follower {
 /// A torque in newtonmillimeters
 struct Torque final {
-  /// Torque in newtonmillimeters
-  double newtonmillimeters;
+    /// Torque in newtonmillimeters
+    double newtonmillimeters;
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_GEAR_RATIO_H_
+#endif  // LINE_FOLLOWER_TYPES_TORQUE_H_

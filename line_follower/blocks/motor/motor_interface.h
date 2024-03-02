@@ -8,16 +8,16 @@
 namespace line_follower {
 class MotorInterface {
  public:
-  MotorInterface() {}
+    MotorInterface() {}
 
-  virtual ~MotorInterface() noexcept = default;
+    virtual ~MotorInterface() noexcept = default;
 
-  MotorInterface(MotorInterface const&)            = delete;
-  MotorInterface(MotorInterface&&)                 = delete;
-  MotorInterface& operator=(MotorInterface const&) = delete;
-  MotorInterface& operator=(MotorInterface&&)      = delete;
+    MotorInterface(MotorInterface const&) = delete;
+    MotorInterface(MotorInterface&&) = delete;
+    MotorInterface& operator=(MotorInterface const&) = delete;
+    MotorInterface& operator=(MotorInterface&&) = delete;
 
-  virtual void    setMotorSpeed(RotorSpeed const& input) = 0;
+    virtual void setMotorSpeed(RotorSpeed const& input) = 0;
 };
 }  // namespace line_follower
 

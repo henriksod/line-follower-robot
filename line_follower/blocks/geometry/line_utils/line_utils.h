@@ -3,21 +3,20 @@
 #ifndef LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_
 #define LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_
 
-#include <cstdlib>
 #include <algorithm>
+#include <cstdlib>
 #include <vector>
 
 #include "line_follower/blocks/geometry/line.h"
-#include "line_follower/blocks/geometry/vector.h"
 #include "line_follower/blocks/geometry/quaternion.h"
+#include "line_follower/blocks/geometry/vector.h"
 
 namespace line_follower {
 namespace geometry {
-namespace {
+namespace detail {
 /// A 90 degree rotation around z
-const geometry::Quaternion<double> k90DegreesAroundZ{ 0.7071068, 0.0, 0.0,
-                                                      0.7071068 };
-}  // namespace
+const geometry::Quaternion<double> k90DegreesAroundZ{0.7071068, 0.0, 0.0, 0.7071068};
+}  // namespace detail
 
 /// @brief Sweep over the width of a line
 /// @param line The line
@@ -25,35 +24,31 @@ const geometry::Quaternion<double> k90DegreesAroundZ{ 0.7071068, 0.0, 0.0,
 /// @param resolution Optionally set the resolution of the sweep (number of
 // lines)
 /// @returns A vector of lines along the width of the line
-template<class T>
-inline std::vector<Line<T> >sweepAlongWidth(Line<T>const& line,
-                                            double        width,
-                                            std::size_t   resolution = 50U) {
-  std::vector<Line<T> > lines{};
+template <class T>
+inline std::vector<Line<T> > sweepAlongWidth(Line<T> const& line, double width,
+                                             std::size_t resolution = 50U) {
+    std::vector<Line<T> > lines{};
 
-  Vector3<double> line_vector{ normalized(line.to() - line.from()) };
-  auto orthogonal_vector{ rotated(k90DegreesAroundZ, line_vector) };
+    Vector3<double> line_vector{normalized(line.to() - line.from())};
+    auto orthogonal_vector{rotated(detail::k90DegreesAroundZ, line_vector)};
 
-  Line<double> left_line{ line.from() + orthogonal_vector * width / 2.0,
-                          line.to() + orthogonal_vector * width / 2.0 };
-  Line<double> right_line{ line.from() - orthogonal_vector * width / 2.0,
-                           line.to() - orthogonal_vector * width / 2.0 };
+    Line<double> left_line{line.from() + orthogonal_vector * width / 2.0,
+                           line.to() + orthogonal_vector * width / 2.0};
+    Line<double> right_line{line.from() - orthogonal_vector * width / 2.0,
+                            line.to() - orthogonal_vector * width / 2.0};
 
-  double lerp_value{ 0.0 };
+    double lerp_value{0.0};
 
-  for (std::size_t idx{ 0U }; idx < resolution; ++idx) {
-    lines.push_back(Line<double>(lerp(left_line.from(), right_line.from(),
-                                      lerp_value),
-                                 lerp(left_line.to(), right_line.to(),
-                                      lerp_value)));
+    for (std::size_t idx{0U}; idx < resolution; ++idx) {
+        lines.push_back(Line<double>(lerp(left_line.from(), right_line.from(), lerp_value),
+                                     lerp(left_line.to(), right_line.to(), lerp_value)));
 
-    lerp_value = std::min(1.0,
-                          lerp_value + 1.0 / static_cast<double>(resolution));
-  }
+        lerp_value = std::min(1.0, lerp_value + 1.0 / static_cast<double>(resolution));
+    }
 
-  return lines;
+    return lines;
 }
 }  // namespace geometry
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_H_
+#endif  // LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_

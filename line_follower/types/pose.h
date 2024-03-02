@@ -10,11 +10,11 @@ namespace line_follower {
 /// A pose in 3D space, in a coordinate system that
 /// follows the right hand rule.
 struct Pose final {
-  /// The position of the pose
-  Position position;
+    /// The position of the pose
+    Position position;
 
-  /// The rotation of the pose
-  QuaternionRotation rotation;
+    /// The rotation of the pose
+    QuaternionRotation rotation;
 };
 }  // namespace line_follower
 

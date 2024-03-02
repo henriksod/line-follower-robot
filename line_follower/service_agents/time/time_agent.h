@@ -11,19 +11,19 @@ namespace line_follower {
 /// Provides the system time
 class TimeAgent final {
  public:
-  TimeAgent();
-  ~TimeAgent() noexcept;
+    TimeAgent();
+    ~TimeAgent() noexcept;
 
-  TimeAgent(TimeAgent const&)            = delete;
-  TimeAgent(TimeAgent&&)                 = delete;
-  TimeAgent& operator=(TimeAgent const&) = delete;
-  TimeAgent& operator=(TimeAgent&&)      = delete;
+    TimeAgent(TimeAgent const&) = delete;
+    TimeAgent(TimeAgent&&) = delete;
+    TimeAgent& operator=(TimeAgent const&) = delete;
+    TimeAgent& operator=(TimeAgent&&) = delete;
 
-  SystemTime getSystemTime();
+    SystemTime getSystemTime();
 
  private:
-  class Impl;
-  std::unique_ptr<Impl>pimpl_;
+    class Impl;
+    std::unique_ptr<Impl> pimpl_;
 };
 }  // namespace line_follower
 

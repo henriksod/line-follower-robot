@@ -19,134 +19,84 @@
 namespace line_follower {
 namespace {
 /// A 90 degree rotation around z
-const geometry::Quaternion<double> k90DegreesAroundZ
-{
-  0.7071068, 0.0, 0.0,
-  0.7071068
-};
+const geometry::Quaternion<double> k90DegreesAroundZ{0.7071068, 0.0, 0.0, 0.7071068};
 
 /// Millimeters to Meters
-constexpr double kMillimetersToMeters{ 0.001 };
+constexpr double kMillimetersToMeters{0.001};
 }  // namespace
 
-
-void IrSensorArrayModel::tick() {
-}
+void IrSensorArrayModel::tick() {}
 
 bool IrSensorArrayModel::getIrSensorArrayData(IrSensorArrayData& output) const {
-  static_cast<void>(memcpy(output.ir_sensor_readings.begin(),
-                           ir_sensor_array_data_.ir_sensor_readings.begin(),
-                           output.ir_sensor_readings.size() *
-                           sizeof(IrSensorData)));
-  return true;
+    static_cast<void>(memcpy(output.ir_sensor_readings.begin(),
+                             ir_sensor_array_data_.ir_sensor_readings.begin(),
+                             output.ir_sensor_readings.size() * sizeof(IrSensorData)));
+    return true;
 }
 
 void IrSensorArrayModel::setTrackLines(TrackSegment const& track_segment,
-                                       Pose const&
-                                       ir_sensor_array_pose_in_track_segment) {
-  using geometry::Vector3;
-  using geometry::Line;
-  resetIrSensorArrayData(ir_sensor_array_data_);
+                                       Pose const& ir_sensor_array_pose_in_track_segment) {
+    using geometry::Line;
+    using geometry::Vector3;
+    resetIrSensorArrayData(ir_sensor_array_data_);
 
-  static_cast<void>(memcpy(&current_track_segment_,
-                           &track_segment,
-                           sizeof(TrackSegment)));
+    static_cast<void>(memcpy(&current_track_segment_, &track_segment, sizeof(TrackSegment)));
 
-  Vector3<double> ir_sensor_array_position
-  {
-    convert(ir_sensor_array_pose_in_track_segment.position)
-  };
+    Vector3<double> ir_sensor_array_position{
+        convert(ir_sensor_array_pose_in_track_segment.position)};
 
-  for (std::size_t idx{ 0U }; idx < ir_array_characteristics_.number_of_leds;
-       ++idx) {
-    double led_idx{ static_cast<double>(idx) };
-    double middle_led_idx
-    {
-      std::floor(
-        ir_array_characteristics_.number_of_leds / 2.0)
-    };
-    double array_spacing
-    {
-      ir_array_characteristics_.array_spacing *
-      kMillimetersToMeters
-    };
+    for (std::size_t idx{0U}; idx < ir_array_characteristics_.number_of_leds; ++idx) {
+        double led_idx{static_cast<double>(idx)};
+        double middle_led_idx{std::floor(ir_array_characteristics_.number_of_leds / 2.0)};
+        double array_spacing{ir_array_characteristics_.array_spacing * kMillimetersToMeters};
 
-    // Get the led position relative to the origin, which is the middle of the
-    // ir array
-    Vector3<double> led_position_rel_origin
-    {
-      (led_idx - middle_led_idx) *
-      array_spacing, 0.0, 0.0
-    };
+        // Get the led position relative to the origin, which is the middle of the
+        // ir array
+        Vector3<double> led_position_rel_origin{(led_idx - middle_led_idx) * array_spacing, 0.0,
+                                                0.0};
 
-    // Convert the point from the previous led to this led into a line
-    Line<double> led_line{};
-    led_line.set(ir_sensor_array_position + rotated(
-                   convert(ir_sensor_array_pose_in_track_segment.rotation),
-                   Vector3<double>
-      {
-        led_position_rel_origin[0] - array_spacing /
-        2.0, 0.0, 0.0
-      }),
-                 ir_sensor_array_position + rotated(
-                   convert(ir_sensor_array_pose_in_track_segment.rotation),
-                   Vector3<double>
-      {
-        led_position_rel_origin[0] + array_spacing /
-        2.0, 0.0, 0.0
-      }));
+        // Convert the point from the previous led to this led into a line
+        Line<double> led_line{};
+        led_line.set(ir_sensor_array_position +
+                         rotated(convert(ir_sensor_array_pose_in_track_segment.rotation),
+                                 Vector3<double>{led_position_rel_origin[0] - array_spacing / 2.0,
+                                                 0.0, 0.0}),
+                     ir_sensor_array_position +
+                         rotated(convert(ir_sensor_array_pose_in_track_segment.rotation),
+                                 Vector3<double>{led_position_rel_origin[0] + array_spacing / 2.0,
+                                                 0.0, 0.0}));
 
-    Vector3<double> led_line_vector
-    {
-      normalized(led_line.to() -
-                 led_line.from())
-    };
+        Vector3<double> led_line_vector{normalized(led_line.to() - led_line.from())};
 
-    /// Check for overlaps
-    for (auto& track_line_segment : track_segment.track_lines) {
-      if (!track_line_segment.visible) {
-        continue;
-      }
+        /// Check for overlaps
+        for (auto& track_line_segment : track_segment.track_lines) {
+            if (!track_line_segment.visible) {
+                continue;
+            }
 
-      auto orthogonal_led_line_vector
-      {
-        rotated(k90DegreesAroundZ,
-                led_line_vector)
-      };
-      Line<double> orthogonal_led_line
-      {
-        led_line.center() +
-        orthogonal_led_line_vector *
-        array_spacing / 2.0,
-        led_line.center() -
-        orthogonal_led_line_vector *
-        array_spacing / 2.0
-      };
+            auto orthogonal_led_line_vector{rotated(k90DegreesAroundZ, led_line_vector)};
+            Line<double> orthogonal_led_line{
+                led_line.center() + orthogonal_led_line_vector * array_spacing / 2.0,
+                led_line.center() - orthogonal_led_line_vector * array_spacing / 2.0};
 
-      Line<double>const track_line{ convert(track_line_segment.line) };
-      auto const track_line_strip
-      {
-        geometry::sweepAlongWidth(track_line,
-                                  track_line_segment.width)
-      };
-      bool any_overlap
-      {
-        led_line.intersectsWithAny(track_line_strip)
-        || orthogonal_led_line.intersectsWithAny(track_line_strip)
-      };
+            Line<double> const track_line{convert(track_line_segment.line)};
+            auto const track_line_strip{
+                geometry::sweepAlongWidth(track_line, track_line_segment.width)};
+            bool any_overlap{led_line.intersectsWithAny(track_line_strip) ||
+                             orthogonal_led_line.intersectsWithAny(track_line_strip)};
 
-      auto& led{ ir_sensor_array_data_.ir_sensor_readings.at(idx) };
-      led.detected_white_surface = true;
-      led.digital_reading        = kMaximumTrackLineWhiteness;
+            auto& led{ir_sensor_array_data_.ir_sensor_readings.at(idx)};
+            led.detected_white_surface = true;
+            led.digital_reading = kMaximumTrackLineWhiteness;
 
-      if (any_overlap) {
-        led.detected_white_surface = false;
+            if (any_overlap) {
+                led.detected_white_surface = false;
 
-        /// TODO: Calculate digital reading based on distance from track line
-        // edge wrt thickness
-        led.digital_reading = track_line_segment.whiteness;
-      }
+                /// TODO: Calculate digital reading based on distance from track line
+                // edge wrt thickness
+                led.digital_reading = track_line_segment.whiteness;
+            }
+        }
     }
-  }
 }  // IrSensorArrayModel::setTrackLines
 }  // namespace line_follower

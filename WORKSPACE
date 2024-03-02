@@ -45,15 +45,6 @@ load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
-# Uncrustify, C/C++ code formatter
-http_archive(
-    name = "com_github_uncrustify_uncrustify",
-    build_file = "//bazel/cpp/uncrustify:uncrustify.bzl",
-    sha256 = "ecaf4c0adca14c36dfffa30bc28e69865115ecd602c90eb16a8cddccb41caad2",
-    strip_prefix = "uncrustify-uncrustify-0.78.1",
-    url = "https://github.com/uncrustify/uncrustify/archive/refs/tags/uncrustify-0.78.1.tar.gz",
-)
-
 # arduino-cli
 http_archive(
     name = "com_github_arduino_arduino_cli",

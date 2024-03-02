@@ -8,8 +8,8 @@
 namespace line_follower {
 /// The time since system start, in microseconds
 struct SystemTime final {
-  /// Time since start of system, in microseconds
-  uint64_t system_time_us;
+    /// Time since start of system, in microseconds
+    uint64_t system_time_us;
 };
 }  // namespace line_follower
 
