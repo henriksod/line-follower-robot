@@ -4,8 +4,12 @@ load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 
 string_flag(
     name = "agents",
-    values = ["simulation", "hardware", "stub"],
     build_setting_default = "simulation",
+    values = [
+        "simulation",
+        "hardware",
+        "stub",
+    ],
 )
 
 config_setting(

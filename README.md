@@ -16,6 +16,11 @@ Ensure arduino is installed for the compiler and upload tools:
 sudo apt install arduino
 ```
 
+## Install pre-commit hooks (important)
+
+1. `pip install pre-commit`
+2. `pre-commit install`
+
 ## Entrypoint
 
 ```

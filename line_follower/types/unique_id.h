@@ -5,16 +5,12 @@
 
 #include <cstdint>
 
-namespace line_follower
-{
-
+namespace line_follower {
 /// A unique identifier
-struct UniqueID final
-{
-    /// Identifier value
-    uint32_t id;
+struct UniqueID final {
+  /// Identifier value
+  uint32_t id;
 };
-
 }  // namespace line_follower
 
 #endif  // LINE_FOLLOWER_TYPES_UNIQUE_ID_H_

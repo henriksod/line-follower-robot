@@ -5,8 +5,8 @@ cc_library(
     hdrs = ["scheduler_agent.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/types",
         "//line_follower/service_agents/common",
+        "//line_follower/types",
     ],
 )
 
@@ -16,9 +16,9 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":scheduler_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
         "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
     ],
 )
 
@@ -28,9 +28,9 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":scheduler_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
         "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
     ],
 )
 
@@ -40,21 +40,21 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":scheduler_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
         "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
     ],
 )
 
 alias(
     name = "scheduler_agent",
-    visibility = ["//visibility:public"],
     actual = select({
         "//bazel/flags/agents:simulation": ":scheduler_agent_simulation",
         "//bazel/flags/agents:hardware": ":scheduler_agent_hardware",
         "//bazel/flags/agents:stub": ":scheduler_agent_stub",
         "//conditions:default": ":scheduler_agent_simulation",
     }),
+    visibility = ["//visibility:public"],
 )
 
 cc_library(

@@ -10,22 +10,23 @@
 #include "line_follower/types/rotor_speed.h"
 #include "line_follower/types/motor_characteristics.h"
 
-namespace line_follower
-{
-
-Torque MotorModel::getMotorTorque() const
-{
-    return rotor_torque_;
+namespace line_follower {
+Torque MotorModel::getMotorTorque() const {
+  return rotor_torque_;
 }
 
-void MotorModel::setMotorSpeed(RotorSpeed const& input)
-{
-    target_rotor_speed_.revolutions_per_second = input.revolutions_per_second;
-    rotor_torque_.newtonmillimeters = motor_characteristics_.stall_torque.newtonmillimeters
-                                      - fabs(target_rotor_speed_.revolutions_per_second)
-                                      * motor_characteristics_.stall_torque.newtonmillimeters
-                                      / motor_characteristics_.no_load_speed;
-    rotor_torque_.newtonmillimeters *= sgn(target_rotor_speed_.revolutions_per_second);
+void MotorModel::setMotorSpeed(RotorSpeed const& input) {
+  target_rotor_speed_.revolutions_per_second = input.revolutions_per_second;
+  rotor_torque_.newtonmillimeters            =
+    motor_characteristics_.stall_torque.newtonmillimeters
+    - fabs(
+      target_rotor_speed_.revolutions_per_second)
+    * motor_characteristics_.
+    stall_torque.
+    newtonmillimeters
+    / motor_characteristics_.
+    no_load_speed;
+  rotor_torque_.newtonmillimeters *= sgn(
+    target_rotor_speed_.revolutions_per_second);
 }
-
 }  // namespace line_follower

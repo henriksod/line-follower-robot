@@ -3,9 +3,22 @@ workspace(name = "line_follower_robot")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
-  name = "com_google_googletest",
-  urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
-  strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
+    name = "rules_foreign_cc",
+    sha256 = "476303bd0f1b04cc311fc258f1708a5f6ef82d3091e53fd1977fa20383425a6a",
+    strip_prefix = "rules_foreign_cc-0.10.1",
+    url = "https://github.com/bazelbuild/rules_foreign_cc/releases/download/0.10.1/rules_foreign_cc-0.10.1.tar.gz",
+)
+
+load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
+
+# This sets up some common toolchains for building targets. For more details, please see
+# https://bazelbuild.github.io/rules_foreign_cc/0.10.1/flatten.html#rules_foreign_cc_dependencies
+rules_foreign_cc_dependencies()
+
+http_archive(
+    name = "com_google_googletest",
+    strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
+    urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
 )
 
 http_archive(
@@ -36,23 +49,10 @@ rules_pkg_dependencies()
 http_archive(
     name = "com_github_uncrustify_uncrustify",
     build_file = "//bazel/cpp/uncrustify:uncrustify.bzl",
-    sha256 = "414bbc9f7860eb18a53074f9af14ed04638a633b2216a73f2629291300d37c1b",
-    strip_prefix = "uncrustify-uncrustify-0.77.1",
-    url = "https://github.com/uncrustify/uncrustify/archive/refs/tags/uncrustify-0.77.1.tar.gz",
+    sha256 = "ecaf4c0adca14c36dfffa30bc28e69865115ecd602c90eb16a8cddccb41caad2",
+    strip_prefix = "uncrustify-uncrustify-0.78.1",
+    url = "https://github.com/uncrustify/uncrustify/archive/refs/tags/uncrustify-0.78.1.tar.gz",
 )
-
-pip_parse(
-    name = "line_follower_pip_deps",
-    python_interpreter_target = python_interpreter_target,
-    requirements_lock = "//:requirements_lock.txt",
-)
-
-load(
-    "@line_follower_pip_deps//:requirements.bzl",
-    install_line_follower_pip_deps = "install_deps",
-)
-
-install_line_follower_pip_deps()
 
 # arduino-cli
 http_archive(
@@ -75,9 +75,11 @@ http_archive(
     ],
 )
 
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies")
 
 go_rules_dependencies()
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains")
 
 go_register_toolchains(version = "1.20.3")
 

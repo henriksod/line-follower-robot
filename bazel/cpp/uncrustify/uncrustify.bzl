@@ -23,9 +23,19 @@ sh_library(
     data = [":uncrustify_build"],
 )
 
+genrule(
+    name = "uncrustify_gen",
+    srcs = [":uncrustify_build_sh"],
+    cmd = """
+#! /usr/bin/env bash
+tool_path=$$(echo \"$(locations :uncrustify_build_sh)/uncrustify_build/bin/uncrustify\" | sed 's/ .*//')
+mv $$tool_path \"$@\"
+""",
+    outs = ["uncrustify_tool"],
+)
+
 sh_binary(
     name = "uncrustify",
-    srcs = ["@balancing_robot//bazel/cpp/uncrustify:exec.sh"],
-    deps = [":uncrustify_build_sh"],
+    srcs = ["uncrustify_tool"],
     visibility = ["//visibility:public"],
 )

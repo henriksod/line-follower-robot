@@ -5,9 +5,9 @@ cc_library(
     hdrs = ["motor_signal_agent.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/types",
-        "//line_follower/service_agents/common",
         "//line_follower/blocks/motor:motor_interface",
+        "//line_follower/service_agents/common",
+        "//line_follower/types",
     ],
 )
 
@@ -17,9 +17,9 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
-        "//line_follower/types",
-        "//line_follower/service_agents/common",
         "//line_follower/blocks/motor:motor_model",
+        "//line_follower/service_agents/common",
+        "//line_follower/types",
     ],
 )
 
@@ -29,8 +29,8 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
+        "//line_follower/types",
     ],
 )
 
@@ -40,18 +40,18 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
+        "//line_follower/types",
     ],
 )
 
 alias(
     name = "motor_signal_agent",
-    visibility = ["//visibility:public"],
     actual = select({
         "//bazel/flags/agents:simulation": ":motor_signal_agent_simulation",
         "//bazel/flags/agents:hardware": ":motor_signal_agent_hardware",
         "//bazel/flags/agents:stub": ":motor_signal_agent_stub",
         "//conditions:default": ":motor_signal_agent_simulation",
     }),
+    visibility = ["//visibility:public"],
 )

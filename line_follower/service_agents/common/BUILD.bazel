@@ -5,6 +5,6 @@ cc_library(
     hdrs = ["common.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/blocks/common"
+        "//line_follower/blocks/common",
     ],
 )

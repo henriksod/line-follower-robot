@@ -5,17 +5,13 @@
 
 #include <cstdint>
 
-namespace line_follower
-{
-
+namespace line_follower {
 /// The characteristics of an encoder
-struct EncoderCharacteristics final
-{
-    /// The number of encoder counts for one
-    /// revolution of the rotor shaft
-    uint16_t counts_per_revolution;
+struct EncoderCharacteristics final {
+  /// The number of encoder counts for one
+  /// revolution of the rotor shaft
+  uint16_t counts_per_revolution;
 };
-
 }  // namespace line_follower
 
 #endif  // LINE_FOLLOWER_TYPES_ENCODER_CHARACTERISTICS_H_

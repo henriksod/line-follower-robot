@@ -4,7 +4,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//line_follower/blocks/geometry:line",
-        "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
     ],
 )

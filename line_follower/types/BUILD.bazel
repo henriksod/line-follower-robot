@@ -1,4 +1,3 @@
-
 cc_library(
     name = "types",
     hdrs = glob(["*.h"]),

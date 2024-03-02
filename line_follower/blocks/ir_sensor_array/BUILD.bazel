@@ -11,17 +11,17 @@ cc_library(
 
 cc_library(
     name = "ir_sensor_array_model",
-    hdrs = ["ir_sensor_array_model.h"],
     srcs = ["ir_sensor_array_model.cpp"],
+    hdrs = ["ir_sensor_array_model.h"],
     visibility = ["//visibility:public"],
     deps = [
         ":ir_sensor_array_interface",
-        "//line_follower/types",
         "//line_follower/blocks/common",
-        "//line_follower/blocks/geometry:line",
-        "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:line",
         "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry/line_utils",
+        "//line_follower/types",
     ],
 )

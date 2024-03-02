@@ -67,7 +67,6 @@ def _uncrustify_impl_factory(ctx):
 
     args = [
         "-L %s" % ctx.attr.log_level,
-        "-c %s" % ctx.file.config.path,
     ]
 
     if ctx.attr.check:
@@ -81,6 +80,7 @@ def _uncrustify_impl_factory(ctx):
     substitutions = {
         "@@ARGS@@": shell.array_literal(args),
         "@@UNCRUSTIFY_SHORT_PATH@@": shell.quote(ctx.executable.uncrustify.short_path),
+        "@@UNCRUSTIFY_CONFIG_SHORT_PATH@@": shell.quote(ctx.file.config.short_path),
     }
     ctx.actions.expand_template(
         template = ctx.file._runner,
@@ -121,4 +121,3 @@ def uncrustify_test(**kwargs):
             tags.append(t)
     kwargs["tags"] = tags
     _uncrustify_test(**kwargs)
-    

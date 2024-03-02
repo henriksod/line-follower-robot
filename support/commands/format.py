@@ -24,7 +24,7 @@ def cli():
 
 @cli.command()
 @click.option(
-    "--all-files",
+    "--all",
     "all_files",
     is_flag=True,
     show_default=True,
@@ -72,7 +72,10 @@ def check(all_files):
             f" | xargs {sys.executable} -m cpplint --filter=-build/c++11 --linelength=100"
         )
 
-    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier_check"
+    # TODO: cpplint and uncrustify do not compy with each other, disabling cpplint
+    cmd_cpplint = "true"
+
+    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=warn"
     cmd_uncrustify = f"{run_entrypoint} bazel run //:uncrustify_check"
     cmd_codespell = "codespell --count"
     exec_subprocess(
@@ -95,7 +98,7 @@ def check(all_files):
 
 @cli.command()
 @click.option(
-    "--all-files",
+    "--all",
     "all_files",
     is_flag=True,
     show_default=True,
@@ -118,7 +121,7 @@ def fix(all_files):
     else:
         cmd_black = f"{sys.executable} -m black --line-length=100 {os.getcwd()}"
 
-    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier_fix"
+    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=fiz"
     cmd_uncrustify = f"{run_entrypoint} bazel run //:uncrustify_fix"
     exec_subprocess(
         "%s && %s && %s"

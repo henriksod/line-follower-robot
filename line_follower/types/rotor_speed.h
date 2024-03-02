@@ -3,16 +3,12 @@
 #ifndef LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_
 #define LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_
 
-namespace line_follower
-{
-
+namespace line_follower {
 /// A rotor speed in revolutions per second
-struct RotorSpeed final
-{
-    /// Rotor speed in revolutions per second
-    double revolutions_per_second;
+struct RotorSpeed final {
+  /// Rotor speed in revolutions per second
+  double revolutions_per_second;
 };
-
 }  // namespace line_follower
 
 #endif  // LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_

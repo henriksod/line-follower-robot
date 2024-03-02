@@ -5,10 +5,10 @@ cc_library(
     hdrs = ["ir_sensor_array_data_agent.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/types",
-        "//line_follower/service_agents/common",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_interface",
+        "//line_follower/service_agents/common",
         "//line_follower/service_agents/scheduler:scheduler_agent_api",
+        "//line_follower/types",
     ],
 )
 
@@ -18,11 +18,11 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
-        "//line_follower/types",
-        "//line_follower/service_agents/common",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
-        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/common",
         "//line_follower/service_agents/scheduler:schedulable_base",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/types",
     ],
 )
 
@@ -32,10 +32,10 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
-        "//line_follower/service_agents/scheduler:scheduler_agent",
         "//line_follower/service_agents/scheduler:schedulable_base",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/types",
     ],
 )
 
@@ -45,19 +45,19 @@ cc_library(
     visibility = [":__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
-        "//line_follower/types",
         "//line_follower/service_agents/common",
         "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/types",
     ],
 )
 
 alias(
     name = "ir_sensor_array_data_agent",
-    visibility = ["//visibility:public"],
     actual = select({
         "//bazel/flags/agents:simulation": ":ir_sensor_array_data_agent_simulation",
         "//bazel/flags/agents:hardware": ":ir_sensor_array_data_agent_hardware",
         "//bazel/flags/agents:stub": ":ir_sensor_array_data_agent_stub",
         "//conditions:default": ":ir_sensor_array_data_agent_simulation",
     }),
+    visibility = ["//visibility:public"],
 )

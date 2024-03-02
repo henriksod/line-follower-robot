@@ -1,11 +1,8 @@
 import os
 import sys
 import click
-from support import check_packages
 
-# global logger
-check_packages("dazel")
-from dazel import DockerInstance  # noqa
+from support.dazel.dazel import DockerInstance  # noqa
 
 
 @click.group(invoke_without_command=True)

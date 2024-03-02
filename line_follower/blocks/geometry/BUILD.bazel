@@ -1,4 +1,3 @@
-
 cc_library(
     name = "vector",
     hdrs = ["vector.h"],
@@ -19,8 +18,8 @@ cc_library(
     hdrs = ["quaternion.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":vector",
         ":euler_angles",
+        ":vector",
         "//line_follower/blocks/common",
     ],
 )
@@ -40,8 +39,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":line",
-        ":vector",
         ":quaternion",
+        ":vector",
         "//line_follower/types",
     ],
 )

@@ -8,29 +8,22 @@
 
 #include "line_follower/types/system_time.h"
 
-namespace line_follower
-{
-
-class TimeAgent::Impl final
-{
+namespace line_follower {
+class TimeAgent::Impl final {
  public:
-    Impl() {}
+  Impl() {}
 
-    SystemTime getSystemTime()
-    {
-        return SystemTime{};
-    }
+  SystemTime getSystemTime() {
+    return SystemTime{};
+  }
 };
 
 TimeAgent::TimeAgent()
-    : pimpl_{std::make_unique<Impl>()}
-{}
+  : pimpl_{std::make_unique<Impl>()} {}
 
 TimeAgent::~TimeAgent() {}
 
-SystemTime TimeAgent::getSystemTime()
-{
-    return pimpl_->getSystemTime();
+SystemTime TimeAgent::getSystemTime() {
+  return pimpl_->getSystemTime();
 }
-
 }  // namespace line_follower

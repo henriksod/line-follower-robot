@@ -11,8 +11,8 @@ cc_library(
 
 cc_library(
     name = "encoder_model",
-    hdrs = ["encoder_model.h"],
     srcs = ["encoder_model.cpp"],
+    hdrs = ["encoder_model.h"],
     visibility = ["//visibility:public"],
     deps = [
         ":encoder_interface",

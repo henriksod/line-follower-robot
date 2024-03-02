@@ -3,7 +3,7 @@ ARG UID
 ARG GID
 ARG USER
 
-ENV BAZEL_VERSION 6.2.1
+ENV BAZEL_VERSION 7.0.2
 
 # Update the package list, install sudo, create a non-root user, and grant password-less sudo permissions
 RUN apt-get update \

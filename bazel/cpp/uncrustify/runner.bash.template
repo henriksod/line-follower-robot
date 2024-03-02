@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
 UNCRUSTIFY_SHORT_PATH=@@UNCRUSTIFY_SHORT_PATH@@
+UNCRUSTIFY_CONFIG_SHORT_PATH=@@UNCRUSTIFY_CONFIG_SHORT_PATH@@
 ARGS=@@ARGS@@
 WORKSPACE=""
 
@@ -41,6 +42,8 @@ else
   fi
 fi
 
+CONFIG_PATH="$BUILD_WORKSPACE_DIRECTORY/$UNCRUSTIFY_CONFIG_SHORT_PATH"
+
 # Run uncrustify on all cpp/cc/h/hpp files
 find . \
   -type "${FIND_FILE_TYPE:-f}" \
@@ -48,4 +51,4 @@ find . \
     -o -name '*.cc' \
     -o -name '*.h' \
     -o -name '*.hpp' \
-  \) -print | "$uncrustify_short_path" -F - "${ARGS[@]}"
+  \) -print | "$uncrustify_short_path" -c "$CONFIG_PATH" "${ARGS[@]}" -F -

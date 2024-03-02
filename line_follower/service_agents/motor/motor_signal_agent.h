@@ -10,41 +10,37 @@
 #include "line_follower/blocks/motor/motor_interface.h"
 #include "line_follower/service_agents/common/common.h"
 
-namespace line_follower
-{
-
+namespace line_follower {
 /// An agent that produces motor signals
-class MotorSignalProducerAgent final : public ProducerAgent<MotorSignal>
-{
+class MotorSignalProducerAgent final : public ProducerAgent<MotorSignal> {
  public:
-    MotorSignalProducerAgent() = default;
-    ~MotorSignalProducerAgent() noexcept = default;
+  MotorSignalProducerAgent()           = default;
+  ~MotorSignalProducerAgent() noexcept = default;
 
-    MotorSignalProducerAgent(MotorSignalProducerAgent const&)            = delete;
-    MotorSignalProducerAgent(MotorSignalProducerAgent&&)                 = delete;
-    MotorSignalProducerAgent& operator=(MotorSignalProducerAgent const&) = delete;
-    MotorSignalProducerAgent& operator=(MotorSignalProducerAgent&&)      = delete;
+  MotorSignalProducerAgent(MotorSignalProducerAgent const&)            = delete;
+  MotorSignalProducerAgent(MotorSignalProducerAgent&&)                 = delete;
+  MotorSignalProducerAgent& operator=(MotorSignalProducerAgent const&) = delete;
+  MotorSignalProducerAgent& operator=(MotorSignalProducerAgent&&)      = delete;
 };
 
 /// An agent that consumes motor signals, like a motor
-class MotorSignalConsumerAgent final : public ConsumerAgent<MotorSignal>
-{
+class MotorSignalConsumerAgent final : public ConsumerAgent<MotorSignal> {
  public:
-    explicit MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics);
-    explicit MotorSignalConsumerAgent(std::unique_ptr<MotorInterface> motor_interface);
-    ~MotorSignalConsumerAgent() noexcept;
+  explicit MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics);
+  explicit MotorSignalConsumerAgent(
+    std::unique_ptr<MotorInterface>motor_interface);
+  ~MotorSignalConsumerAgent() noexcept;
 
-    MotorSignalConsumerAgent(MotorSignalConsumerAgent const&)            = delete;
-    MotorSignalConsumerAgent(MotorSignalConsumerAgent&&)                 = delete;
-    MotorSignalConsumerAgent& operator=(MotorSignalConsumerAgent const&) = delete;
-    MotorSignalConsumerAgent& operator=(MotorSignalConsumerAgent&&)      = delete;
+  MotorSignalConsumerAgent(MotorSignalConsumerAgent const&)            = delete;
+  MotorSignalConsumerAgent(MotorSignalConsumerAgent&&)                 = delete;
+  MotorSignalConsumerAgent& operator=(MotorSignalConsumerAgent const&) = delete;
+  MotorSignalConsumerAgent& operator=(MotorSignalConsumerAgent&&)      = delete;
 
  private:
-    using ConsumerAgent<MotorSignal>::onReceiveData;
-    class Impl;
-    std::unique_ptr<Impl> pimpl_;
+  using ConsumerAgent<MotorSignal>::onReceiveData;
+  class Impl;
+  std::unique_ptr<Impl>pimpl_;
 };
-
 }  // namespace line_follower
 
 #endif  // LINE_FOLLOWER_SERVICE_AGENTS_MOTOR_MOTOR_AGENT_H_

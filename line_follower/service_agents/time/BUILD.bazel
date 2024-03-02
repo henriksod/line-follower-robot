@@ -41,11 +41,11 @@ cc_library(
 
 alias(
     name = "time_agent",
-    visibility = ["//visibility:public"],
     actual = select({
         "//bazel/flags/agents:simulation": ":time_agent_simulation",
         "//bazel/flags/agents:hardware": ":time_agent_hardware",
         "//bazel/flags/agents:stub": ":time_agent_stub",
         "//conditions:default": ":time_agent_simulation",
     }),
+    visibility = ["//visibility:public"],
 )

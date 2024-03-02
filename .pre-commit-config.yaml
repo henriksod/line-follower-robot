@@ -26,3 +26,8 @@ repos:
         entry: python run.py format check
         language: python
         pass_filenames: false
+    -   id: bazel-tests
+        name: bazel-tests
+        entry: ./test.sh
+        language: python
+        pass_filenames: false
