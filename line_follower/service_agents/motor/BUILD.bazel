@@ -19,6 +19,7 @@ cc_library(
         ":motor_signal_agent_api",
         "//line_follower/blocks/motor:motor_model",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/types",
     ],
 )
@@ -30,6 +31,7 @@ cc_library(
     deps = [
         ":motor_signal_agent_api",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/types",
     ],
 )
@@ -41,6 +43,7 @@ cc_library(
     deps = [
         ":motor_signal_agent_api",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/types",
     ],
 )

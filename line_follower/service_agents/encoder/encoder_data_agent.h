@@ -40,8 +40,8 @@ class EncoderDataProducerAgent final : public ProducerAgent<EncoderData> {
 /// An encoder data consumer agent
 class EncoderDataConsumerAgent final : public ConsumerAgent<EncoderData> {
  public:
-    EncoderDataConsumerAgent() = default;
-    ~EncoderDataConsumerAgent() noexcept = default;
+    EncoderDataConsumerAgent();
+    ~EncoderDataConsumerAgent() noexcept;
 
     EncoderDataConsumerAgent(EncoderDataConsumerAgent const&) = delete;
     EncoderDataConsumerAgent(EncoderDataConsumerAgent&&) = delete;

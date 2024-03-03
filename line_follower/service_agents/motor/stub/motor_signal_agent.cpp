@@ -6,6 +6,7 @@
 
 #include "line_follower/blocks/motor/motor_interface.h"
 #include "line_follower/service_agents/common/common.h"
+#include "line_follower/service_agents/common/logging.h"
 #include "line_follower/types/motor_characteristics.h"
 #include "line_follower/types/motor_signal.h"
 #include "line_follower/types/rotor_speed.h"
@@ -15,10 +16,13 @@ class MotorSignalConsumerAgent::Impl final {
  public:
     explicit Impl(MotorCharacteristics motor_characteristics) : motor_interface_{nullptr} {
         static_cast<void>(motor_characteristics);
+        LOG_INFO("Created motor signal consumer agent (stub)");
     }
 
     explicit Impl(std::unique_ptr<MotorInterface> motor_interface)
-        : motor_interface_{std::move(motor_interface)} {}
+        : motor_interface_{std::move(motor_interface)} {
+        LOG_INFO("Created motor signal consumer agent (stub)");
+    }
 
     void setMotorSpeed(RotorSpeed const& input) { static_cast<void>(input); }
 
@@ -37,4 +41,11 @@ MotorSignalConsumerAgent::MotorSignalConsumerAgent(std::unique_ptr<MotorInterfac
 }
 
 MotorSignalConsumerAgent::~MotorSignalConsumerAgent() {}
+
+MotorSignalProducerAgent::MotorSignalProducerAgent() {
+    LOG_INFO("Created motor signal producer agent (stub)");
+}
+
+MotorSignalProducerAgent::~MotorSignalProducerAgent() {}
+
 }  // namespace line_follower

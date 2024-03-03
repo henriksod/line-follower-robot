@@ -2,9 +2,10 @@
 
 #include <math.h>
 
-#include <iostream>
 #include <memory>
+#include <sstream>
 
+#include "line_follower/service_agents/common/logging.h"
 #include "line_follower/service_agents/encoder/encoder_data_agent.h"
 #include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
 #include "line_follower/service_agents/motor/motor_signal_agent.h"
@@ -28,6 +29,9 @@ namespace line_follower {
 namespace {
 // Update rate
 constexpr uint32_t kUpdateRateMicros{10000U};
+
+// Logging update rate
+constexpr uint32_t kLoggingUpdateRateMicros{100000U};
 
 // Convert rev/min to rev/sec
 constexpr double kRevPerMinToRevPerSec{1.0 / 60.0};
@@ -76,6 +80,8 @@ class ExampleRobot final {
           encoder_data_consumer_agent_{},
           pose_{},
           time_agent_{} {
+        LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
+
         auto encoder_model{std::make_unique<EncoderModel>(createEncoderCharacteristics())};
 
         encoder_model_ = encoder_model.get();
@@ -145,14 +151,14 @@ void ExampleRobot::setup() {
 
     ir_sensor_array_data_consumer_agent_.onReceiveData(
         [this](IrSensorArrayData const& ir_sensor_array_data) {
-            std::cerr << "Position: (" << pose_.position.x << ", " << pose_.position.y << ", "
-                      << pose_.position.z << ")";
-            std::cerr << "\tRead ir data: ";
+            std::stringstream stream{};
+            stream << "Position: (%.2f, %.2f, %.2f), Read ir data: ";
 
             for (auto const& reading : ir_sensor_array_data.ir_sensor_readings) {
-                std::cerr << reading.detected_white_surface << " ";
+                stream << reading.detected_white_surface << " ";
             }
-            std::cerr << "\n";
+            stream << "\n";
+            LOG_INFO(stream.str(), pose_.position.x, pose_.position.y, pose_.position.z);
 
             /// TODO: Here we could implement line following logic!
         });

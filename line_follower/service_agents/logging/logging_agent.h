@@ -19,9 +19,11 @@ enum class LoggingVerbosityLevel : std::uint8_t { kFatal = 0U, kError, kWarn, kI
 /// Provides the system time
 class LoggingAgent final {
  public:
-    static LoggingAgent const& getInstance();
+    static LoggingAgent& getInstance() {
+        static LoggingAgent agent;
+        return agent;
+    }
 
-    LoggingAgent(Badge<LoggingAgent> tag);
     ~LoggingAgent() noexcept;
 
     LoggingAgent(LoggingAgent const&) = delete;
@@ -40,7 +42,7 @@ class LoggingAgent final {
     void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us);
 
  private:
-    static std::unique_ptr<LoggingAgent> logging_agent_;
+    LoggingAgent();
     class Impl;
     std::unique_ptr<Impl> pimpl_;
 };

@@ -35,9 +35,9 @@ class LoggingAgent::Impl final : public SchedulableBase {
     void dispatchMessages() {
         while (!message_queue_.empty()) {
             LogMessage message{message_queue_.front()};
-            std::cerr << "[" << message.timestamp.system_time_us << "]"
-                      << " (" << message.file << ":" << message.line << "):"
-                      << " " << message.message << "\n";
+            static_cast<void>(message);
+            /// TODO: Implement message dispatch for hardware, maybe it will send data via uart to
+            /// PC?
             message_queue_.pop();
         }
     }
@@ -47,18 +47,9 @@ class LoggingAgent::Impl final : public SchedulableBase {
     std::queue<LogMessage> message_queue_{};
 };
 
-LoggingAgent::LoggingAgent(Badge<LoggingAgent> tag) : pimpl_{std::make_unique<Impl>()} {
-    static_cast<void>(tag);
-}
+LoggingAgent::LoggingAgent() : pimpl_{std::make_unique<Impl>()} {}
 
 LoggingAgent::~LoggingAgent() {}
-
-LoggingAgent const& LoggingAgent::getInstance() {
-    if (LoggingAgent::logging_agent_ == nullptr) {
-        LoggingAgent::logging_agent_ = std::make_unique<LoggingAgent>(Badge<LoggingAgent>{});
-    }
-    return *LoggingAgent::logging_agent_;
-}
 
 void LoggingAgent::dispatchMessage(std::string message, std::string file, int line,
                                    detail::LoggingVerbosityLevel verbosity) const {

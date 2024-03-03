@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include "line_follower/blocks/common/string.h"
 #include "line_follower/service_agents/logging/logging_agent.h"
 
 namespace line_follower {
@@ -14,12 +15,16 @@ namespace line_follower {
     LoggingAgent::getInstance().dispatchMessage(message, __FILE__, __LINE__, verbosity)
 
 // Use these macros for logging
-#define LOG_DEBUG(message) LOG_(message, __FILE__, __LINE__, detail::LoggingVerbosityLevel::kDebug)
-#define LOG_INFO(message) LOG_(message, __FILE__, __LINE__, detail::LoggingVerbosityLevel::kInfo)
-#define LOG_WARN(message) LOG_(message, __FILE__, __LINE__, detail::LoggingVerbosityLevel::kWarn)
-#define LOG_ERROR(message) LOG_(message, __FILE__, __LINE__, detail::LoggingVerbosityLevel::kError)
-#define LOG_FATAL_ABORT(message) \
-    LOG_(message, __FILE__, __LINE__, detail::LoggingVerbosityLevel::kFatal)
+#define LOG_DEBUG(format, ...) \
+    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kDebug)
+#define LOG_INFO(format, ...) \
+    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kInfo)
+#define LOG_WARN(format, ...) \
+    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kWarn)
+#define LOG_ERROR(format, ...) \
+    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kError)
+#define LOG_FATAL_ABORT(format, ...) \
+    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kFatal)
 
 }  // namespace line_follower
 

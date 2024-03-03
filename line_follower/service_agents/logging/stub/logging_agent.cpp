@@ -28,18 +28,9 @@ class LoggingAgent::Impl final : public SchedulableBase {
     std::unique_ptr<TimeAgent> time_agent_;
 };
 
-LoggingAgent::LoggingAgent(Badge<LoggingAgent> tag) : pimpl_{std::make_unique<Impl>()} {
-    static_cast<void>(tag);
-}
+LoggingAgent::LoggingAgent() : pimpl_{std::make_unique<Impl>()} {}
 
 LoggingAgent::~LoggingAgent() {}
-
-LoggingAgent const& LoggingAgent::getInstance() {
-    if (LoggingAgent::logging_agent_ == nullptr) {
-        LoggingAgent::logging_agent_ = std::make_unique<LoggingAgent>(Badge<LoggingAgent>{});
-    }
-    return *LoggingAgent::logging_agent_;
-}
 
 void LoggingAgent::dispatchMessage(std::string message, std::string file, int line,
                                    detail::LoggingVerbosityLevel verbosity) const {

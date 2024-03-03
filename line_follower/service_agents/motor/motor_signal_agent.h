@@ -14,8 +14,8 @@ namespace line_follower {
 /// An agent that produces motor signals
 class MotorSignalProducerAgent final : public ProducerAgent<MotorSignal> {
  public:
-    MotorSignalProducerAgent() = default;
-    ~MotorSignalProducerAgent() noexcept = default;
+    MotorSignalProducerAgent();
+    ~MotorSignalProducerAgent() noexcept;
 
     MotorSignalProducerAgent(MotorSignalProducerAgent const&) = delete;
     MotorSignalProducerAgent(MotorSignalProducerAgent&&) = delete;

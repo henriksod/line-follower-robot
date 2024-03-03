@@ -43,13 +43,19 @@ TEST_F(EncoderDataAgentTest, GetEncoderData) {
 
     EncoderDataConsumerAgent encoder_data_consumer_agent{};
 
+    auto duration{std::chrono::system_clock::now().time_since_epoch()};
+    auto current_time{std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()};
+    int64_t time_at_last_tick_ns_{current_time};
+
     encoder_data_consumer_agent.onReceiveData([&](EncoderData const& encoder_data) {
         EXPECT_EQ(encoder_data.revolutions_per_second, set_revolutions_per_second);
         received_encoder_data = encoder_data;
 
         // Manipulate encoder speed, to simulate an encoder reading
-        estimated_smooth_step += encoder_data.revolutions_per_second *
-                                 (kUpdateIntervalMicros * 1e-6) *
+        duration = std::chrono::system_clock::now().time_since_epoch();
+        current_time = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+        double time_difference_seconds{(current_time - time_at_last_tick_ns_) * 1e-9};
+        estimated_smooth_step += encoder_data.revolutions_per_second * time_difference_seconds *
                                  encoder_characteristics_.counts_per_revolution;
 
         if (estimated_smooth_step < 100.0) {
@@ -59,6 +65,7 @@ TEST_F(EncoderDataAgentTest, GetEncoderData) {
         }
 
         encoder_model_->setRotorSpeed(RotorSpeed{set_revolutions_per_second});
+        time_at_last_tick_ns_ = current_time;
     });
     encoder_data_consumer_agent.attach(*encoder_data_producer_agent_);
 

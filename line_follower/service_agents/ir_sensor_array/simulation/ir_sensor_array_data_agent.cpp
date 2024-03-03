@@ -7,6 +7,7 @@
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_interface.h"
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
+#include "line_follower/service_agents/common/logging.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
 #include "line_follower/types/ir_sensor_array_characteristics.h"
@@ -17,10 +18,14 @@ namespace line_follower {
 class IrSensorArrayDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(IrSensorArrayCharacteristics ir_array_characteristics)
-        : ir_array_interface_{std::make_unique<IrSensorArrayModel>(ir_array_characteristics)} {}
+        : ir_array_interface_{std::make_unique<IrSensorArrayModel>(ir_array_characteristics)} {
+        LOG_INFO("Created ir sensor array data producer agent (simulation)");
+    }
 
     explicit Impl(std::unique_ptr<IrSensorArrayInterface> ir_array_interface)
-        : ir_array_interface_{std::move(ir_array_interface)} {}
+        : ir_array_interface_{std::move(ir_array_interface)} {
+        LOG_INFO("Created ir sensor array data producer agent (simulation)");
+    }
 
     bool getIrSensorArrayData(IrSensorArrayData& output) const {
         ir_array_interface_->tick();
@@ -51,4 +56,10 @@ void IrSensorArrayDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerA
         }
     });
 }
+
+IrSensorArrayDataConsumerAgent::IrSensorArrayDataConsumerAgent() {
+    LOG_INFO("Created ir sensor array data consumer agent (simulation)");
+}
+
+IrSensorArrayDataConsumerAgent::~IrSensorArrayDataConsumerAgent() {}
 }  // namespace line_follower

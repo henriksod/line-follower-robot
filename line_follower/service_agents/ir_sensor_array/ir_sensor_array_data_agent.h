@@ -41,8 +41,8 @@ class IrSensorArrayDataProducerAgent final : public ProducerAgent<IrSensorArrayD
 /// An infrared sensor array data consumer agent
 class IrSensorArrayDataConsumerAgent final : public ConsumerAgent<IrSensorArrayData> {
  public:
-    IrSensorArrayDataConsumerAgent() = default;
-    ~IrSensorArrayDataConsumerAgent() noexcept = default;
+    IrSensorArrayDataConsumerAgent();
+    ~IrSensorArrayDataConsumerAgent() noexcept;
 
     IrSensorArrayDataConsumerAgent(IrSensorArrayDataConsumerAgent const&) = delete;
     IrSensorArrayDataConsumerAgent(IrSensorArrayDataConsumerAgent&&) = delete;

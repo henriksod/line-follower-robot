@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "line_follower/blocks/encoder/encoder_interface.h"
+#include "line_follower/service_agents/common/logging.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
 #include "line_follower/types/encoder_characteristics.h"
@@ -15,10 +16,13 @@ class EncoderDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(EncoderCharacteristics encoder_characteristics) {
         static_cast<void>(encoder_characteristics);
+        LOG_INFO("Created encoder data producer agent (hardware)");
     }
 
     explicit Impl(std::unique_ptr<EncoderInterface> encoder_interface)
-        : encoder_interface_{std::move(encoder_interface)} {}
+        : encoder_interface_{std::move(encoder_interface)} {
+        LOG_INFO("Created encoder data producer agent (hardware)");
+    }
 
     bool getEncoderData(EncoderData& output) const {
         return encoder_interface_->getEncoderData(output);
@@ -47,4 +51,10 @@ void EncoderDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> 
         }
     });
 }
+
+EncoderDataConsumerAgent::EncoderDataConsumerAgent() {
+    LOG_INFO("Created encoder data consumer agent (hardware)");
+}
+
+EncoderDataConsumerAgent::~EncoderDataConsumerAgent() {}
 }  // namespace line_follower

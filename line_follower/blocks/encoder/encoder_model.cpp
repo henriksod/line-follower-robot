@@ -10,6 +10,10 @@ void EncoderModel::tick() {
     auto duration{now.time_since_epoch()};
     auto current_time{std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()};
 
+    if (time_at_last_tick_ns_ == 0) {
+        time_at_last_tick_ns_ = current_time;
+    }
+
     double time_difference_seconds{(current_time - time_at_last_tick_ns_) * 1e-9};
 
     smooth_encoder_step_ += (rotor_speed_.revolutions_per_second * time_difference_seconds) *

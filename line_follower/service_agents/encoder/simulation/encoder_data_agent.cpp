@@ -7,6 +7,7 @@
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/blocks/encoder/encoder_interface.h"
 #include "line_follower/blocks/encoder/encoder_model.h"
+#include "line_follower/service_agents/common/logging.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
 #include "line_follower/types/encoder_characteristics.h"
@@ -17,10 +18,14 @@ namespace line_follower {
 class EncoderDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(EncoderCharacteristics encoder_characteristics)
-        : encoder_interface_{std::make_unique<EncoderModel>(encoder_characteristics)} {}
+        : encoder_interface_{std::make_unique<EncoderModel>(encoder_characteristics)} {
+        LOG_INFO("Created encoder data producer agent (simulation)");
+    }
 
     explicit Impl(std::unique_ptr<EncoderInterface> encoder_interface)
-        : encoder_interface_{std::move(encoder_interface)} {}
+        : encoder_interface_{std::move(encoder_interface)} {
+        LOG_INFO("Created encoder data producer agent (simulation)");
+    }
 
     bool getEncoderData(EncoderData& output) const {
         encoder_interface_->tick();
@@ -50,4 +55,10 @@ void EncoderDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> 
         }
     });
 }
+
+EncoderDataConsumerAgent::EncoderDataConsumerAgent() {
+    LOG_INFO("Created encoder data consumer agent (simulation)");
+}
+
+EncoderDataConsumerAgent::~EncoderDataConsumerAgent() {}
 }  // namespace line_follower

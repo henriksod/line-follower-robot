@@ -20,6 +20,7 @@ cc_library(
         ":encoder_data_agent_api",
         "//line_follower/blocks/encoder:encoder_model",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
         "//line_follower/types",
@@ -33,6 +34,7 @@ cc_library(
     deps = [
         ":encoder_data_agent_api",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
         "//line_follower/types",
@@ -46,6 +48,7 @@ cc_library(
     deps = [
         ":encoder_data_agent_api",
         "//line_follower/service_agents/common",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/scheduler:scheduler_agent",
         "//line_follower/types",
     ],

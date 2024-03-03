@@ -139,14 +139,6 @@ TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
 
         ASSERT_TRUE(receiveDataWasCalled);
 
-        for (std::size_t idx{0U}; idx < kNumberOfLeds; ++idx) {
-            std::cerr
-                << received_ir_sensor_array_data.ir_sensor_readings[idx].detected_white_surface
-                << " (" << expected_output[idx].detected_white_surface << ") ";
-        }
-
-        std::cerr << "\n";
-
         ++iter1;
         ++iter2;
     }

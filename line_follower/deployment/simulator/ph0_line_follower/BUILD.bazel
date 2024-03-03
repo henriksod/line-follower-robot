@@ -1,3 +1,4 @@
+# TODO: Binaries should be built via special rule where we can force the variant flag if needed
 cc_binary(
     name = "example",
     srcs = ["example.cpp"],
@@ -5,6 +6,7 @@ cc_binary(
         "//line_follower/blocks/encoder:encoder_model",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
         "//line_follower/blocks/motor:motor_model",
+        "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/encoder:encoder_data_agent_simulation",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent_simulation",
         "//line_follower/service_agents/motor:motor_signal_agent_simulation",
