@@ -1,0 +1,62 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "logging_agent_api",
+    hdrs = ["logging_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/service_agents/scheduler:scheduler_agent_api",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "logging_agent_simulation",
+    srcs = ["simulation/logging_agent.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logging_agent_api",
+        "//line_follower/service_agents/scheduler:schedulable_base",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "logging_agent_hardware",
+    srcs = ["hardware/logging_agent.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logging_agent_api",
+        "//line_follower/service_agents/scheduler:schedulable_base",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "logging_agent_stub",
+    srcs = ["stub/logging_agent.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logging_agent_api",
+        "//line_follower/service_agents/scheduler:schedulable_base",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
+        "//line_follower/types",
+    ],
+)
+
+alias(
+    name = "logging_agent",
+    actual = select({
+        "//bazel/flags/agents:simulation": ":logging_agent_simulation",
+        "//bazel/flags/agents:hardware": ":logging_agent_hardware",
+        "//bazel/flags/agents:stub": ":logging_agent_stub",
+        "//conditions:default": ":logging_agent_simulation",
+    }),
+    visibility = ["//visibility:public"],
+)

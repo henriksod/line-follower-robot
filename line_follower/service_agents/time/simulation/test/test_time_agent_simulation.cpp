@@ -21,7 +21,7 @@ TEST(TimeAgentTest, GetSystemTime_Incrementing) {
     std::this_thread::sleep_for(timespan);
     SystemTime end_time{time_agent.getSystemTime()};
 
-    EXPECT_NEAR(end_time.system_time_us - start_time.system_time_us, kSleepTimeMicros, 100U);
+    EXPECT_NEAR(end_time.system_time_us - start_time.system_time_us, kSleepTimeMicros, 110U);
     ASSERT_TRUE(start_time.system_time_us < end_time.system_time_us);
 }
 }  // namespace

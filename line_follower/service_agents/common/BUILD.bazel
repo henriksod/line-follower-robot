@@ -8,3 +8,12 @@ cc_library(
         "//line_follower/blocks/common",
     ],
 )
+
+cc_library(
+    name = "logging",
+    hdrs = ["logging.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/service_agents/logging:logging_agent",
+    ],
+)

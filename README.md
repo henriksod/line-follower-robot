@@ -13,7 +13,7 @@ Bazel is run via a [dazel](https://github.com/nadirizr/dazel) container.
 Ensure arduino is installed for the compiler and upload tools:
 
 ```
-sudo apt install arduino
+sudo apt install arduino clang-format
 ```
 
 ## Install pre-commit hooks (important)
