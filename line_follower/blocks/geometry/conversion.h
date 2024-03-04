@@ -49,7 +49,7 @@ inline geometry::Quaternion<double> convert(QuaternionRotation const& q) {
 /// Convert a geometry::Quaternion to a QuaternionRotation
 template <typename T>
 inline QuaternionRotation convert(geometry::Quaternion<T> const& q) {
-    return QuaternionRotation(q.w(), q.x(), q.y(), q.z());
+    return QuaternionRotation{q.w(), q.x(), q.y(), q.z()};
 }
 
 /// Convert a EulerRotation to ageometry:: Quaternion
