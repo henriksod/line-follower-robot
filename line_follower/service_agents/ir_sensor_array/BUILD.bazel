@@ -15,7 +15,7 @@ cc_library(
 cc_library(
     name = "ir_sensor_array_data_agent_simulation",
     srcs = ["simulation/ir_sensor_array_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
@@ -30,7 +30,7 @@ cc_library(
 cc_library(
     name = "ir_sensor_array_data_agent_hardware",
     srcs = ["hardware/ir_sensor_array_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
         "//line_follower/service_agents/common",
@@ -44,7 +44,7 @@ cc_library(
 cc_library(
     name = "ir_sensor_array_data_agent_stub",
     srcs = ["stub/ir_sensor_array_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":ir_sensor_array_data_agent_api",
         "//line_follower/service_agents/common",

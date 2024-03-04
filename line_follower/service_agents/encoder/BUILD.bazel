@@ -15,7 +15,7 @@ cc_library(
 cc_library(
     name = "encoder_data_agent_simulation",
     srcs = ["simulation/encoder_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":encoder_data_agent_api",
         "//line_follower/blocks/encoder:encoder_model",
@@ -30,7 +30,7 @@ cc_library(
 cc_library(
     name = "encoder_data_agent_hardware",
     srcs = ["hardware/encoder_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":encoder_data_agent_api",
         "//line_follower/service_agents/common",
@@ -44,7 +44,7 @@ cc_library(
 cc_library(
     name = "encoder_data_agent_stub",
     srcs = ["stub/encoder_data_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":encoder_data_agent_api",
         "//line_follower/service_agents/common",

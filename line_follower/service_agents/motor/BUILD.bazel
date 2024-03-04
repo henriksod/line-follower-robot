@@ -14,7 +14,7 @@ cc_library(
 cc_library(
     name = "motor_signal_agent_simulation",
     srcs = ["simulation/motor_signal_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
         "//line_follower/blocks/motor:motor_model",
@@ -27,7 +27,7 @@ cc_library(
 cc_library(
     name = "motor_signal_agent_hardware",
     srcs = ["hardware/motor_signal_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
         "//line_follower/service_agents/common",
@@ -39,7 +39,7 @@ cc_library(
 cc_library(
     name = "motor_signal_agent_stub",
     srcs = ["stub/motor_signal_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":motor_signal_agent_api",
         "//line_follower/service_agents/common",

@@ -1,17 +1,19 @@
-# TODO: Binaries should be built via special rule where we can force the variant flag if needed
-cc_binary(
+load("//bazel/rules/build_for_variant:rules.bzl", "cc_binary_with_variant")
+
+cc_binary_with_variant(
     name = "example",
     srcs = ["example.cpp"],
+    variant = "simulation",
     deps = [
         "//line_follower/blocks/encoder:encoder_model",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
         "//line_follower/blocks/motor:motor_model",
         "//line_follower/service_agents/common:logging",
-        "//line_follower/service_agents/encoder:encoder_data_agent_simulation",
-        "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent_simulation",
-        "//line_follower/service_agents/motor:motor_signal_agent_simulation",
-        "//line_follower/service_agents/scheduler:scheduler_agent_simulation",
-        "//line_follower/service_agents/time:time_agent_simulation",
+        "//line_follower/service_agents/encoder:encoder_data_agent",
+        "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
+        "//line_follower/service_agents/motor:motor_signal_agent",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
         "//line_follower/types",
     ],
 )

@@ -14,7 +14,7 @@ cc_library(
 cc_library(
     name = "logging_agent_simulation",
     srcs = ["simulation/logging_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":logging_agent_api",
         "//line_follower/service_agents/scheduler:schedulable_base",
@@ -27,20 +27,7 @@ cc_library(
 cc_library(
     name = "logging_agent_hardware",
     srcs = ["hardware/logging_agent.cpp"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":logging_agent_api",
-        "//line_follower/service_agents/scheduler:schedulable_base",
-        "//line_follower/service_agents/scheduler:scheduler_agent",
-        "//line_follower/service_agents/time:time_agent",
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
-    name = "logging_agent_stub",
-    srcs = ["stub/logging_agent.cpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["__subpackages__"],
     deps = [
         ":logging_agent_api",
         "//line_follower/service_agents/scheduler:schedulable_base",
@@ -55,7 +42,7 @@ alias(
     actual = select({
         "//bazel/flags/agents:simulation": ":logging_agent_simulation",
         "//bazel/flags/agents:hardware": ":logging_agent_hardware",
-        "//bazel/flags/agents:stub": ":logging_agent_stub",
+        "//bazel/flags/agents:stub": ":logging_agent_simulation",
         "//conditions:default": ":logging_agent_simulation",
     }),
     visibility = ["//visibility:public"],
