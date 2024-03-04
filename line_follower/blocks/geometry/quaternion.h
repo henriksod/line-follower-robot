@@ -190,21 +190,34 @@ class Quaternion {
  * WARNING: conversion to/from Euler angles is not readother.
  */
 template <typename T>
-inline EulerAngles<T> to_euler(Quaternion<T> const& x, T eps = 1e-12) {
-    // assert(x.is_unit(eps));
-    T v = x.x() * x.y() + x.w() * x.z();
-
-    if (std::abs(v - 0.5) < eps) {
-        return {{2 * atan2(x.x(), x.w()), +M_PI / 2, 0}};
+inline EulerAngles<T> to_euler(Quaternion<T> const& q, T eps = 1e-7) {
+    const T w2 = q.w() * q.w();
+    const T x2 = q.x() * q.x();
+    const T y2 = q.y() * q.y();
+    const T z2 = q.z() * q.z();
+    const T unit_length = w2 + x2 + y2 + z2;
+    const T abcd = q.w() * q.x() + q.y() * q.z();
+    const T pi = M_PI;
+    T yaw{};
+    T pitch{};
+    T roll{};
+    if (abcd > (0.5 - eps) * unit_length) {
+        yaw = 2.0 * atan2(q.y(), q.w());
+        pitch = pi;
+        roll = 0.0;
+    } else if (abcd < (-0.5 + eps) * unit_length) {
+        yaw = -2.0 * std::atan2(q.y(), q.w());
+        pitch = -pi;
+        roll = 0.0;
+    } else {
+        const double adbc = q.w() * q.z() - q.x() * q.y();
+        const double acbd = q.w() * q.y() - q.x() * q.z();
+        yaw = std::atan2(2.0 * adbc, 1.0 - 2.0 * (z2 + x2));
+        pitch = std::asin(2.0 * abcd / unit_length);
+        roll = std::atan2(2.0 * acbd, 1.0 - 2.0 * (y2 + x2));
     }
 
-    if (std::abs(v + 0.5) < eps) {
-        return {{-2 * atan2(x.x(), x.w()), -M_PI / 2, 0}};
-    }
-
-    return {{atan2(2 * (x.w() * x.y() - x.x() * x.z()), 1 - 2 * (x.y() * x.y() + x.z() * x.z())),
-             std::asin(2 * v),
-             atan2(2 * (x.w() * x.x() - x.y() * x.z()), 1 - 2 * (x.x() * x.x() + x.z() * x.z()))}};
+    return EulerAngles<T>{roll, pitch, yaw};
 }
 
 /**
@@ -214,13 +227,13 @@ inline EulerAngles<T> to_euler(Quaternion<T> const& x, T eps = 1e-12) {
  */
 template <typename T>
 inline Quaternion<T> from_euler(EulerAngles<T> const& x) {
-    T c0 = std::cos(x.roll() / 2), s0 = std::sin(x.roll() / 2);
+    T c0 = std::cos(x.yaw() / 2), s0 = std::sin(x.yaw() / 2);
     T c1 = std::cos(x.pitch() / 2), s1 = std::sin(x.pitch() / 2);
-    T c2 = std::cos(x.yaw() / 2), s2 = std::sin(x.yaw() / 2);
+    T c2 = std::cos(x.roll() / 2), s2 = std::sin(x.roll() / 2);
     T c0c1 = c0 * c1, s0s1 = s0 * s1, s0c1 = s0 * c1, c0s1 = c0 * s1;
 
-    return {c0c1 * c2 + s0s1 * s2, s0c1 * c2 - c0c1 * s2, c0s1 * c2 + s0c1 * s2,
-            c0c1 * s2 - s0s1 * c2};
+    return {c0c1 * c2 + s0s1 * s2, c0c1 * s2 - s0s1 * c2, c0s1 * c2 + s0c1 * s2,
+            s0c1 * c2 - c0c1 * s2};
 }
 
 /** +
