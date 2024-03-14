@@ -12,15 +12,13 @@
 #include "line_follower/blocks/common/math.h"
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/line.h"
-#include "line_follower/blocks/geometry/line_utils/line_utils.h"
 #include "line_follower/blocks/geometry/quaternion.h"
+#include "line_follower/blocks/geometry/utils/line_utils.h"
+#include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/geometry/vector.h"
 
 namespace line_follower {
 namespace {
-/// A 90 degree rotation around z
-const geometry::Quaternion<double> k90DegreesAroundZ{0.7071068, 0.0, 0.0, 0.7071068};
-
 /// Millimeters to Meters
 constexpr double kMillimetersToMeters{0.001};
 }  // namespace
@@ -74,7 +72,8 @@ void IrSensorArrayModel::setTrackLines(TrackSegment const& track_segment,
                 continue;
             }
 
-            auto orthogonal_led_line_vector{rotated(k90DegreesAroundZ, led_line_vector)};
+            auto orthogonal_led_line_vector{
+                rotated(geometry::detail::k90DegreesAroundZ, led_line_vector)};
             Line<double> orthogonal_led_line{
                 led_line.center() + orthogonal_led_line_vector * array_spacing / 2.0,
                 led_line.center() - orthogonal_led_line_vector * array_spacing / 2.0};

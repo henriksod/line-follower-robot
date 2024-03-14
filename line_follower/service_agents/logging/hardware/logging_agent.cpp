@@ -53,7 +53,7 @@ LoggingAgent::~LoggingAgent() {}
 
 void LoggingAgent::dispatchMessage(std::string message, std::string file, int line,
                                    detail::LoggingVerbosityLevel verbosity) const {
-    return pimpl_->queueMessage(message, file, line, verbosity);
+    return pimpl_->queueMessage(message + "\n", file, line, verbosity);
 }
 
 void LoggingAgent::schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,

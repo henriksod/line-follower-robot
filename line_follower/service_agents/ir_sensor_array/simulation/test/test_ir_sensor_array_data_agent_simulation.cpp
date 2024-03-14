@@ -53,7 +53,15 @@ std::vector<TrackLineSegment> input_track_line_list = {
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters * 2.5,
+     kLedArraySpacingMeters * 0.5,
+     0U,
+     true},
+    {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
+     kLedArraySpacingMeters * 1.5,
+     0U,
+     true},
+    {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
+     kLedArraySpacingMeters* kNumberOfLeds,
      0U,
      true}};
 std::vector<std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> > expected_activated_leds_list =
@@ -69,8 +77,12 @@ std::vector<std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> > expected_a
       white, white},
      {black, black, black, black, black, black, black, black, black, black, black, black, black,
       black, black},
+     {white, white, white, white, white, white, white, black, white, white, white, white, white,
+      white, white},
      {white, white, white, white, white, white, black, black, black, white, white, white, white,
-      white, white}};
+      white, white},
+     {black, black, black, black, black, black, black, black, black, black, black, black, black,
+      black, black}};
 
 class IrSensorArrayDataAgentTest : public ::testing::Test {
  protected:

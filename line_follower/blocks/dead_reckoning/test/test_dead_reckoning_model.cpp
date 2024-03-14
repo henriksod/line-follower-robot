@@ -34,7 +34,9 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
 
     encoder_data_left.revolutions_per_second = 1.0;
     encoder_data_right.revolutions_per_second = 1.0;
-    dead_reckoning_model.update(encoder_data_left, encoder_data_right, 0.5);
+    dead_reckoning_model.setEncoderLeftData(encoder_data_left);
+    dead_reckoning_model.setEncoderRightData(encoder_data_right);
+    dead_reckoning_model.step(0.5);
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, M_PI * kRobotWheelRadiusMeters, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -46,7 +48,9 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
 
     encoder_data_left.revolutions_per_second = -1.0;
     encoder_data_right.revolutions_per_second = -1.0;
-    dead_reckoning_model.update(encoder_data_left, encoder_data_right, 0.5);
+    dead_reckoning_model.setEncoderLeftData(encoder_data_left);
+    dead_reckoning_model.setEncoderRightData(encoder_data_right);
+    dead_reckoning_model.step(0.5);
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -58,7 +62,9 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
 
     encoder_data_left.revolutions_per_second = 1.0;
     encoder_data_right.revolutions_per_second = -1.0;
-    dead_reckoning_model.update(encoder_data_left, encoder_data_right, 1.0);
+    dead_reckoning_model.setEncoderLeftData(encoder_data_left);
+    dead_reckoning_model.setEncoderRightData(encoder_data_right);
+    dead_reckoning_model.step(1.0);
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -72,7 +78,9 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
 
     encoder_data_left.revolutions_per_second = 0.5;
     encoder_data_right.revolutions_per_second = 1.0;
-    dead_reckoning_model.update(encoder_data_left, encoder_data_right, 1.0);
+    dead_reckoning_model.setEncoderLeftData(encoder_data_left);
+    dead_reckoning_model.setEncoderRightData(encoder_data_right);
+    dead_reckoning_model.step(1.0);
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0896, 1e-4);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0291, 1e-4);

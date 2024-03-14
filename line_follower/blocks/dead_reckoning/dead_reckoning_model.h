@@ -35,16 +35,23 @@ class DeadReckoningModel {
     /// \param new_pose The new pose to set
     void setPose(const Pose& new_pose);
 
-    /// Update the model with new input data
+    /// Update the model with new input data for left encoder
     /// \param encoder_data_left The encoder data from the left wheel
+    void setEncoderLeftData(const EncoderData& encoder_data_left);
+
+    /// Update the model with new input data for right encoder
     /// \param encoder_data_right The encoder data from the right wheel
+    void setEncoderRightData(const EncoderData& encoder_data_right);
+
+    /// Step the model with given delta time
     /// \param delta_time_seconds The time elapsed since the last update in seconds
-    void update(const EncoderData& encoder_data_left, const EncoderData& encoder_data_right,
-                double delta_time_seconds);
+    void step(double delta_time_seconds);
 
  private:
     DifferentialDriveRobotCharacteristics characteristics_;  ///< Characteristics of the robot
     Pose pose_;                                              ///< Current pose of the robot
+    EncoderData left_encoder_data_{};
+    EncoderData right_encoder_data_{};
 };
 
 }  // namespace line_follower

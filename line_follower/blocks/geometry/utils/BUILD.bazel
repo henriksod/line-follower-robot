@@ -1,0 +1,23 @@
+cc_library(
+    name = "rotation_utils",
+    hdrs = ["rotation_utils.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "line_utils",
+    hdrs = ["line_utils.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":rotation_utils",
+        "//line_follower/blocks/geometry:line",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+    ],
+)

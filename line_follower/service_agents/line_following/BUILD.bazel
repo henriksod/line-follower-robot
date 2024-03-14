@@ -1,0 +1,48 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "line_following_agent_api",
+    hdrs = ["line_following_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/types",
+    ],
+)
+
+cc_library(
+    name = "line_following_agent_simulation",
+    srcs = ["simulation/line_following_agent.cpp"],
+    visibility = ["__subpackages__"],
+    deps = [
+        ":line_following_agent_api",
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+        "//line_follower/blocks/geometry/utils:rotation_utils",
+    ],
+)
+
+cc_library(
+    name = "line_following_agent_hardware",
+    srcs = ["hardware/line_following_agent.cpp"],
+    visibility = ["__subpackages__"],
+    deps = [
+        ":line_following_agent_api",
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+        "//line_follower/blocks/geometry/utils:rotation_utils",
+    ],
+)
+
+alias(
+    name = "line_following_agent",
+    actual = select({
+        "//bazel/flags/agents:simulation": ":line_following_agent_simulation",
+        "//bazel/flags/agents:hardware": ":line_following_agent_hardware",
+        "//bazel/flags/agents:stub": ":line_following_agent_simulation",
+        "//conditions:default": ":line_following_agent_simulation",
+    }),
+    visibility = ["//visibility:public"],
+)

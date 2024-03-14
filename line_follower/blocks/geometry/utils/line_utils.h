@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_
-#define LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_
+#ifndef LINE_FOLLOWER_BLOCKS_GEOMETRY_UTILS_LINE_UTILS_H_
+#define LINE_FOLLOWER_BLOCKS_GEOMETRY_UTILS_LINE_UTILS_H_
 
 #include <algorithm>
 #include <cstdlib>
@@ -9,14 +9,11 @@
 
 #include "line_follower/blocks/geometry/line.h"
 #include "line_follower/blocks/geometry/quaternion.h"
+#include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/geometry/vector.h"
 
 namespace line_follower {
 namespace geometry {
-namespace detail {
-/// A 90 degree rotation around z
-const geometry::Quaternion<double> k90DegreesAroundZ{0.7071068, 0.0, 0.0, 0.7071068};
-}  // namespace detail
 
 /// @brief Sweep over the width of a line
 /// @param line The line
@@ -51,4 +48,4 @@ inline std::vector<Line<T> > sweepAlongWidth(Line<T> const& line, double width,
 }  // namespace geometry
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_GEOMETRY_LINE_UTILS_LINE_UTILS_H_
+#endif  // LINE_FOLLOWER_BLOCKS_GEOMETRY_UTILS_LINE_UTILS_H_

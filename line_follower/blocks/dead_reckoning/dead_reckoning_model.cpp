@@ -18,13 +18,20 @@ void DeadReckoningModel::setPose(Pose const& new_pose) {
     pose_ = new_pose;
 }
 
-void DeadReckoningModel::update(EncoderData const& encoder_data_left,
-                                EncoderData const& encoder_data_right, double delta_time_seconds) {
+void DeadReckoningModel::setEncoderLeftData(EncoderData const& encoder_data_left) {
+    left_encoder_data_ = encoder_data_left;
+}
+
+void DeadReckoningModel::setEncoderRightData(EncoderData const& encoder_data_right) {
+    right_encoder_data_ = encoder_data_right;
+}
+
+void DeadReckoningModel::step(double delta_time_seconds) {
     // Calculate wheel velocities
     double left_wheel_velocity = 2.0 * M_PI * characteristics_.wheel_radius *
-                                 encoder_data_left.revolutions_per_second * delta_time_seconds;
+                                 left_encoder_data_.revolutions_per_second * delta_time_seconds;
     double right_wheel_velocity = 2.0 * M_PI * characteristics_.wheel_radius *
-                                  encoder_data_right.revolutions_per_second * delta_time_seconds;
+                                  right_encoder_data_.revolutions_per_second * delta_time_seconds;
 
     // Calculate forward and angular velocities
     double forward_velocity = (right_wheel_velocity + left_wheel_velocity) / 2.0;

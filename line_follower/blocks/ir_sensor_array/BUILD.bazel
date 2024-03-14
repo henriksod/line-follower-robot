@@ -21,7 +21,8 @@ cc_library(
         "//line_follower/blocks/geometry:line",
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/geometry:vector",
-        "//line_follower/blocks/geometry/line_utils",
+        "//line_follower/blocks/geometry/utils:line_utils",
+        "//line_follower/blocks/geometry/utils:rotation_utils",
         "//line_follower/types",
     ],
 )

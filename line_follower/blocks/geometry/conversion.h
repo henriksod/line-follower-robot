@@ -73,6 +73,7 @@ inline Line convert(geometry::Line<T> const& line) {
 inline geometry::Line<double> convert(Line const& line) {
     return geometry::Line<double>{convert(line.start), convert(line.end)};
 }
+
 }  // namespace line_follower
 
 #endif  // LINE_FOLLOWER_BLOCKS_GEOMETRY_CONVERSION_H_
