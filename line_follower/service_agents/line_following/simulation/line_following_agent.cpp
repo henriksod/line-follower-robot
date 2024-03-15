@@ -20,6 +20,14 @@ const geometry::Quaternion<double> kIrSensorToRobotRotation{0.7071068, 0.0, 0.0,
 const geometry::Vector3<double> kIrSensorToRobotPosition{0.0, 0.0, 0.0};
 }  // namespace
 
+/// TODO: Line following logic
+/// Kalman filter to track the line position on the 1 dimensional ir sensor array
+/// PID that follows the predicted position of the line based on the kalman filter
+/// Special case when either all leds detect line on one side or all leds in total detect a line
+/// When all leds detect a line, we continue forward and do not use the observation
+/// When all leds on one side are detected, we make the pid follow an orthogonal line to the one
+/// before and we predict the line to be detected on the outermost edge. If no observation of a
+/// line, we continue predicting and follow the predicted path
 class LineFollowingAgent::Impl final {
  public:
     Impl(DifferentialDriveRobotCharacteristics characteristics, Pose initial_pose)

@@ -14,9 +14,10 @@
 namespace line_follower {
 
 namespace {
-/// Rotation from
 const geometry::Quaternion<double> kRobotToWorldRotation{0.7071068, 0.0, 0.0, 0.7071068};
 const geometry::Quaternion<double> kWorldToRobotRotation{0.7071068, 0.0, 0.0, -0.7071068};
+const geometry::Quaternion<double> kIrSensorToRobotRotation{0.7071068, 0.0, 0.0, -0.7071068};
+const geometry::Vector3<double> kIrSensorToRobotPosition{0.0, 0.0, 0.0};
 }  // namespace
 
 class LineFollowingAgent::Impl final {
@@ -30,6 +31,15 @@ class LineFollowingAgent::Impl final {
 
     Pose getPose() const {
         return geometry::transformedPose(kRobotToWorldRotation, dead_reckoning_model_->getPose());
+    }
+
+    Pose getIrSensorArrayPose() const {
+        return geometry::transformedPose(
+            kRobotToWorldRotation,
+            geometry::transformedPose(
+                convert(dead_reckoning_model_->getPose().rotation),
+                convert(dead_reckoning_model_->getPose().position),
+                {convert(kIrSensorToRobotPosition), convert(kIrSensorToRobotRotation)}));
     }
 
     void setEncoderLeftData(const EncoderData& encoder_data_left) {
@@ -61,6 +71,10 @@ LineFollowingAgent::~LineFollowingAgent() {}
 
 Pose LineFollowingAgent::getPose() const {
     return pimpl_->getPose();
+}
+
+Pose LineFollowingAgent::getIrSensorArrayPose() const {
+    return pimpl_->getIrSensorArrayPose();
 }
 
 void LineFollowingAgent::setEncoderLeftData(const EncoderData& encoder_data_left) {

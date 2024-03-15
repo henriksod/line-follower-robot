@@ -94,7 +94,6 @@ class ExampleRobot final {
           left_encoder_data_consumer_agent_{},
           right_motor_signal_producer_agent_{},
           right_encoder_data_consumer_agent_{},
-          ir_sensor_array_data_consumer_agent_{},
           initial_pose_{createInitialPose()},
           time_agent_{} {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
@@ -141,7 +140,6 @@ class ExampleRobot final {
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
     MotorSignalProducerAgent right_motor_signal_producer_agent_;
     EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
-    IrSensorArrayDataConsumerAgent ir_sensor_array_data_consumer_agent_;
     Pose initial_pose_;
     TimeAgent time_agent_;
     DeadReckoningModel* dead_reckoning_model_;
@@ -179,43 +177,42 @@ void ExampleRobot::setup() {
     });
 
     time_at_last_update_ = time_agent_.getSystemTime();
-    ir_sensor_array_data_consumer_agent_.onReceiveData(
-        [this](IrSensorArrayData const& ir_sensor_array_data) {
-            Pose pose{line_following_agent_->getPose()};
-            Pose ir_pose{line_following_agent_->getIrSensorArrayPose()};
-            SystemTime current_time{time_agent_.getSystemTime()};
-            auto time_diff{(current_time.system_time_us - time_at_last_update_.system_time_us) *
-                           kMicrosToSeconds};
-            ir_sensor_array_model_->setTrackLines(
-                current_track_segment_,
-                geometry::transformedPose(convert(current_track_segment_.pose.rotation),
-                                          convert(current_track_segment_.pose.position), ir_pose));
-            line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
-            line_following_agent_->step(time_diff);
+    line_following_agent_->onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
+        /// TODO: Have to move most of this to inside line following agent!
+        Pose pose{line_following_agent_->getPose()};
+        Pose ir_pose{line_following_agent_->getIrSensorArrayPose()};
+        SystemTime current_time{time_agent_.getSystemTime()};
+        auto time_diff{(current_time.system_time_us - time_at_last_update_.system_time_us) *
+                       kMicrosToSeconds};
+        ir_sensor_array_model_->setTrackLines(
+            current_track_segment_,
+            geometry::transformedPose(convert(current_track_segment_.pose.rotation),
+                                      convert(current_track_segment_.pose.position), ir_pose));
+        line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
+        line_following_agent_->step(time_diff);
 
-            time_at_last_update_ = time_agent_.getSystemTime();
+        time_at_last_update_ = time_agent_.getSystemTime();
 
-            std::stringstream stream{};
-            stream << "Read ir data: ";
+        std::stringstream stream{};
+        stream << "Read ir data: ";
 
-            for (auto const& reading : ir_sensor_array_data.ir_sensor_readings) {
-                stream << reading.detected_white_surface << " ";
-            }
-            stream << "\n";
+        for (auto const& reading : ir_sensor_array_data.ir_sensor_readings) {
+            stream << reading.detected_white_surface << " ";
+        }
+        stream << "\n";
 
-            LOG_INFO("Position: (%.2f, %.2f, %.2f)", pose.position.x, pose.position.y,
-                     pose.position.z);
-            LOG_INFO("Rotation: (%.2f, %.2f, %.2f, %.2f)", pose.rotation.w, pose.rotation.x,
-                     pose.rotation.y, pose.rotation.z);
-            LOG_INFO(stream.str());
-        });
+        LOG_INFO("Position: (%.2f, %.2f, %.2f)", pose.position.x, pose.position.y, pose.position.z);
+        LOG_INFO("Rotation: (%.2f, %.2f, %.2f, %.2f)", pose.rotation.w, pose.rotation.x,
+                 pose.rotation.y, pose.rotation.z);
+        LOG_INFO(stream.str());
+    });
 
     // Attach consumers to producers
     left_motor_signal_consumer_agent_->attach(left_motor_signal_producer_agent_);
     right_motor_signal_consumer_agent_->attach(right_motor_signal_producer_agent_);
     left_encoder_data_consumer_agent_.attach(*left_encoder_data_producer_agent_);
     right_encoder_data_consumer_agent_.attach(*right_encoder_data_producer_agent_);
-    ir_sensor_array_data_consumer_agent_.attach(*ir_sensor_array_data_producer_agent_);
+    line_following_agent_->attach(*ir_sensor_array_data_producer_agent_);
 
     // Start scheduling readings from sensors
     left_encoder_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);

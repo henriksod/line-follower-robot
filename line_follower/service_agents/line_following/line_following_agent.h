@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
+#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
 #include "line_follower/types/encoder_data.h"
 #include "line_follower/types/ir_sensor_array_data.h"
 #include "line_follower/types/pose.h"
@@ -13,7 +14,7 @@
 
 namespace line_follower {
 /// Provides the system time
-class LineFollowingAgent final {
+class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
  public:
     LineFollowingAgent(DifferentialDriveRobotCharacteristics characteristics,
                        /// TODO: Add config for controller

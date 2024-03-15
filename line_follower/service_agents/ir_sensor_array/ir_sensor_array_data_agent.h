@@ -39,7 +39,7 @@ class IrSensorArrayDataProducerAgent final : public ProducerAgent<IrSensorArrayD
 };
 
 /// An infrared sensor array data consumer agent
-class IrSensorArrayDataConsumerAgent final : public ConsumerAgent<IrSensorArrayData> {
+class IrSensorArrayDataConsumerAgent : public ConsumerAgent<IrSensorArrayData> {
  public:
     IrSensorArrayDataConsumerAgent();
     ~IrSensorArrayDataConsumerAgent() noexcept;
