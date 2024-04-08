@@ -19,7 +19,7 @@ class TimeAgent final {
     TimeAgent& operator=(TimeAgent const&) = delete;
     TimeAgent& operator=(TimeAgent&&) = delete;
 
-    SystemTime getSystemTime();
+    SystemTime getSystemTime() const;
 
  private:
     class Impl;

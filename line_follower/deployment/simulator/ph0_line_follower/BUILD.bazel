@@ -10,6 +10,7 @@ cc_binary_with_variant(
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry/utils:rotation_utils",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
+        "//line_follower/blocks/line_following:line_following_model",
         "//line_follower/blocks/motor:motor_model",
         "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/encoder:encoder_data_agent",
@@ -17,7 +18,6 @@ cc_binary_with_variant(
         "//line_follower/service_agents/line_following:line_following_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
         "//line_follower/service_agents/scheduler:scheduler_agent",
-        "//line_follower/service_agents/time:time_agent",
         "//line_follower/types",
     ],
 )

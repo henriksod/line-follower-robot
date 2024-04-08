@@ -7,6 +7,7 @@
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 #include "line_follower/types/encoder_data.h"
 #include "line_follower/types/robot_characteristics.h"
+#include "line_follower/types/system_time.h"
 
 namespace line_follower {
 namespace {
@@ -32,11 +33,13 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     EncoderData encoder_data_left{};
     EncoderData encoder_data_right{};
 
+    dead_reckoning_model.step(SystemTime{500000U});
+
     encoder_data_left.revolutions_per_second = 1.0;
     encoder_data_right.revolutions_per_second = 1.0;
     dead_reckoning_model.setEncoderLeftData(encoder_data_left);
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
-    dead_reckoning_model.step(0.5);
+    dead_reckoning_model.step(SystemTime{1000000U});
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, M_PI * kRobotWheelRadiusMeters, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -50,7 +53,7 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     encoder_data_right.revolutions_per_second = -1.0;
     dead_reckoning_model.setEncoderLeftData(encoder_data_left);
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
-    dead_reckoning_model.step(0.5);
+    dead_reckoning_model.step(SystemTime{1500000U});
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -64,7 +67,7 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     encoder_data_right.revolutions_per_second = -1.0;
     dead_reckoning_model.setEncoderLeftData(encoder_data_left);
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
-    dead_reckoning_model.step(1.0);
+    dead_reckoning_model.step(SystemTime{2500000U});
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
@@ -74,13 +77,13 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.y, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.z, -0.5878, 1e-4);
 
-    dead_reckoning_model.setPose(Pose{{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}});
+    dead_reckoning_model.setPose(Pose{{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}}, SystemTime{2500000U});
 
     encoder_data_left.revolutions_per_second = 0.5;
     encoder_data_right.revolutions_per_second = 1.0;
     dead_reckoning_model.setEncoderLeftData(encoder_data_left);
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
-    dead_reckoning_model.step(1.0);
+    dead_reckoning_model.step(SystemTime{3500000U});
 
     EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0896, 1e-4);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0291, 1e-4);

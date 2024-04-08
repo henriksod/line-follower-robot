@@ -5,21 +5,24 @@
 
 #include <memory>
 
-#include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
+#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
+#include "line_follower/service_agents/motor/motor_signal_agent.h"
 #include "line_follower/types/encoder_data.h"
 #include "line_follower/types/ir_sensor_array_data.h"
+#include "line_follower/types/line_following_characteristics.h"
 #include "line_follower/types/pose.h"
 #include "line_follower/types/robot_characteristics.h"
+#include "line_follower/types/system_time.h"
 
 namespace line_follower {
 /// Provides the system time
 class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
  public:
-    LineFollowingAgent(DifferentialDriveRobotCharacteristics characteristics,
-                       /// TODO: Add config for controller
+    LineFollowingAgent(DifferentialDriveRobotCharacteristics robot_characteristics,
+                       LineFollowingCharacteristics line_following_characteristics,
                        Pose initial_pose);
-    explicit LineFollowingAgent(std::unique_ptr<DeadReckoningModel> dead_reckoning_model);
+    LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model);
     ~LineFollowingAgent() noexcept;
 
     LineFollowingAgent(LineFollowingAgent const&) = delete;
@@ -47,9 +50,14 @@ class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
     /// @param ir_array_data Infrared sensor array data
     void setIrSensorArrayData(const IrSensorArrayData& ir_array_data);
 
-    /// Step the line following model with given delta time
-    /// @param delta_time_seconds The time elapsed since the last update in seconds
-    void step(double delta_time_seconds);
+    /// Attach the left motor to receive signals from the line follower agent
+    void attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer);
+
+    /// Attach the right motor to receive signals from the line follower agent
+    void attachMotorRight(MotorSignalConsumerAgent& motor_signal_consumer);
+
+    /// Step the line following model
+    void step();
 
  private:
     class Impl;

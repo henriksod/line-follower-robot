@@ -1,0 +1,13 @@
+# Copyright (c) 2024 Henrik Söderlund
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = ["test_line_following_model.cpp"],
+    deps = [
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/blocks/line_following:line_following_model",
+        "//line_follower/types",
+        "@com_google_googletest//:gtest_main",
+    ],
+)

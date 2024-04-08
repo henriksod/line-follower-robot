@@ -1,0 +1,9 @@
+cc_library(
+    name = "robot_geometry",
+    hdrs = ["robot_geometry.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+    ],
+)

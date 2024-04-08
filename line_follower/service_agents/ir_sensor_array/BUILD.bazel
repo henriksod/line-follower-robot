@@ -23,6 +23,7 @@ cc_library(
         "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
         "//line_follower/types",
     ],
 )
@@ -37,6 +38,7 @@ cc_library(
         "//line_follower/service_agents/common:logging",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
+        "//line_follower/service_agents/time:time_agent",
         "//line_follower/types",
     ],
 )

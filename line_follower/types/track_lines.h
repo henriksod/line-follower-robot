@@ -11,7 +11,6 @@
 #include "line_follower/types/pose.h"
 
 namespace line_follower {
-constexpr uint16_t kMaximumTrackLineWhiteness{1024U};
 
 constexpr size_t kMaxNumberOfLinesPerTrackSegment{50U};
 
@@ -26,10 +25,9 @@ struct TrackLineSegment final {
     /// symmetrically on both sides of the line segment centre line.
     double width;
 
-    /// The whiteness intensity of the line segment. Higher values
-    /// means more white, where the maximum whiteness possible is
-    /// defined by kMaximumTrackLineWhiteness.
-    uint16_t whiteness;
+    /// The whiteness intensity of the line segment going from 0 to 1.
+    /// 0 is black and 1 is white.
+    double whiteness;
 
     /// Whether the line segment is detectable or not.
     bool visible;

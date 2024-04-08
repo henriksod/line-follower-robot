@@ -20,7 +20,7 @@ TimeAgent::TimeAgent() : pimpl_{std::make_unique<Impl>()} {}
 
 TimeAgent::~TimeAgent() {}
 
-SystemTime TimeAgent::getSystemTime() {
+SystemTime TimeAgent::getSystemTime() const {
     return pimpl_->getSystemTime();
 }
 }  // namespace line_follower

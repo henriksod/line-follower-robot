@@ -1,0 +1,19 @@
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+
+LIBRARIES = [
+    "//line_follower/service_agents/common:logging",
+    "//line_follower/service_agents/encoder:encoder_data_agent",
+    "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
+    "//line_follower/service_agents/line_following:line_following_agent",
+    "//line_follower/service_agents/motor:motor_signal_agent",
+    "//line_follower/service_agents/scheduler:scheduler_agent",
+]
+
+pkg_tar(
+    name = "line_follower_library_package",
+    srcs = LIBRARIES + [
+        "//line_follower:external_headers",
+    ],
+    include_runfiles = True,
+    strip_prefix = "/",
+)

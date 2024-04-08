@@ -7,17 +7,17 @@
 #include "line_follower/types/ir_sensor_array_characteristics.h"
 #include "line_follower/types/ir_sensor_array_data.h"
 #include "line_follower/types/pose.h"
+#include "line_follower/types/system_time.h"
 #include "line_follower/types/track_lines.h"
 
 namespace line_follower {
-static_assert(kMaximumTrackLineWhiteness == kDigitalReadingMaxValue,
-              "Digital reading and maximum track line whiteness do not match!");
 
 class IrSensorArrayModel final : public IrSensorArrayInterface {
     void resetIrSensorArrayData(IrSensorArrayData& ir_sensor_array_data) {
+        ir_sensor_array_data.valid = false;
         for (auto& ir_sensor_data : ir_sensor_array_data.ir_sensor_readings) {
             ir_sensor_data.detected_white_surface = true;
-            ir_sensor_data.digital_reading = kDigitalReadingMaxValue;
+            ir_sensor_data.intensity = 1.0;
         }
     }
 
@@ -36,7 +36,7 @@ class IrSensorArrayModel final : public IrSensorArrayInterface {
     IrSensorArrayModel& operator=(IrSensorArrayModel const&) = delete;
     IrSensorArrayModel& operator=(IrSensorArrayModel&&) = delete;
 
-    void tick() override;
+    void tick(SystemTime const timestamp) override;
     bool getIrSensorArrayData(IrSensorArrayData& output) const override;
 
     /// @brief Set the reference track lines to convert into ir sensor readings.

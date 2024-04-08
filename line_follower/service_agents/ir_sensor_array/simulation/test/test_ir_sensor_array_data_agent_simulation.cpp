@@ -20,8 +20,8 @@ namespace line_follower {
 namespace {
 constexpr double kMillimetersToMeters{0.001};
 
-constexpr IrSensorData white{true, kMaximumTrackLineWhiteness};
-constexpr IrSensorData black{false, 0U};
+constexpr IrSensorData white{true, 1.0};
+constexpr IrSensorData black{false, 0.0};
 constexpr double kLedArraySpacingMilli{4.0};
 constexpr double kLedArraySpacingMeters{kLedArraySpacingMilli * kMillimetersToMeters};
 constexpr double kNumberOfLeds{15U};
@@ -131,8 +131,8 @@ TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
                 for (std::size_t idx{0U}; idx < kNumberOfLeds; ++idx) {
                     EXPECT_EQ(ir_sensor_array_data.ir_sensor_readings[idx].detected_white_surface,
                               expected_output[idx].detected_white_surface);
-                    EXPECT_EQ(ir_sensor_array_data.ir_sensor_readings[idx].digital_reading,
-                              expected_output[idx].digital_reading);
+                    EXPECT_NEAR(ir_sensor_array_data.ir_sensor_readings[idx].intensity,
+                                expected_output[idx].intensity, 1e-6);
                 }
 
                 receiveDataWasCalled = true;

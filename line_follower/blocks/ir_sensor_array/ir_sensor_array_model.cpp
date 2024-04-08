@@ -6,7 +6,6 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
-#include <iostream>
 #include <vector>
 
 #include "line_follower/blocks/common/math.h"
@@ -23,12 +22,17 @@ namespace {
 constexpr double kMillimetersToMeters{0.001};
 }  // namespace
 
-void IrSensorArrayModel::tick() {}
+void IrSensorArrayModel::tick(SystemTime const timestamp) {
+    ir_sensor_array_data_.timestamp = timestamp;
+}
 
 bool IrSensorArrayModel::getIrSensorArrayData(IrSensorArrayData& output) const {
     static_cast<void>(memcpy(output.ir_sensor_readings.begin(),
                              ir_sensor_array_data_.ir_sensor_readings.begin(),
                              output.ir_sensor_readings.size() * sizeof(IrSensorData)));
+    output.valid = ir_sensor_array_data_.valid;
+    output.timestamp = ir_sensor_array_data_.timestamp;
+    output.number_of_leds = ir_sensor_array_data_.number_of_leds;
     return true;
 }
 
@@ -37,6 +41,7 @@ void IrSensorArrayModel::setTrackLines(TrackSegment const& track_segment,
     using geometry::Line;
     using geometry::Vector3;
     resetIrSensorArrayData(ir_sensor_array_data_);
+    ir_sensor_array_data_.number_of_leds = ir_array_characteristics_.number_of_leds;
 
     static_cast<void>(memcpy(&current_track_segment_, &track_segment, sizeof(TrackSegment)));
 
@@ -86,14 +91,15 @@ void IrSensorArrayModel::setTrackLines(TrackSegment const& track_segment,
 
             auto& led{ir_sensor_array_data_.ir_sensor_readings.at(idx)};
             led.detected_white_surface = true;
-            led.digital_reading = kMaximumTrackLineWhiteness;
+            led.intensity = 1.0;
 
             if (any_overlap) {
+                ir_sensor_array_data_.valid = true;
                 led.detected_white_surface = false;
 
                 /// TODO: Calculate digital reading based on distance from track line
                 // edge wrt thickness
-                led.digital_reading = track_line_segment.whiteness;
+                led.intensity = track_line_segment.whiteness;
             }
         }
     }

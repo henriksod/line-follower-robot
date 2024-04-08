@@ -10,30 +10,34 @@
 #include "line_follower/service_agents/common/logging.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
+#include "line_follower/service_agents/time/time_agent.h"
 #include "line_follower/types/ir_sensor_array_characteristics.h"
 #include "line_follower/types/ir_sensor_array_data.h"
+#include "line_follower/types/system_time.h"
 #include "line_follower/types/unique_id.h"
 
 namespace line_follower {
 class IrSensorArrayDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(IrSensorArrayCharacteristics ir_array_characteristics)
-        : ir_array_interface_{std::make_unique<IrSensorArrayModel>(ir_array_characteristics)} {
+        : ir_array_interface_{std::make_unique<IrSensorArrayModel>(ir_array_characteristics)},
+          time_agent_{} {
         LOG_INFO("Created ir sensor array data producer agent (simulation)");
     }
 
     explicit Impl(std::unique_ptr<IrSensorArrayInterface> ir_array_interface)
-        : ir_array_interface_{std::move(ir_array_interface)} {
+        : ir_array_interface_{std::move(ir_array_interface)}, time_agent_{} {
         LOG_INFO("Created ir sensor array data producer agent (simulation)");
     }
 
     bool getIrSensorArrayData(IrSensorArrayData& output) const {
-        ir_array_interface_->tick();
+        ir_array_interface_->tick(time_agent_.getSystemTime());
         return ir_array_interface_->getIrSensorArrayData(output);
     }
 
  private:
     std::unique_ptr<IrSensorArrayInterface> ir_array_interface_;
+    TimeAgent time_agent_;
 };
 
 IrSensorArrayDataProducerAgent::IrSensorArrayDataProducerAgent(

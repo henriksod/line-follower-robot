@@ -11,11 +11,11 @@
 #include "line_follower/service_agents/line_following/line_following_agent.h"
 #include "line_follower/service_agents/motor/motor_signal_agent.h"
 #include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/service_agents/time/time_agent.h"
 #include "line_follower/types/encoder_characteristics.h"
 #include "line_follower/types/ir_sensor_array_characteristics.h"
 #include "line_follower/types/line.h"
 #include "line_follower/types/motor_characteristics.h"
+#include "line_follower/types/motor_signal.h"
 #include "line_follower/types/pose.h"
 #include "line_follower/types/robot_characteristics.h"
 #include "line_follower/types/rotor_speed.h"
@@ -28,6 +28,7 @@
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
+#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/blocks/motor/motor_model.h"
 
 namespace line_follower {
@@ -45,7 +46,7 @@ constexpr double kRevPerMinToRevPerSec{1.0 / 60.0};
 constexpr double kKilogramMmToNewtonMm{9.80665};
 
 // Convert microseconds to seconds
-constexpr double kMicrosToSeconds{1e-6};
+// constexpr double kMicrosToSeconds{1e-6};
 
 // The initial pose of the robot, in world coordinate system
 Pose createInitialPose() {
@@ -84,25 +85,51 @@ DifferentialDriveRobotCharacteristics createRobotCharacteristics() {
     robot_characteristics.distance_between_wheels = 0.1;
     return robot_characteristics;
 }
+
+LineFollowingCharacteristics createLineFollowingCharacteristics() {
+    LineFollowingCharacteristics line_following_characteristics{};
+
+    line_following_characteristics.pid_speed_parameters.proportional_gain = 2.0;
+    line_following_characteristics.pid_speed_parameters.integral_gain = 0.0;
+    line_following_characteristics.pid_speed_parameters.derivative_gain = 0.0;
+    line_following_characteristics.pid_speed_parameters.min_value = 0.0;
+    line_following_characteristics.pid_speed_parameters.max_value = 2.0;
+
+    line_following_characteristics.pid_steer_parameters.proportional_gain = 2.0;
+    line_following_characteristics.pid_steer_parameters.integral_gain = 0.0;
+    line_following_characteristics.pid_steer_parameters.derivative_gain = 0.0;
+    line_following_characteristics.pid_steer_parameters.min_value = -2.0;
+    line_following_characteristics.pid_steer_parameters.max_value = 2.0;
+
+    line_following_characteristics.measurement_noise = 0.1;
+    line_following_characteristics.position_state_noise = 0.1;
+    line_following_characteristics.position_derivative_state_noise = 0.01;
+
+    line_following_characteristics.max_forward_velocity = 0.05;
+
+    return line_following_characteristics;
+}
 }  // namespace
 
 class ExampleRobot final {
  public:
     ExampleRobot()
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
-          left_motor_signal_producer_agent_{},
           left_encoder_data_consumer_agent_{},
-          right_motor_signal_producer_agent_{},
           right_encoder_data_consumer_agent_{},
-          initial_pose_{createInitialPose()},
-          time_agent_{} {
+          initial_pose_{createInitialPose()} {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
 
         auto dead_reckoning_model{
             std::make_unique<DeadReckoningModel>(createRobotCharacteristics(), initial_pose_)};
         dead_reckoning_model_ = dead_reckoning_model.get();
+
+        auto line_following_model{std::make_unique<LineFollowingModel>(
+            createLineFollowingCharacteristics(), std::move(dead_reckoning_model))};
+        line_following_model_ = line_following_model.get();
+
         line_following_agent_ =
-            std::make_unique<LineFollowingAgent>(std::move(dead_reckoning_model));
+            std::make_unique<LineFollowingAgent>(std::move(line_following_model));
 
         auto ir_sensor_array_model{
             std::make_unique<IrSensorArrayModel>(createIrSensorArrayCharacteristics())};
@@ -136,13 +163,11 @@ class ExampleRobot final {
 
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
-    MotorSignalProducerAgent left_motor_signal_producer_agent_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
-    MotorSignalProducerAgent right_motor_signal_producer_agent_;
     EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
     Pose initial_pose_;
-    TimeAgent time_agent_;
     DeadReckoningModel* dead_reckoning_model_;
+    LineFollowingModel* line_following_model_;
     EncoderModel* left_encoder_model_;
     MotorModel* left_motor_model_;
     EncoderModel* right_encoder_model_;
@@ -155,7 +180,6 @@ class ExampleRobot final {
     std::unique_ptr<MotorSignalConsumerAgent> right_motor_signal_consumer_agent_;
     std::unique_ptr<IrSensorArrayDataProducerAgent> ir_sensor_array_data_producer_agent_;
     TrackSegment current_track_segment_{};
-    SystemTime time_at_last_update_{};
 };
 
 void ExampleRobot::setup() {
@@ -170,28 +194,24 @@ void ExampleRobot::setup() {
 
     // Define callbacks
     left_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
+        LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
         line_following_agent_->setEncoderLeftData(encoder_data);
     });
     right_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
+        LOG_INFO("Right encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
         line_following_agent_->setEncoderRightData(encoder_data);
     });
 
-    time_at_last_update_ = time_agent_.getSystemTime();
     line_following_agent_->onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
-        /// TODO: Have to move most of this to inside line following agent!
         Pose pose{line_following_agent_->getPose()};
         Pose ir_pose{line_following_agent_->getIrSensorArrayPose()};
-        SystemTime current_time{time_agent_.getSystemTime()};
-        auto time_diff{(current_time.system_time_us - time_at_last_update_.system_time_us) *
-                       kMicrosToSeconds};
         ir_sensor_array_model_->setTrackLines(
             current_track_segment_,
             geometry::transformedPose(convert(current_track_segment_.pose.rotation),
                                       convert(current_track_segment_.pose.position), ir_pose));
-        line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
-        line_following_agent_->step(time_diff);
 
-        time_at_last_update_ = time_agent_.getSystemTime();
+        line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
+        line_following_agent_->step();
 
         std::stringstream stream{};
         stream << "Read ir data: ";
@@ -208,22 +228,18 @@ void ExampleRobot::setup() {
     });
 
     // Attach consumers to producers
-    left_motor_signal_consumer_agent_->attach(left_motor_signal_producer_agent_);
-    right_motor_signal_consumer_agent_->attach(right_motor_signal_producer_agent_);
     left_encoder_data_consumer_agent_.attach(*left_encoder_data_producer_agent_);
     right_encoder_data_consumer_agent_.attach(*right_encoder_data_producer_agent_);
     line_following_agent_->attach(*ir_sensor_array_data_producer_agent_);
+
+    // Attach motors to line follower agent
+    line_following_agent_->attachMotorLeft(*left_motor_signal_consumer_agent_);
+    line_following_agent_->attachMotorRight(*right_motor_signal_consumer_agent_);
 
     // Start scheduling readings from sensors
     left_encoder_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
     right_encoder_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
     ir_sensor_array_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
-
-    // Set a constant motor speed
-    MotorSignal motor_signal{};
-    motor_signal.speed.revolutions_per_second = 100 * kRevPerMinToRevPerSec;
-    left_motor_signal_producer_agent_.sendData(motor_signal);
-    right_motor_signal_producer_agent_.sendData(motor_signal);
 }
 
 void ExampleRobot::loop() {

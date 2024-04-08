@@ -2,22 +2,27 @@
 
 #include "line_follower/service_agents/line_following/line_following_agent.h"
 
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <utility>
 
+#include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/geometry/vector.h"
+#include "line_follower/blocks/robot_geometry/robot_geometry.h"
+#include "line_follower/service_agents/common/logging.h"
+#include "line_follower/service_agents/time/time_agent.h"
+#include "line_follower/types/line_following_state.h"
+#include "line_follower/types/system_time.h"
 
 namespace line_follower {
 
 namespace {
-const geometry::Quaternion<double> kRobotToWorldRotation{0.7071068, 0.0, 0.0, 0.7071068};
-const geometry::Quaternion<double> kWorldToRobotRotation{0.7071068, 0.0, 0.0, -0.7071068};
-const geometry::Quaternion<double> kIrSensorToRobotRotation{0.7071068, 0.0, 0.0, -0.7071068};
-const geometry::Vector3<double> kIrSensorToRobotPosition{0.0, 0.0, 0.0};
+// Kalman filter state history size
+constexpr size_t kStateHistorySize{5U};
 }  // namespace
 
 /// TODO: Line following logic
@@ -30,50 +35,141 @@ const geometry::Vector3<double> kIrSensorToRobotPosition{0.0, 0.0, 0.0};
 /// line, we continue predicting and follow the predicted path
 class LineFollowingAgent::Impl final {
  public:
-    Impl(DifferentialDriveRobotCharacteristics characteristics, Pose initial_pose)
-        : dead_reckoning_model_{std::make_unique<DeadReckoningModel>(
-              characteristics, geometry::transformedPose(kWorldToRobotRotation, initial_pose))} {}
+    Impl(DifferentialDriveRobotCharacteristics robot_characteristics,
+         LineFollowingCharacteristics line_following_characteristics, Pose initial_pose)
+        : line_following_model_{std::make_unique<LineFollowingModel>(
+              line_following_characteristics,
+              std::make_unique<DeadReckoningModel>(
+                  robot_characteristics,
+                  geometry::transformedPose(robot_geometry::kWorldToRobotRotation, initial_pose)))},
+          left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
+          right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
+          time_agent_{},
+          time_at_last_step_{time_agent_.getSystemTime()} {
+        LOG_INFO("Created line following agent (simulation)");
+    }
 
-    explicit Impl(std::unique_ptr<DeadReckoningModel> dead_reckoning_model)
-        : dead_reckoning_model_{std::move(dead_reckoning_model)} {}
+    explicit Impl(std::unique_ptr<LineFollowingModel> line_following_model)
+        : line_following_model_{std::move(line_following_model)},
+          left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
+          right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
+          time_agent_{},
+          time_at_last_step_{time_agent_.getSystemTime()} {
+        LOG_INFO("Created line following agent (simulation)");
+    }
 
     Pose getPose() const {
-        return geometry::transformedPose(kRobotToWorldRotation, dead_reckoning_model_->getPose());
+        return geometry::transformedPose(robot_geometry::kRobotToWorldRotation,
+                                         line_following_model_->getPose());
     }
 
     Pose getIrSensorArrayPose() const {
         return geometry::transformedPose(
-            kRobotToWorldRotation,
-            geometry::transformedPose(
-                convert(dead_reckoning_model_->getPose().rotation),
-                convert(dead_reckoning_model_->getPose().position),
-                {convert(kIrSensorToRobotPosition), convert(kIrSensorToRobotRotation)}));
+            robot_geometry::kRobotToWorldRotation,
+            geometry::transformedPose(convert(line_following_model_->getPose().rotation),
+                                      convert(line_following_model_->getPose().position),
+                                      {convert(robot_geometry::kIrSensorToRobotPosition),
+                                       convert(robot_geometry::kIrSensorToRobotRotation)}));
     }
 
     void setEncoderLeftData(const EncoderData& encoder_data_left) {
-        dead_reckoning_model_->setEncoderLeftData(encoder_data_left);
+        line_following_model_->setEncoderLeftData(encoder_data_left);
     }
 
     void setEncoderRightData(const EncoderData& encoder_data_right) {
-        dead_reckoning_model_->setEncoderRightData(encoder_data_right);
+        line_following_model_->setEncoderRightData(encoder_data_right);
     }
 
     void setIrSensorArrayData(const IrSensorArrayData& ir_array_data) {
-        static_cast<void>(ir_array_data);
+        new_ir_array_data_ = ir_array_data;
     }
 
-    void step(double delta_time_seconds) { dead_reckoning_model_->step(delta_time_seconds); }
+    void attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer) {
+        motor_signal_consumer.attach(*left_motor_signal_producer_);
+    }
+
+    void attachMotorRight(MotorSignalConsumerAgent& motor_signal_consumer) {
+        motor_signal_consumer.attach(*right_motor_signal_producer_);
+    }
+
+    void step() {
+        SystemTime current_time{time_agent_.getSystemTime()};
+
+        if (new_ir_array_data_.valid) {
+            line_following_model_->predict(new_ir_array_data_.timestamp);
+            line_following_model_->update(new_ir_array_data_);
+            new_ir_array_data_ = {};
+        }
+
+        line_following_model_->predict(current_time);
+
+        left_motor_signal_producer_->sendData(line_following_model_->getMotorSignalLeft());
+        right_motor_signal_producer_->sendData(line_following_model_->getMotorSignalRight());
+
+        /*line_following_model_->predict(current_time);
+        LineFollowingState const predicted_state{line_following_model_->getPredictedState()};
+
+        // Shift new prediction into state history, where first element is the newest
+        for (size_t idx{0U}; idx < state_history_.size()-1U; ++idx)
+        {
+            state_history_.at(idx + 1U) = state_history_.at(idx);
+        }
+        state_history_.front() = predicted_state;
+
+        if (new_ir_array_data_.valid)
+        {
+            // Fetch the a priori state which has to be updated
+            size_t selected_history_index{0U};
+            for (auto const& state : state_history_)
+            {
+                if (!state.valid)
+                {
+                    continue;
+                }
+
+                uint64_t const state_timestamp{state.timestamp.system_time_us};
+                if (state_timestamp < new_ir_array_data_.timestamp.system_time_us)
+                {
+                    line_following_model_->setPredictedState(state);
+                    break;
+                }
+                ++selected_history_index;
+            }
+
+            // Update the kalman filter based on the a priori state
+            line_following_model_->predict(new_ir_array_data_.timestamp);
+            line_following_model_->update(new_ir_array_data_);
+
+            // Predict until the latest state
+            for (size_t idx{selected_history_index}; idx > 1U; --idx)
+            {
+                LineFollowingState const next_state{state_history_.at(idx - 1U)};
+                line_following_model_->predict(next_state.timestamp);
+            }
+        }
+        new_ir_array_data_ = {};
+        left_motor_signal_producer_->sendData(line_following_model_->getMotorSignalLeft());
+        right_motor_signal_producer_->sendData(line_following_model_->getMotorSignalRight());*/
+    }
 
  private:
-    std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
+    std::unique_ptr<LineFollowingModel> line_following_model_;
+    std::unique_ptr<MotorSignalProducerAgent> left_motor_signal_producer_;
+    std::unique_ptr<MotorSignalProducerAgent> right_motor_signal_producer_;
+    TimeAgent time_agent_;
+    SystemTime time_at_last_step_;
+    IrSensorArrayData new_ir_array_data_{};
+    std::array<LineFollowingState, kStateHistorySize> state_history_{};
 };
 
-LineFollowingAgent::LineFollowingAgent(DifferentialDriveRobotCharacteristics characteristics,
+LineFollowingAgent::LineFollowingAgent(DifferentialDriveRobotCharacteristics robot_characteristics,
+                                       LineFollowingCharacteristics line_following_characteristics,
                                        Pose initial_pose)
-    : pimpl_{std::make_unique<Impl>(characteristics, initial_pose)} {}
+    : pimpl_{std::make_unique<Impl>(robot_characteristics, line_following_characteristics,
+                                    initial_pose)} {}
 
-LineFollowingAgent::LineFollowingAgent(std::unique_ptr<DeadReckoningModel> dead_reckoning_model)
-    : pimpl_{std::make_unique<Impl>(std::move(dead_reckoning_model))} {}
+LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model)
+    : pimpl_{std::make_unique<Impl>(std::move(line_following_model))} {}
 
 LineFollowingAgent::~LineFollowingAgent() {}
 
@@ -97,8 +193,16 @@ void LineFollowingAgent::setIrSensorArrayData(const IrSensorArrayData& ir_array_
     pimpl_->setIrSensorArrayData(ir_array_data);
 }
 
-void LineFollowingAgent::step(double delta_time_seconds) {
-    pimpl_->step(delta_time_seconds);
+void LineFollowingAgent::attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer) {
+    pimpl_->attachMotorLeft(motor_signal_consumer);
+}
+
+void LineFollowingAgent::attachMotorRight(MotorSignalConsumerAgent& motor_signal_consumer) {
+    pimpl_->attachMotorRight(motor_signal_consumer);
+}
+
+void LineFollowingAgent::step() {
+    pimpl_->step();
 }
 
 }  // namespace line_follower

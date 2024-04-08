@@ -14,7 +14,7 @@ class TimeAgent::Impl final {
     Impl() {}
 
     SystemTime getSystemTime() {
-        std::chrono::time_point<std::chrono::system_clock> now{std::chrono::system_clock::now()};
+        std::chrono::time_point<std::chrono::steady_clock> now{std::chrono::steady_clock::now()};
         auto duration{now.time_since_epoch()};
         auto current_time{std::chrono::duration_cast<std::chrono::microseconds>(duration).count()};
 
@@ -26,7 +26,7 @@ TimeAgent::TimeAgent() : pimpl_{std::make_unique<Impl>()} {}
 
 TimeAgent::~TimeAgent() {}
 
-SystemTime TimeAgent::getSystemTime() {
+SystemTime TimeAgent::getSystemTime() const {
     return pimpl_->getSystemTime();
 }
 }  // namespace line_follower

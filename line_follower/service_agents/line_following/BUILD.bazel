@@ -7,6 +7,7 @@ cc_library(
     deps = [
         "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent_api",
+        "//line_follower/service_agents/motor:motor_signal_agent_api",
         "//line_follower/types",
     ],
 )
@@ -21,7 +22,10 @@ cc_library(
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry/utils:rotation_utils",
+        "//line_follower/blocks/line_following:line_following_model",
+        "//line_follower/blocks/robot_geometry",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
+        "//line_follower/service_agents/motor:motor_signal_agent",
     ],
 )
 
@@ -35,7 +39,10 @@ cc_library(
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry/utils:rotation_utils",
+        "//line_follower/blocks/line_following:line_following_model",
+        "//line_follower/blocks/robot_geometry",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
+        "//line_follower/service_agents/motor:motor_signal_agent",
     ],
 )
 
