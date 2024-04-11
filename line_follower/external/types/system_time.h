@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_SYSTEM_TIME_H_
-#define LINE_FOLLOWER_TYPES_SYSTEM_TIME_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_SYSTEM_TIME_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_SYSTEM_TIME_H_
 
 #include <cstdint>
 
@@ -13,4 +13,4 @@ struct SystemTime final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_SYSTEM_TIME_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_SYSTEM_TIME_H_

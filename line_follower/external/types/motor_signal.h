@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_MOTOR_SIGNAL_H_
-#define LINE_FOLLOWER_TYPES_MOTOR_SIGNAL_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_MOTOR_SIGNAL_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_MOTOR_SIGNAL_H_
 
 #include "line_follower/external/types/rotor_speed.h"
 
@@ -13,4 +13,4 @@ struct MotorSignal final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_MOTOR_SIGNAL_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_MOTOR_SIGNAL_H_

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_
-#define LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_ROTOR_SPEED_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_ROTOR_SPEED_H_
 
 namespace line_follower {
 /// A rotor speed in revolutions per second
@@ -11,4 +11,4 @@ struct RotorSpeed final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_ROTOR_SPEED_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_ROTOR_SPEED_H_

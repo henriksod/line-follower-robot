@@ -37,7 +37,7 @@ class LoggingAgent::Impl final : public SchedulableBase {
         while (!message_queue_.empty()) {
             LogMessage message{message_queue_.front()};
             /// TODO: Fix so it prints more information
-            arduino::PRINT_MESSAGE(message.message, 100U);
+            arduino::PRINT_MESSAGE(message);
             message_queue_.pop();
         }
     }

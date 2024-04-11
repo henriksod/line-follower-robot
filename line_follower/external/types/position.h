@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_POSITION_H_
-#define LINE_FOLLOWER_TYPES_POSITION_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_POSITION_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_POSITION_H_
 
 namespace line_follower {
 /// A position in 3D space.
@@ -18,4 +18,4 @@ struct Position final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_POSITION_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_POSITION_H_

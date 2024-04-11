@@ -8,6 +8,7 @@
 #include "line_follower/external/api/common.h"
 #include "line_follower/external/api/motor_interface.h"
 #include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/motor_pin_configuration.h"
 #include "line_follower/external/types/motor_signal.h"
 
 namespace line_follower {
@@ -27,6 +28,8 @@ class MotorSignalProducerAgent final : public ProducerAgent<MotorSignal> {
 class MotorSignalConsumerAgent final : public ConsumerAgent<MotorSignal> {
  public:
     explicit MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics);
+    MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics,
+                             MotorPinConfiguration pin_configuration);
     explicit MotorSignalConsumerAgent(std::unique_ptr<MotorInterface> motor_interface);
     ~MotorSignalConsumerAgent() noexcept;
 

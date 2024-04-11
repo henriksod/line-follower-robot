@@ -8,6 +8,7 @@
 #include "line_follower/external/api/logging.h"
 #include "line_follower/external/api/motor_interface.h"
 #include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/motor_pin_configuration.h"
 #include "line_follower/external/types/motor_signal.h"
 #include "line_follower/external/types/rotor_speed.h"
 
@@ -15,6 +16,13 @@ namespace line_follower {
 class MotorSignalConsumerAgent::Impl final {
  public:
     explicit Impl(MotorCharacteristics motor_characteristics) : motor_interface_{nullptr} {
+        static_cast<void>(motor_characteristics);
+        LOG_INFO("Created motor signal consumer agent (stub)");
+    }
+
+    Impl(MotorCharacteristics motor_characteristics, MotorPinConfiguration pin_configuration)
+        : motor_interface_{nullptr} {
+        static_cast<void>(pin_configuration);
         static_cast<void>(motor_characteristics);
         LOG_INFO("Created motor signal consumer agent (stub)");
     }
@@ -32,6 +40,12 @@ class MotorSignalConsumerAgent::Impl final {
 
 MotorSignalConsumerAgent::MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics)
     : pimpl_{std::make_unique<Impl>(motor_characteristics)} {
+    onReceiveData([this](MotorSignal const& signal) { pimpl_->setMotorSpeed(signal.speed); });
+}
+
+MotorSignalConsumerAgent::MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics,
+                                                   MotorPinConfiguration pin_configuration)
+    : pimpl_{std::make_unique<Impl>(motor_characteristics, pin_configuration)} {
     onReceiveData([this](MotorSignal const& signal) { pimpl_->setMotorSpeed(signal.speed); });
 }
 

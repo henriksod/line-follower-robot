@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_ENCODER_DATA_H_
-#define LINE_FOLLOWER_TYPES_ENCODER_DATA_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_ENCODER_DATA_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_ENCODER_DATA_H_
 
 #include <cstdint>
 
@@ -22,4 +22,4 @@ struct EncoderData final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_ENCODER_DATA_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_ENCODER_DATA_H_

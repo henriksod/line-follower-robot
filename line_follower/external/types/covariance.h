@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_COVARIANCE_H_
-#define LINE_FOLLOWER_TYPES_COVARIANCE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_COVARIANCE_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_COVARIANCE_H_
 
 namespace line_follower {
 /// A 2-dimensional covariance matrix
@@ -13,4 +13,4 @@ struct Covariance2D final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_COVARIANCE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_COVARIANCE_H_

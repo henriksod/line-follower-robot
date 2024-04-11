@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_POSE_H_
-#define LINE_FOLLOWER_TYPES_POSE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_POSE_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_POSE_H_
 
 #include "line_follower/external/types/position.h"
 #include "line_follower/external/types/rotation.h"
@@ -18,4 +18,4 @@ struct Pose final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_POSE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_POSE_H_

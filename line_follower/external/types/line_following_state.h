@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_LINE_FOLLOWING_STATE_H_
-#define LINE_FOLLOWER_TYPES_LINE_FOLLOWING_STATE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_LINE_FOLLOWING_STATE_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_LINE_FOLLOWING_STATE_H_
 
 #include <array>
 
@@ -50,4 +50,4 @@ struct LineFollowingState final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_LINE_FOLLOWING_STATE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_LINE_FOLLOWING_STATE_H_

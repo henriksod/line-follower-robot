@@ -1,6 +1,19 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
+    name = "hardware_motor_interface",
+    srcs = ["hardware/interface/hardware_motor_interface.cpp"],
+    hdrs = ["hardware/interface/hardware_motor_interface.h"],
+    visibility = ["__subpackages__"],
+    deps = [
+        "//line_follower/deployment/arduino:api",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:motor_interface",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
     name = "motor_signal_agent_simulation",
     srcs = ["simulation/motor_signal_agent.cpp"],
     visibility = ["__subpackages__"],
@@ -18,6 +31,7 @@ cc_library(
     srcs = ["hardware/motor_signal_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
+        ":hardware_motor_interface",
         "//line_follower/external/api:common",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/api:motor_signal_agent_api",

@@ -68,7 +68,8 @@ def check(all_files):
     else:
         cmd_flake8 = f"{sys.executable} -m flake8 {os.getcwd()}"
         cmd_cpplint = (
-            f"find {os.getcwd()} -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
+            f"find {os.path.join(os.getcwd(), 'line_follower')}"
+            " -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
             f" | xargs {sys.executable} -m cpplint"
             " --filter=-build/c++11,-runtime/references --linelength=100"
         )

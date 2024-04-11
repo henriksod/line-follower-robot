@@ -8,14 +8,27 @@
 #include "line_follower/external/api/logging.h"
 #include "line_follower/external/api/motor_interface.h"
 #include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/motor_pin_configuration.h"
 #include "line_follower/external/types/motor_signal.h"
+#include "line_follower/external/types/pin.h"
 #include "line_follower/external/types/rotor_speed.h"
+#include "line_follower/service_agents/motor/hardware/interface/hardware_motor_interface.h"
 
 namespace line_follower {
 class MotorSignalConsumerAgent::Impl final {
  public:
     explicit Impl(MotorCharacteristics motor_characteristics) : motor_interface_{nullptr} {
         static_cast<void>(motor_characteristics);
+        LOG_WARN(
+            "Initializing hardware variant of motor signal consumer agent"
+            " without pin configuration is not supported!",
+            "");
+        LOG_INFO("Created motor signal consumer agent (hardware)", "");
+    }
+
+    Impl(MotorCharacteristics motor_characteristics, MotorPinConfiguration pin_configuration)
+        : motor_interface_{
+              std::make_unique<HardwareMotorInterface>(motor_characteristics, pin_configuration)} {
         LOG_INFO("Created motor signal consumer agent (hardware)", "");
     }
 
@@ -24,7 +37,16 @@ class MotorSignalConsumerAgent::Impl final {
         LOG_INFO("Created motor signal consumer agent (hardware)", "");
     }
 
-    void setMotorSpeed(RotorSpeed const& input) { static_cast<void>(input); }
+    void setMotorSpeed(RotorSpeed const& input) {
+        if (motor_interface_ == nullptr) {
+            LOG_WARN(
+                "Motor signal consumer agent has no interface,"
+                " cannot set motor speed!",
+                "");
+            return;
+        }
+        motor_interface_->setMotorSpeed(input);
+    }
 
  private:
     std::unique_ptr<MotorInterface> motor_interface_;
@@ -32,6 +54,12 @@ class MotorSignalConsumerAgent::Impl final {
 
 MotorSignalConsumerAgent::MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics)
     : pimpl_{std::make_unique<Impl>(motor_characteristics)} {
+    onReceiveData([this](MotorSignal const& signal) { pimpl_->setMotorSpeed(signal.speed); });
+}
+
+MotorSignalConsumerAgent::MotorSignalConsumerAgent(MotorCharacteristics motor_characteristics,
+                                                   MotorPinConfiguration pin_configuration)
+    : pimpl_{std::make_unique<Impl>(motor_characteristics, pin_configuration)} {
     onReceiveData([this](MotorSignal const& signal) { pimpl_->setMotorSpeed(signal.speed); });
 }
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_LOG_MESSAGE_H_
-#define LINE_FOLLOWER_TYPES_LOG_MESSAGE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_LOG_MESSAGE_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_LOG_MESSAGE_H_
 
 #include <cstdlib>
 
@@ -22,4 +22,4 @@ struct LogMessage final {
 
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_LOG_MESSAGE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_LOG_MESSAGE_H_

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_TYPES_IR_SENSOR_ARRAY_DATA_H_
-#define LINE_FOLLOWER_TYPES_IR_SENSOR_ARRAY_DATA_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_TYPES_IR_SENSOR_ARRAY_DATA_H_
+#define LINE_FOLLOWER_EXTERNAL_TYPES_IR_SENSOR_ARRAY_DATA_H_
 
 #include <array>
 #include <cstdint>
@@ -43,4 +43,4 @@ struct IrSensorArrayData final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_TYPES_IR_SENSOR_ARRAY_DATA_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_TYPES_IR_SENSOR_ARRAY_DATA_H_
