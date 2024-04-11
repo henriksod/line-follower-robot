@@ -5,8 +5,8 @@
 
 #include <cstdint>
 
-#include "line_follower/types/gear_ratio.h"
-#include "line_follower/types/torque.h"
+#include "line_follower/external/types/gear_ratio.h"
+#include "line_follower/external/types/torque.h"
 
 namespace line_follower {
 /// The characteristics of a motor

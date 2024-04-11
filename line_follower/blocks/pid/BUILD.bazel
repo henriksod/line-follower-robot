@@ -6,6 +6,6 @@ cc_library(
     hdrs = ["pid.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/types",
+        "//line_follower/external/types",
     ],
 )

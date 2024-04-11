@@ -1,0 +1,151 @@
+# Copyright (c) 2024 Henrik Söderlund
+
+filegroup(
+    name = "headers",
+    srcs = glob(["*.h"]),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "encoder_interface",
+    hdrs = ["encoder_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "ir_sensor_array_interface",
+    hdrs = ["ir_sensor_array_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "dead_reckoning_interface",
+    hdrs = ["dead_reckoning_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "line_following_interface",
+    hdrs = ["line_following_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":dead_reckoning_interface",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "common",
+    hdrs = ["common.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/common",
+    ],
+)
+
+cc_library(
+    name = "logging_api",
+    hdrs = ["logging.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/service_agents/logging:logging_agent",
+    ],
+)
+
+cc_library(
+    name = "encoder_data_agent_api",
+    hdrs = ["encoder_data_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":common",
+        ":encoder_interface",
+        "//line_follower/external/api:scheduler_agent_api",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "ir_sensor_array_data_agent_api",
+    hdrs = ["ir_sensor_array_data_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":common",
+        ":ir_sensor_array_interface",
+        "//line_follower/external/api:scheduler_agent_api",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "motor_interface",
+    hdrs = ["motor_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "line_following_agent_api",
+    hdrs = ["line_following_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":motor_signal_agent_api",
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/external/api:ir_sensor_array_data_agent_api",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "logging_agent_api",
+    hdrs = ["logging_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/external/api:scheduler_agent_api",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "motor_signal_agent_api",
+    hdrs = ["motor_signal_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":common",
+        ":motor_interface",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "scheduler_agent_api",
+    hdrs = ["scheduler_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":common",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "time_agent_api",
+    hdrs = ["time_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ],
+)

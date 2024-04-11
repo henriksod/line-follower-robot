@@ -1,26 +1,15 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "motor_signal_agent_api",
-    hdrs = ["motor_signal_agent.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/blocks/motor:motor_interface",
-        "//line_follower/service_agents/common",
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "motor_signal_agent_simulation",
     srcs = ["simulation/motor_signal_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":motor_signal_agent_api",
         "//line_follower/blocks/motor:motor_model",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
-        "//line_follower/types",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/api:motor_signal_agent_api",
+        "//line_follower/external/types",
     ],
 )
 
@@ -29,10 +18,10 @@ cc_library(
     srcs = ["hardware/motor_signal_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":motor_signal_agent_api",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
-        "//line_follower/types",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/api:motor_signal_agent_api",
+        "//line_follower/external/types",
     ],
 )
 
@@ -41,10 +30,10 @@ cc_library(
     srcs = ["stub/motor_signal_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":motor_signal_agent_api",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
-        "//line_follower/types",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/api:motor_signal_agent_api",
+        "//line_follower/external/types",
     ],
 )
 

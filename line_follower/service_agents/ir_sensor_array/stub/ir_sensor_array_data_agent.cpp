@@ -1,16 +1,16 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
+#include "line_follower/external/api/ir_sensor_array_data_agent.h"
 
 #include <memory>
 
 #include "line_follower/blocks/common/function.h"
-#include "line_follower/blocks/ir_sensor_array/ir_sensor_array_interface.h"
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/ir_sensor_array_characteristics.h"
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/unique_id.h"
+#include "line_follower/external/api/ir_sensor_array_interface.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/unique_id.h"
 
 namespace line_follower {
 class IrSensorArrayDataProducerAgent::Impl final {

@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_MOTOR_MOTOR_INTERFACE_H_
-#define LINE_FOLLOWER_BLOCKS_MOTOR_MOTOR_INTERFACE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_MOTOR_INTERFACE_H_
+#define LINE_FOLLOWER_EXTERNAL_API_MOTOR_INTERFACE_H_
 
-#include "line_follower/types/rotor_speed.h"
+#include "line_follower/external/types/rotor_speed.h"
 
 namespace line_follower {
 class MotorInterface {
@@ -21,4 +21,4 @@ class MotorInterface {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_MOTOR_MOTOR_INTERFACE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_MOTOR_INTERFACE_H_

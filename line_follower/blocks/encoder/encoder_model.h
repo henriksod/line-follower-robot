@@ -3,11 +3,11 @@
 #ifndef LINE_FOLLOWER_BLOCKS_ENCODER_ENCODER_MODEL_H_
 #define LINE_FOLLOWER_BLOCKS_ENCODER_ENCODER_MODEL_H_
 
-#include "line_follower/blocks/encoder/encoder_interface.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/rotor_position.h"
-#include "line_follower/types/rotor_speed.h"
+#include "line_follower/external/api/encoder_interface.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/rotor_position.h"
+#include "line_follower/external/types/rotor_speed.h"
 
 namespace line_follower {
 class EncoderModel final : public EncoderInterface {

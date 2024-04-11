@@ -8,6 +8,9 @@
 #include <type_traits>
 
 namespace line_follower {
+
+constexpr double PI{3.141592653589};
+
 /// Signum function
 template <typename T>
 inline int sgn(T val) {
@@ -17,13 +20,13 @@ inline int sgn(T val) {
 /// Convert radians to degrees
 template <typename T>
 inline T radToDeg(T const& radians) {
-    return radians * 180.0 / M_PI;
+    return radians * 180.0 / PI;
 }
 
 /// Convert degrees to radians
 template <typename T>
 inline T degToRad(T const& degrees) {
-    return degrees * M_PI / 180.0;
+    return degrees * PI / 180.0;
 }
 
 /// Utility function to work with numbers approximately equal to zero.

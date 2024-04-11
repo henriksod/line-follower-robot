@@ -3,7 +3,7 @@
 #ifndef LINE_FOLLOWER_TYPES_LINE_FOLLOWING_CHARACTERISTICS_H_
 #define LINE_FOLLOWER_TYPES_LINE_FOLLOWING_CHARACTERISTICS_H_
 
-#include "line_follower/types/pid_configuration.h"
+#include "line_follower/external/types/pid_configuration.h"
 
 namespace line_follower {
 /// The characteristics of a differential drive robot

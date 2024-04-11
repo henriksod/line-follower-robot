@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include "line_follower/types/position.h"
+#include "line_follower/external/types/position.h"
 
 namespace line_follower {
 /// A line with a start position and end position

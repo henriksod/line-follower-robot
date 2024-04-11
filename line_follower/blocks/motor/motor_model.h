@@ -3,10 +3,10 @@
 #ifndef LINE_FOLLOWER_BLOCKS_MOTOR_MOTOR_MODEL_H_
 #define LINE_FOLLOWER_BLOCKS_MOTOR_MOTOR_MODEL_H_
 
-#include "line_follower/blocks/motor/motor_interface.h"
-#include "line_follower/types/motor_characteristics.h"
-#include "line_follower/types/rotor_speed.h"
-#include "line_follower/types/torque.h"
+#include "line_follower/external/api/motor_interface.h"
+#include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/rotor_speed.h"
+#include "line_follower/external/types/torque.h"
 
 namespace line_follower {
 class MotorModel final : public MotorInterface {

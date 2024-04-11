@@ -1,21 +1,11 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "ir_sensor_array_interface",
-    hdrs = ["ir_sensor_array_interface.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "ir_sensor_array_model",
     srcs = ["ir_sensor_array_model.cpp"],
     hdrs = ["ir_sensor_array_model.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":ir_sensor_array_interface",
         "//line_follower/blocks/common",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:line",
@@ -23,6 +13,7 @@ cc_library(
         "//line_follower/blocks/geometry:vector",
         "//line_follower/blocks/geometry/utils:line_utils",
         "//line_follower/blocks/geometry/utils:rotation_utils",
-        "//line_follower/types",
+        "//line_follower/external/api:ir_sensor_array_interface",
+        "//line_follower/external/types",
     ],
 )

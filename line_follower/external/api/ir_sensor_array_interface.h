@@ -1,10 +1,10 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_INTERFACE_H_
-#define LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_INTERFACE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_INTERFACE_H_
+#define LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_INTERFACE_H_
 
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 class IrSensorArrayInterface {
@@ -23,4 +23,4 @@ class IrSensorArrayInterface {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_INTERFACE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_INTERFACE_H_

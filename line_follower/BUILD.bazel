@@ -1,5 +1,0 @@
-filegroup(
-    name = "external_headers",
-    srcs = glob(["types/**/*.h"]) + glob(["service_agents/**/*.h"]),
-    visibility = ["//visibility:public"],
-)

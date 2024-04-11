@@ -9,12 +9,12 @@
 #include <tuple>
 
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
-#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/ir_sensor_array_characteristics.h"
-#include "line_follower/types/line.h"
-#include "line_follower/types/pose.h"
-#include "line_follower/types/track_lines.h"
+#include "line_follower/external/api/ir_sensor_array_data_agent.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/line.h"
+#include "line_follower/external/types/pose.h"
+#include "line_follower/external/types/track_lines.h"
 
 namespace line_follower {
 namespace {

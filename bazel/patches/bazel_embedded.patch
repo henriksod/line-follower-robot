@@ -1,0 +1,14 @@
+diff --git a/toolchains/gcc_arm_none_eabi/gcc_arm_none_toolchain.bzl b/toolchains/gcc_arm_none_eabi/gcc_arm_none_toolchain.bzl
+index e33fa14..05e90c0 100644
+--- a/toolchains/gcc_arm_none_eabi/gcc_arm_none_toolchain.bzl
++++ b/toolchains/gcc_arm_none_eabi/gcc_arm_none_toolchain.bzl
+@@ -118,9 +118,6 @@ def _gcc_arm_none_toolchain_config_info_impl(ctx):
+     ]
+     os = "nix"
+     postfix = ""
+-    if ctx.host_configuration.host_path_separator == ";":
+-        os = "windows"
+-        postfix = ".bat"
+     tool_paths = [tool_path(name = t.name, path = t.path.format(os = os) + postfix) for t in tool_paths]
+ 
+     common_features = GetCommonFeatures(

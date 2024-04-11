@@ -10,9 +10,9 @@
 #include "line_follower/blocks/common/badge.h"
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/blocks/common/maybe.h"
-#include "line_follower/service_agents/common/common.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/unique_id.h"
+#include "line_follower/external/api/common.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/unique_id.h"
 
 namespace line_follower {
 /// Inherit from this class to be able to schedule

@@ -1,28 +1,28 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
+#include "line_follower/external/api/ir_sensor_array_data_agent.h"
 
 #include <memory>
 
 #include "line_follower/blocks/common/function.h"
-#include "line_follower/blocks/ir_sensor_array/ir_sensor_array_interface.h"
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/ir_sensor_array_characteristics.h"
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/unique_id.h"
+#include "line_follower/external/api/ir_sensor_array_interface.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/unique_id.h"
 
 namespace line_follower {
 class IrSensorArrayDataProducerAgent::Impl final {
  public:
     explicit Impl(IrSensorArrayCharacteristics ir_array_characteristics) {
         static_cast<void>(ir_array_characteristics);
-        LOG_INFO("Created ir sensor array data producer agent (hardware)");
+        LOG_INFO("Created ir sensor array data producer agent (hardware)", "");
     }
 
     explicit Impl(std::unique_ptr<IrSensorArrayInterface> ir_array_interface)
         : ir_array_interface_{std::move(ir_array_interface)} {
-        LOG_INFO("Created ir sensor array data producer agent (hardware)");
+        LOG_INFO("Created ir sensor array data producer agent (hardware)", "");
     }
 
     bool getIrSensorArrayData(IrSensorArrayData& output) const {
@@ -51,7 +51,7 @@ void IrSensorArrayDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerA
 }
 
 IrSensorArrayDataConsumerAgent::IrSensorArrayDataConsumerAgent() {
-    LOG_INFO("Created ir sensor array data consumer agent (hardware)");
+    LOG_INFO("Created ir sensor array data consumer agent (hardware)", "");
 }
 
 IrSensorArrayDataConsumerAgent::~IrSensorArrayDataConsumerAgent() {}

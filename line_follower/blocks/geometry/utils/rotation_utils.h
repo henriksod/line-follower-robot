@@ -6,7 +6,7 @@
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/vector.h"
-#include "line_follower/types/pose.h"
+#include "line_follower/external/types/pose.h"
 
 namespace line_follower {
 namespace geometry {

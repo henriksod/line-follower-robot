@@ -5,12 +5,12 @@
 
 #include <array>
 
-#include "line_follower/types/covariance.h"
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/motor_signal.h"
-#include "line_follower/types/pose.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/covariance.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/motor_signal.h"
+#include "line_follower/external/types/pose.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 /// The kalman filter state of the line following model

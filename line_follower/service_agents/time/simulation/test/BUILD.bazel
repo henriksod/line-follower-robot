@@ -5,7 +5,7 @@ cc_test(
     size = "small",
     srcs = ["test_time_agent_simulation.cpp"],
     deps = [
-        "//line_follower/service_agents/time:time_agent_api",
+        "//line_follower/external/api:time_agent_api",
         "//line_follower/service_agents/time:time_agent_simulation",
         "@com_google_googletest//:gtest_main",
     ],

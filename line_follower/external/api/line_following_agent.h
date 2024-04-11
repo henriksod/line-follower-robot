@@ -1,19 +1,19 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_LINE_FOLLOWING_LINE_FOLLOWING_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_LINE_FOLLOWING_LINE_FOLLOWING_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_LINE_FOLLOWING_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_LINE_FOLLOWING_AGENT_H_
 
 #include <memory>
 
-#include "line_follower/blocks/line_following/line_following_model.h"
-#include "line_follower/service_agents/ir_sensor_array/ir_sensor_array_data_agent.h"
-#include "line_follower/service_agents/motor/motor_signal_agent.h"
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/line_following_characteristics.h"
-#include "line_follower/types/pose.h"
-#include "line_follower/types/robot_characteristics.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/api/ir_sensor_array_data_agent.h"
+#include "line_follower/external/api/line_following_interface.h"
+#include "line_follower/external/api/motor_signal_agent.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/line_following_characteristics.h"
+#include "line_follower/external/types/pose.h"
+#include "line_follower/external/types/robot_characteristics.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 /// Provides the system time
@@ -22,7 +22,7 @@ class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
     LineFollowingAgent(DifferentialDriveRobotCharacteristics robot_characteristics,
                        LineFollowingCharacteristics line_following_characteristics,
                        Pose initial_pose);
-    LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model);
+    LineFollowingAgent(std::unique_ptr<LineFollowingInterface> line_following_model);
     ~LineFollowingAgent() noexcept;
 
     LineFollowingAgent(LineFollowingAgent const&) = delete;
@@ -65,4 +65,4 @@ class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_LINE_FOLLOWING_LINE_FOLLOWING_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_LINE_FOLLOWING_AGENT_H_

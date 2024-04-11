@@ -7,7 +7,7 @@
 
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/quaternion.h"
-#include "line_follower/types/rotation.h"
+#include "line_follower/external/types/rotation.h"
 
 namespace line_follower {
 
@@ -51,9 +51,9 @@ void DeadReckoningModel::step(SystemTime timestamp) {
                          kMicrosToSeconds};
 
     // Calculate wheel velocities
-    double left_wheel_velocity = 2.0 * M_PI * characteristics_.wheel_radius *
+    double left_wheel_velocity = 2.0 * PI * characteristics_.wheel_radius *
                                  left_encoder_data_.revolutions_per_second * time_diff;
-    double right_wheel_velocity = 2.0 * M_PI * characteristics_.wheel_radius *
+    double right_wheel_velocity = 2.0 * PI * characteristics_.wheel_radius *
                                   right_encoder_data_.revolutions_per_second * time_diff;
 
     // Calculate forward and angular velocities

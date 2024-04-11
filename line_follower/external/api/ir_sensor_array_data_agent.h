@@ -1,15 +1,15 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_DATA_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_DATA_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_DATA_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_DATA_AGENT_H_
 
 #include <memory>
 
-#include "line_follower/blocks/ir_sensor_array/ir_sensor_array_interface.h"
-#include "line_follower/service_agents/common/common.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/ir_sensor_array_characteristics.h"
-#include "line_follower/types/ir_sensor_array_data.h"
+#include "line_follower/external/api/common.h"
+#include "line_follower/external/api/ir_sensor_array_interface.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
 
 namespace line_follower {
 /// An infrared sensor array data producer agent
@@ -51,4 +51,4 @@ class IrSensorArrayDataConsumerAgent : public ConsumerAgent<IrSensorArrayData> {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_DATA_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_IR_SENSOR_ARRAY_DATA_AGENT_H_

@@ -1,12 +1,12 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_COMMON_LOGGING_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_COMMON_LOGGING_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_LOGGING_H_
+#define LINE_FOLLOWER_EXTERNAL_API_LOGGING_H_
 
 #include <cstdint>
 
 #include "line_follower/blocks/common/string.h"
-#include "line_follower/service_agents/logging/logging_agent.h"
+#include "line_follower/external/api/logging_agent.h"
 
 namespace line_follower {
 
@@ -28,4 +28,4 @@ namespace line_follower {
 
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_COMMON_LOGGING_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_LOGGING_H_

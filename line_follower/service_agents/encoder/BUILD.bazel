@@ -1,29 +1,17 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "encoder_data_agent_api",
-    hdrs = ["encoder_data_agent.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/blocks/encoder:encoder_interface",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/scheduler:scheduler_agent_api",
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "encoder_data_agent_simulation",
     srcs = ["simulation/encoder_data_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":encoder_data_agent_api",
         "//line_follower/blocks/encoder:encoder_model",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:encoder_data_agent_api",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
-        "//line_follower/types",
     ],
 )
 
@@ -32,12 +20,12 @@ cc_library(
     srcs = ["hardware/encoder_data_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":encoder_data_agent_api",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:encoder_data_agent_api",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
         "//line_follower/service_agents/scheduler:schedulable_base",
         "//line_follower/service_agents/scheduler:scheduler_agent",
-        "//line_follower/types",
     ],
 )
 
@@ -46,11 +34,11 @@ cc_library(
     srcs = ["stub/encoder_data_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":encoder_data_agent_api",
-        "//line_follower/service_agents/common",
-        "//line_follower/service_agents/common:logging",
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:encoder_data_agent_api",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
         "//line_follower/service_agents/scheduler:scheduler_agent",
-        "//line_follower/types",
     ],
 )
 

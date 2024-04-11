@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#include "line_follower/service_agents/line_following/line_following_agent.h"
+#include "line_follower/external/api/line_following_agent.h"
 
 #include <array>
 #include <cstdint>
@@ -12,11 +12,12 @@
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/geometry/vector.h"
+#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/service_agents/time/time_agent.h"
-#include "line_follower/types/line_following_state.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 
@@ -49,7 +50,7 @@ class LineFollowingAgent::Impl final {
         LOG_INFO("Created line following agent (simulation)");
     }
 
-    explicit Impl(std::unique_ptr<LineFollowingModel> line_following_model)
+    explicit Impl(std::unique_ptr<LineFollowingInterface> line_following_model)
         : line_following_model_{std::move(line_following_model)},
           left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
@@ -153,7 +154,7 @@ class LineFollowingAgent::Impl final {
     }
 
  private:
-    std::unique_ptr<LineFollowingModel> line_following_model_;
+    std::unique_ptr<LineFollowingInterface> line_following_model_;
     std::unique_ptr<MotorSignalProducerAgent> left_motor_signal_producer_;
     std::unique_ptr<MotorSignalProducerAgent> right_motor_signal_producer_;
     TimeAgent time_agent_;
@@ -168,7 +169,7 @@ LineFollowingAgent::LineFollowingAgent(DifferentialDriveRobotCharacteristics rob
     : pimpl_{std::make_unique<Impl>(robot_characteristics, line_following_characteristics,
                                     initial_pose)} {}
 
-LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model)
+LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingInterface> line_following_model)
     : pimpl_{std::make_unique<Impl>(std::move(line_following_model))} {}
 
 LineFollowingAgent::~LineFollowingAgent() {}

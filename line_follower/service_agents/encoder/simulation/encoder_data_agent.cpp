@@ -1,18 +1,18 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/encoder/encoder_data_agent.h"
+#include "line_follower/external/api/encoder_data_agent.h"
 
 #include <memory>
 
 #include "line_follower/blocks/common/function.h"
-#include "line_follower/blocks/encoder/encoder_interface.h"
 #include "line_follower/blocks/encoder/encoder_model.h"
-#include "line_follower/service_agents/common/logging.h"
+#include "line_follower/external/api/encoder_interface.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/unique_id.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/unique_id.h"
 
 namespace line_follower {
 class EncoderDataProducerAgent::Impl final : public SchedulableBase {

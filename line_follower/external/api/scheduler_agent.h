@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_SCHEDULER_SCHEDULER_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_SCHEDULER_SCHEDULER_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_SCHEDULER_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_SCHEDULER_AGENT_H_
 
 #include <cstdint>
 #include <memory>
@@ -10,8 +10,8 @@
 #include "line_follower/blocks/common/badge.h"
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/blocks/common/maybe.h"
-#include "line_follower/service_agents/common/common.h"
-#include "line_follower/types/unique_id.h"
+#include "line_follower/external/api/common.h"
+#include "line_follower/external/types/unique_id.h"
 
 namespace line_follower {
 class SchedulerConsumerAgent;
@@ -94,4 +94,4 @@ class SchedulerConsumerAgent final : public ConsumerAgent<UniqueID> {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_SCHEDULER_SCHEDULER_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_SCHEDULER_AGENT_H_

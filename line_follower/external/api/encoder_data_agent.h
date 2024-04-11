@@ -1,15 +1,15 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_ENCODER_ENCODER_DATA_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_ENCODER_ENCODER_DATA_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_ENCODER_DATA_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_ENCODER_DATA_AGENT_H_
 
 #include <memory>
 
-#include "line_follower/blocks/encoder/encoder_interface.h"
-#include "line_follower/service_agents/common/common.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/encoder_data.h"
+#include "line_follower/external/api/common.h"
+#include "line_follower/external/api/encoder_interface.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_data.h"
 
 namespace line_follower {
 /// An encoder data producer agent
@@ -50,4 +50,4 @@ class EncoderDataConsumerAgent final : public ConsumerAgent<EncoderData> {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_ENCODER_ENCODER_DATA_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_ENCODER_DATA_AGENT_H_

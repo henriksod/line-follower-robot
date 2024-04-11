@@ -10,6 +10,9 @@ build --incompatible_default_to_explicit_init_py
 # This is a mandatory flag.
 build --cxxopt=-std=c++14
 
+# Enable toolchain resolution with cc
+build --incompatible_enable_cc_toolchain_resolution
+
 # Ensure that you don't accidentally make non-hermetic actions/tests
 # which depend on remote services. Tag an individual target with
 # tags=["requires-network"] to opt-out of the enforcement.
@@ -32,6 +35,9 @@ build:debug --verbose_failures --sandbox_debug --toolchain_resolution_debug --co
 build:clang --repo_env=CC=clang
 build:clang --repo_env=CXX=clang++
 build:clang --linkopt="-fuse-ld=lld"
+
+build:hardware --platforms=@bazel_embedded//platforms:cortex_m7_fpu --//bazel/flags/agents=hardware
+build:hardware --cxxopt=-std=c++14 --cxxopt=-fno-exceptions --cxxopt=-fpermissive --cxxopt=-fno-rtti
 
 # Load any settings specific to the current user.
 # user.bazelrc should appear in .gitignore so that settings are not shared with

@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
+#include "line_follower/external/api/scheduler_agent.h"
 
 #include <algorithm>
 #include <list>
@@ -9,9 +9,9 @@
 
 #include "line_follower/blocks/common/badge.h"
 #include "line_follower/blocks/common/maybe.h"
-#include "line_follower/service_agents/time/time_agent.h"
-#include "line_follower/types/system_time.h"
-#include "line_follower/types/unique_id.h"
+#include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/system_time.h"
+#include "line_follower/external/types/unique_id.h"
 
 namespace line_follower {
 class SchedulerProducerAgent::Impl final {

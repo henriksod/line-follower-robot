@@ -8,7 +8,7 @@
 #include <utility>
 
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
-#include "line_follower/types/covariance.h"
+#include "line_follower/external/types/covariance.h"
 
 namespace line_follower {
 

@@ -7,8 +7,8 @@
 #include <cstdint>
 #include <cstdlib>
 
-#include "line_follower/types/line.h"
-#include "line_follower/types/pose.h"
+#include "line_follower/external/types/line.h"
+#include "line_follower/external/types/pose.h"
 
 namespace line_follower {
 

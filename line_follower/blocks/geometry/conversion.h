@@ -8,9 +8,9 @@
 #include "line_follower/blocks/geometry/line.h"
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/vector.h"
-#include "line_follower/types/line.h"
-#include "line_follower/types/position.h"
-#include "line_follower/types/rotation.h"
+#include "line_follower/external/types/line.h"
+#include "line_follower/external/types/position.h"
+#include "line_follower/external/types/rotation.h"
 
 namespace line_follower {
 /// Convert a Position to a geometry::Vector3

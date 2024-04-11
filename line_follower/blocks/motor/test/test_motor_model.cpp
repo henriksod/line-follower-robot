@@ -5,8 +5,8 @@
 #include <cmath>
 
 #include "line_follower/blocks/motor/motor_model.h"
-#include "line_follower/types/motor_characteristics.h"
-#include "line_follower/types/rotor_speed.h"
+#include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/rotor_speed.h"
 
 namespace line_follower {
 namespace {

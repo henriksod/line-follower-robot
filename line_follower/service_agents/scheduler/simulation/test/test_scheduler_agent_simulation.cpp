@@ -8,8 +8,8 @@
 #include <cstdint>
 #include <thread>
 
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 namespace {

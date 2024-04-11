@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "line_follower/service_agents/common/common.h"
+#include "line_follower/external/api/common.h"
 
 namespace line_follower {
 namespace {

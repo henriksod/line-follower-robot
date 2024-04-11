@@ -3,12 +3,12 @@
 #ifndef LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_MODEL_H_
 #define LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_MODEL_H_
 
-#include "line_follower/blocks/ir_sensor_array/ir_sensor_array_interface.h"
-#include "line_follower/types/ir_sensor_array_characteristics.h"
-#include "line_follower/types/ir_sensor_array_data.h"
-#include "line_follower/types/pose.h"
-#include "line_follower/types/system_time.h"
-#include "line_follower/types/track_lines.h"
+#include "line_follower/external/api/ir_sensor_array_interface.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/pose.h"
+#include "line_follower/external/types/system_time.h"
+#include "line_follower/external/types/track_lines.h"
 
 namespace line_follower {
 

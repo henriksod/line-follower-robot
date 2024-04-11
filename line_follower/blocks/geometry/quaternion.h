@@ -197,7 +197,7 @@ inline EulerAngles<T> to_euler(Quaternion<T> const& q, T eps = 1e-7) {
     const T z2 = q.z() * q.z();
     const T unit_length = w2 + x2 + y2 + z2;
     const T abcd = q.w() * q.x() + q.y() * q.z();
-    const T pi = M_PI;
+    const T pi = PI;
     T yaw{};
     T pitch{};
     T roll{};

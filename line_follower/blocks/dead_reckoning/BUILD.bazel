@@ -1,25 +1,14 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "dead_reckoning_interface",
-    hdrs = ["dead_reckoning_interface.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/blocks/geometry:conversion",
-        "//line_follower/blocks/geometry:quaternion",
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "dead_reckoning_model",
     srcs = ["dead_reckoning_model.cpp"],
     hdrs = ["dead_reckoning_model.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":dead_reckoning_interface",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
-        "//line_follower/types",
+        "//line_follower/external/api:dead_reckoning_interface",
+        "//line_follower/external/types",
     ],
 )

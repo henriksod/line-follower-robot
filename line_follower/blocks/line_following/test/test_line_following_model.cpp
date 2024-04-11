@@ -8,10 +8,10 @@
 
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 #include "line_follower/blocks/line_following/line_following_model.h"
-#include "line_follower/types/line_following_characteristics.h"
-#include "line_follower/types/line_following_state.h"
-#include "line_follower/types/robot_characteristics.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/line_following_characteristics.h"
+#include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/robot_characteristics.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 namespace {

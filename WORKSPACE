@@ -34,10 +34,9 @@ yaml_repositories()
 
 http_archive(
     name = "rules_pkg",
-    sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",
+    sha256 = "d250924a2ecc5176808fc4c25d5cf5e9e79e6346d79d5ab1c493e289e722d1d0",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
-        "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.10.1/rules_pkg-0.10.1.tar.gz",
     ],
 )
 
@@ -49,9 +48,8 @@ rules_pkg_dependencies()
 http_archive(
     name = "com_github_arduino_arduino_cli",
     build_file = "//bazel/arduino:arduino_cli.bzl",
-    sha256 = "c6b23c4a028d27c31eeb7e1126e22b9a87e5e5c5daada8b990194dabfae6a6c5",
-    strip_prefix = "arduino-cli-a7f0de42fa04243b948c14741ee06f30098475ff",
-    url = "https://github.com/arduino/arduino-cli/archive/a7f0de42fa04243b948c14741ee06f30098475ff.tar.gz",
+    sha256 = "e97380db0f8f2a4e18433e424cd0346d7a3affebfc9aaff5b2a34f9c1671eb56",
+    url = "https://downloads.arduino.cc/arduino-cli/nightly/arduino-cli_nightly-latest_Linux_64bit.tar.gz",
 )
 
 # Buildifier
@@ -110,3 +108,37 @@ http_archive(
         "https://github.com/bazelbuild/buildtools/archive/refs/tags/4.2.2.tar.gz",
     ],
 )
+
+http_archive(
+    name = "bazel_embedded",
+    patch_args = ["-p1"],
+    patches = [
+        "//bazel/patches:bazel_embedded.patch",
+    ],
+    sha256 = "ee26c7dd5fcbe620eae8b0de9a34ecb9264cbe81cf8359d3f14ba99badfde70e",
+    strip_prefix = "bazel-embedded-d3cbe4eff9a63d3dee63067d61096d681daca33b",
+    url = "https://github.com/bazelembedded/bazel-embedded/archive/d3cbe4eff9a63d3dee63067d61096d681daca33b.tar.gz",
+)
+
+load("@bazel_embedded//:bazel_embedded_deps.bzl", "bazel_embedded_deps")
+
+bazel_embedded_deps()
+
+load("@bazel_embedded//platforms:execution_platforms.bzl", "register_platforms")
+
+register_platforms()
+
+load(
+    "@bazel_embedded//toolchains/compilers/gcc_arm_none_eabi:gcc_arm_none_repository.bzl",
+    "gcc_arm_none_compiler",
+)
+
+gcc_arm_none_compiler()
+
+load("@bazel_embedded//toolchains/gcc_arm_none_eabi:gcc_arm_none_toolchain.bzl", "register_gcc_arm_none_toolchain")
+
+register_gcc_arm_none_toolchain()
+
+load("@bazel_embedded//tools/openocd:openocd_repository.bzl", "openocd_deps")
+
+openocd_deps()

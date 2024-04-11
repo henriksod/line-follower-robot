@@ -1,13 +1,13 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_LOGGING_LOGGING_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_LOGGING_LOGGING_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_LOGGING_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_LOGGING_AGENT_H_
 
 #include <memory>
 #include <string>
 
 #include "line_follower/blocks/common/badge.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
+#include "line_follower/external/api/scheduler_agent.h"
 
 namespace line_follower {
 
@@ -48,4 +48,4 @@ class LoggingAgent final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_LOGGING_LOGGING_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_LOGGING_AGENT_H_

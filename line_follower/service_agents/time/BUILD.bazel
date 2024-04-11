@@ -1,21 +1,12 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "time_agent_api",
-    hdrs = ["time_agent.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "time_agent_simulation",
     srcs = ["simulation/time_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":time_agent_api",
-        "//line_follower/types",
+        "//line_follower/external/api:time_agent_api",
+        "//line_follower/external/types",
     ],
 )
 
@@ -24,8 +15,9 @@ cc_library(
     srcs = ["hardware/time_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
-        ":time_agent_api",
-        "//line_follower/types",
+        "//line_follower/deployment/arduino:api",
+        "//line_follower/external/api:time_agent_api",
+        "//line_follower/external/types",
     ],
 )
 

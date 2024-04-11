@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/logging/logging_agent.h"
+#include "line_follower/external/api/logging_agent.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -9,10 +9,11 @@
 #include <memory>
 #include <queue>
 
+#include "line_follower/deployment/arduino/api.h"
+#include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/log_message.h"
+#include "line_follower/external/types/system_time.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
-#include "line_follower/service_agents/time/time_agent.h"
-#include "line_follower/types/log_message.h"
-#include "line_follower/types/system_time.h"
 
 namespace line_follower {
 class LoggingAgent::Impl final : public SchedulableBase {
@@ -35,9 +36,8 @@ class LoggingAgent::Impl final : public SchedulableBase {
     void dispatchMessages() {
         while (!message_queue_.empty()) {
             LogMessage message{message_queue_.front()};
-            static_cast<void>(message);
-            /// TODO: Implement message dispatch for hardware, maybe it will send data via uart to
-            /// PC?
+            /// TODO: Fix so it prints more information
+            arduino::PRINT_MESSAGE(message.message, 100U);
             message_queue_.pop();
         }
     }

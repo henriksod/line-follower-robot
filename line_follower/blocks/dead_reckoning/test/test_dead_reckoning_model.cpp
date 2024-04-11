@@ -4,10 +4,11 @@
 
 #include <cmath>
 
+#include "line_follower/blocks/common/math.h"
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/robot_characteristics.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/robot_characteristics.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 namespace {
@@ -41,7 +42,7 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
     dead_reckoning_model.step(SystemTime{1000000U});
 
-    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, M_PI * kRobotWheelRadiusMeters, 1e-9);
+    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, PI * kRobotWheelRadiusMeters, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.z, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.w, 1.0, 1e-9);

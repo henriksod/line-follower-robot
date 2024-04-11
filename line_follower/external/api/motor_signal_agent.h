@@ -1,14 +1,14 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_MOTOR_MOTOR_SIGNAL_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_MOTOR_MOTOR_SIGNAL_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_MOTOR_SIGNAL_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_MOTOR_SIGNAL_AGENT_H_
 
 #include <memory>
 
-#include "line_follower/blocks/motor/motor_interface.h"
-#include "line_follower/service_agents/common/common.h"
-#include "line_follower/types/motor_characteristics.h"
-#include "line_follower/types/motor_signal.h"
+#include "line_follower/external/api/common.h"
+#include "line_follower/external/api/motor_interface.h"
+#include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/motor_signal.h"
 
 namespace line_follower {
 /// An agent that produces motor signals
@@ -42,4 +42,4 @@ class MotorSignalConsumerAgent final : public ConsumerAgent<MotorSignal> {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_MOTOR_MOTOR_SIGNAL_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_MOTOR_SIGNAL_AGENT_H_

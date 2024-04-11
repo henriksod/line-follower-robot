@@ -1,21 +1,12 @@
 # Copyright (c) 2023 Henrik Söderlund
 
 cc_library(
-    name = "encoder_interface",
-    hdrs = ["encoder_interface.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/types",
-    ],
-)
-
-cc_library(
     name = "encoder_model",
     srcs = ["encoder_model.cpp"],
     hdrs = ["encoder_model.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":encoder_interface",
-        "//line_follower/types",
+        "//line_follower/external/api:encoder_interface",
+        "//line_follower/external/types",
     ],
 )

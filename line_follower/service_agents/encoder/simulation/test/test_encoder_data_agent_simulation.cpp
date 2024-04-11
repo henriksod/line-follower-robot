@@ -7,10 +7,10 @@
 #include <memory>
 
 #include "line_follower/blocks/encoder/encoder_model.h"
-#include "line_follower/service_agents/encoder/encoder_data_agent.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/rotor_speed.h"
+#include "line_follower/external/api/encoder_data_agent.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/rotor_speed.h"
 
 namespace line_follower {
 namespace {

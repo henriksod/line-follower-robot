@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_COMMON_COMMON_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_COMMON_COMMON_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_COMMON_H_
+#define LINE_FOLLOWER_EXTERNAL_API_COMMON_H_
 
 #include <algorithm>
 #include <list>
@@ -140,4 +140,4 @@ class ConsumerAgent {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_COMMON_COMMON_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_COMMON_H_

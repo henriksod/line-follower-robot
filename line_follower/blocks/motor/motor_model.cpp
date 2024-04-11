@@ -6,9 +6,9 @@
 #include <cmath>
 
 #include "line_follower/blocks/common/math.h"
-#include "line_follower/types/motor_characteristics.h"
-#include "line_follower/types/rotor_speed.h"
-#include "line_follower/types/torque.h"
+#include "line_follower/external/types/motor_characteristics.h"
+#include "line_follower/external/types/rotor_speed.h"
+#include "line_follower/external/types/torque.h"
 
 namespace line_follower {
 Torque MotorModel::getMotorTorque() const {

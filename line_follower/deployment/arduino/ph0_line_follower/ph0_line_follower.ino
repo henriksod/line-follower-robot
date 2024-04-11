@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
+#include <Arduino.h>
+#include <LineFollower.h>
 
 namespace line_follower {
 
@@ -17,13 +17,14 @@ class LineFollowerRobot final
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
     }
 
-    void LineFollowerRobot::setup();
-    void LineFollowerRobot::loop();
+    void setup();
+    void loop();
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
 };
 
 void LineFollowerRobot::setup() {
+    LOG_INFO("I am alive!", "");
 }
 
 void LineFollowerRobot::loop() {
@@ -34,7 +35,9 @@ void LineFollowerRobot::loop() {
 }  // namespace line_follower
 
 void setup()
-{}
+{
+    Serial.begin(9600);
+}
 
 void loop()
 {

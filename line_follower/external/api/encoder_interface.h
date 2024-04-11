@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_ENCODER_ENCODER_INTERFACE_H_
-#define LINE_FOLLOWER_BLOCKS_ENCODER_ENCODER_INTERFACE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_ENCODER_INTERFACE_H_
+#define LINE_FOLLOWER_EXTERNAL_API_ENCODER_INTERFACE_H_
 
-#include "line_follower/types/encoder_data.h"
+#include "line_follower/external/types/encoder_data.h"
 
 namespace line_follower {
 class EncoderInterface {
@@ -22,4 +22,4 @@ class EncoderInterface {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_ENCODER_ENCODER_INTERFACE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_ENCODER_INTERFACE_H_

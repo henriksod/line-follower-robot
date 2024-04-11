@@ -1,13 +1,13 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/encoder/encoder_data_agent.h"
+#include "line_follower/external/api/encoder_data_agent.h"
 
 #include <memory>
 
-#include "line_follower/blocks/encoder/encoder_interface.h"
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/encoder_data.h"
+#include "line_follower/external/api/encoder_interface.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_data.h"
 
 namespace line_follower {
 class EncoderDataProducerAgent::Impl final {

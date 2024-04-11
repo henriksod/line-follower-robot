@@ -1,11 +1,11 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_SERVICE_AGENTS_TIME_TIME_AGENT_H_
-#define LINE_FOLLOWER_SERVICE_AGENTS_TIME_TIME_AGENT_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_TIME_AGENT_H_
+#define LINE_FOLLOWER_EXTERNAL_API_TIME_AGENT_H_
 
 #include <memory>
 
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 /// Provides the system time
@@ -27,4 +27,4 @@ class TimeAgent final {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_SERVICE_AGENTS_TIME_TIME_AGENT_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_TIME_AGENT_H_

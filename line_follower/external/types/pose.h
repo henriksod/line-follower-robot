@@ -3,8 +3,8 @@
 #ifndef LINE_FOLLOWER_TYPES_POSE_H_
 #define LINE_FOLLOWER_TYPES_POSE_H_
 
-#include "line_follower/types/position.h"
-#include "line_follower/types/rotation.h"
+#include "line_follower/external/types/position.h"
+#include "line_follower/external/types/rotation.h"
 
 namespace line_follower {
 /// A pose in 3D space, in a coordinate system that

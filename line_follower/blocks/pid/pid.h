@@ -3,7 +3,7 @@
 #ifndef LINE_FOLLOWER_BLOCKS_PID_PID_H_
 #define LINE_FOLLOWER_BLOCKS_PID_PID_H_
 
-#include "line_follower/types/pid_configuration.h"
+#include "line_follower/external/types/pid_configuration.h"
 
 namespace line_follower {
 

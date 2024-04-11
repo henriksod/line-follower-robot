@@ -5,7 +5,7 @@ cc_test(
     size = "small",
     srcs = ["test_common.cpp"],
     deps = [
-        "//line_follower/service_agents/common",
+        "//line_follower/external/api:common",
         "@com_google_googletest//:gtest_main",
     ],
 )

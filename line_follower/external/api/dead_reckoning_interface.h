@@ -1,12 +1,12 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_DEAD_RECKONING_DEAD_RECKONING_INTERFACE_H_
-#define LINE_FOLLOWER_BLOCKS_DEAD_RECKONING_DEAD_RECKONING_INTERFACE_H_
+#ifndef LINE_FOLLOWER_EXTERNAL_API_DEAD_RECKONING_INTERFACE_H_
+#define LINE_FOLLOWER_EXTERNAL_API_DEAD_RECKONING_INTERFACE_H_
 
-#include "line_follower/types/encoder_data.h"
-#include "line_follower/types/pose.h"
-#include "line_follower/types/robot_characteristics.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/pose.h"
+#include "line_follower/external/types/robot_characteristics.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 class DeadReckoningInterface {
@@ -63,4 +63,4 @@ class DeadReckoningInterface {
 };
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_DEAD_RECKONING_DEAD_RECKONING_INTERFACE_H_
+#endif  // LINE_FOLLOWER_EXTERNAL_API_DEAD_RECKONING_INTERFACE_H_

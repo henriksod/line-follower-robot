@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#include "line_follower/service_agents/line_following/line_following_agent.h"
+#include "line_follower/external/api/line_following_agent.h"
 
 #include <array>
 #include <cstdint>
@@ -12,11 +12,12 @@
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/geometry/vector.h"
+#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
-#include "line_follower/service_agents/common/logging.h"
-#include "line_follower/service_agents/time/time_agent.h"
-#include "line_follower/types/line_following_state.h"
-#include "line_follower/types/system_time.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 
@@ -46,16 +47,16 @@ class LineFollowingAgent::Impl final {
           right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           time_agent_{},
           time_at_last_step_{time_agent_.getSystemTime()} {
-        LOG_INFO("Created line following agent (simulation)");
+        LOG_INFO("Created line following agent (hardware)", "");
     }
 
-    explicit Impl(std::unique_ptr<LineFollowingModel> line_following_model)
+    explicit Impl(std::unique_ptr<LineFollowingInterface> line_following_model)
         : line_following_model_{std::move(line_following_model)},
           left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           time_agent_{},
           time_at_last_step_{time_agent_.getSystemTime()} {
-        LOG_INFO("Created line following agent (simulation)");
+        LOG_INFO("Created line following agent (hardware)", "");
     }
 
     Pose getPose() const {
@@ -105,55 +106,10 @@ class LineFollowingAgent::Impl final {
 
         left_motor_signal_producer_->sendData(line_following_model_->getMotorSignalLeft());
         right_motor_signal_producer_->sendData(line_following_model_->getMotorSignalRight());
-
-        /*line_following_model_->predict(current_time);
-        LineFollowingState const predicted_state{line_following_model_->getPredictedState()};
-
-        // Shift new prediction into state history, where first element is the newest
-        for (size_t idx{0U}; idx < state_history_.size()-1U; ++idx)
-        {
-            state_history_.at(idx + 1U) = state_history_.at(idx);
-        }
-        state_history_.front() = predicted_state;
-
-        if (new_ir_array_data_.valid)
-        {
-            // Fetch the a priori state which has to be updated
-            size_t selected_history_index{0U};
-            for (auto const& state : state_history_)
-            {
-                if (!state.valid)
-                {
-                    continue;
-                }
-
-                uint64_t const state_timestamp{state.timestamp.system_time_us};
-                if (state_timestamp < new_ir_array_data_.timestamp.system_time_us)
-                {
-                    line_following_model_->setPredictedState(state);
-                    break;
-                }
-                ++selected_history_index;
-            }
-
-            // Update the kalman filter based on the a priori state
-            line_following_model_->predict(new_ir_array_data_.timestamp);
-            line_following_model_->update(new_ir_array_data_);
-
-            // Predict until the latest state
-            for (size_t idx{selected_history_index}; idx > 1U; --idx)
-            {
-                LineFollowingState const next_state{state_history_.at(idx - 1U)};
-                line_following_model_->predict(next_state.timestamp);
-            }
-        }
-        new_ir_array_data_ = {};
-        left_motor_signal_producer_->sendData(line_following_model_->getMotorSignalLeft());
-        right_motor_signal_producer_->sendData(line_following_model_->getMotorSignalRight());*/
     }
 
  private:
-    std::unique_ptr<LineFollowingModel> line_following_model_;
+    std::unique_ptr<LineFollowingInterface> line_following_model_;
     std::unique_ptr<MotorSignalProducerAgent> left_motor_signal_producer_;
     std::unique_ptr<MotorSignalProducerAgent> right_motor_signal_producer_;
     TimeAgent time_agent_;
@@ -168,7 +124,7 @@ LineFollowingAgent::LineFollowingAgent(DifferentialDriveRobotCharacteristics rob
     : pimpl_{std::make_unique<Impl>(robot_characteristics, line_following_characteristics,
                                     initial_pose)} {}
 
-LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model)
+LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingInterface> line_following_model)
     : pimpl_{std::make_unique<Impl>(std::move(line_following_model))} {}
 
 LineFollowingAgent::~LineFollowingAgent() {}

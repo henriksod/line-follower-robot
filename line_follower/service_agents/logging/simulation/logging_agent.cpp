@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/logging/logging_agent.h"
+#include "line_follower/external/api/logging_agent.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -9,10 +9,10 @@
 #include <memory>
 #include <queue>
 
+#include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/log_message.h"
+#include "line_follower/external/types/system_time.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
-#include "line_follower/service_agents/time/time_agent.h"
-#include "line_follower/types/log_message.h"
-#include "line_follower/types/system_time.h"
 
 namespace line_follower {
 class LoggingAgent::Impl final : public SchedulableBase {

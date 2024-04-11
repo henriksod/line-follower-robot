@@ -6,11 +6,12 @@ cc_library(
     hdrs = ["line_following_model.h"],
     visibility = ["//visibility:public"],
     deps = [
-        "//line_follower/blocks/dead_reckoning:dead_reckoning_interface",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/pid",
         "//line_follower/blocks/robot_geometry",
-        "//line_follower/types",
+        "//line_follower/external/api:dead_reckoning_interface",
+        "//line_follower/external/api:line_following_interface",
+        "//line_follower/external/types",
     ],
 )

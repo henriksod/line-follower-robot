@@ -1,27 +1,27 @@
 // Copyright (c) 2023 Henrik Söderlund
 
-#include "line_follower/service_agents/encoder/encoder_data_agent.h"
+#include "line_follower/external/api/encoder_data_agent.h"
 
 #include <memory>
 
-#include "line_follower/blocks/encoder/encoder_interface.h"
-#include "line_follower/service_agents/common/logging.h"
+#include "line_follower/external/api/encoder_interface.h"
+#include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_data.h"
 #include "line_follower/service_agents/scheduler/schedulable_base.h"
-#include "line_follower/service_agents/scheduler/scheduler_agent.h"
-#include "line_follower/types/encoder_characteristics.h"
-#include "line_follower/types/encoder_data.h"
 
 namespace line_follower {
 class EncoderDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(EncoderCharacteristics encoder_characteristics) {
         static_cast<void>(encoder_characteristics);
-        LOG_INFO("Created encoder data producer agent (hardware)");
+        LOG_INFO("Created encoder data producer agent (hardware)", "");
     }
 
     explicit Impl(std::unique_ptr<EncoderInterface> encoder_interface)
         : encoder_interface_{std::move(encoder_interface)} {
-        LOG_INFO("Created encoder data producer agent (hardware)");
+        LOG_INFO("Created encoder data producer agent (hardware)", "");
     }
 
     bool getEncoderData(EncoderData& output) const {
@@ -53,7 +53,7 @@ void EncoderDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> 
 }
 
 EncoderDataConsumerAgent::EncoderDataConsumerAgent() {
-    LOG_INFO("Created encoder data consumer agent (hardware)");
+    LOG_INFO("Created encoder data consumer agent (hardware)", "");
 }
 
 EncoderDataConsumerAgent::~EncoderDataConsumerAgent() {}

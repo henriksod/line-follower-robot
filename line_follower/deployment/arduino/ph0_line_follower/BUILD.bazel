@@ -1,7 +1,11 @@
-load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+# Copyright (c) 2024 Henrik Söderlund
+
+load("@rules_pkg//pkg:pkg.bzl", "pkg_tar", "pkg_zip")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
 
 LIBRARIES = [
-    "//line_follower/service_agents/common:logging",
+    "//line_follower/service_agents/time:time_agent",
+    "//line_follower/service_agents/logging:logging_agent",
     "//line_follower/service_agents/encoder:encoder_data_agent",
     "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
     "//line_follower/service_agents/line_following:line_following_agent",
@@ -9,11 +13,96 @@ LIBRARIES = [
     "//line_follower/service_agents/scheduler:scheduler_agent",
 ]
 
-pkg_tar(
-    name = "line_follower_library_package",
-    srcs = LIBRARIES + [
-        "//line_follower:external_headers",
+filegroup(
+    name = "sketch_sources",
+    srcs = [
+        "boards.txt",
+        "ph0_line_follower.ino",
+        "platform.txt",
     ],
-    include_runfiles = True,
+)
+
+filegroup(
+    name = "library_properties_file",
+    srcs = ["library.properties"],
+)
+
+filegroup(
+    name = "library_source_files",
+    srcs = ["LineFollower.h"],
+)
+
+pkg_files(
+    name = "library_properties",
+    srcs = [
+        ":library_properties_file",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package",
+)
+
+pkg_files(
+    name = "library_sources",
+    srcs = [
+        ":library_source_files",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src",
+)
+
+pkg_files(
+    name = "common_headers",
+    srcs = [
+        "//line_follower/blocks/common:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/blocks/common",
+)
+
+pkg_files(
+    name = "external_api_headers",
+    srcs = [
+        "//line_follower/external/api:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/external/api",
+)
+
+pkg_files(
+    name = "external_types_headers",
+    srcs = [
+        "//line_follower/external/types:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/external/types",
+)
+
+pkg_files(
+    name = "library",
+    srcs = LIBRARIES,
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/imxrt1062/fpv5-d16-hard/",
+)
+
+pkg_zip(
+    name = "line_follower_library_package",
+    srcs = [
+        ":common_headers",
+        ":external_api_headers",
+        ":external_types_headers",
+        ":library",
+        ":library_properties",
+        ":library_sources",
+    ],
+    strip_prefix = "/",
+)
+
+pkg_tar(
+    name = "line_follower_delivery",
+    srcs = [
+        ":line_follower_library_package",
+        ":sketch_sources",
+        "@com_github_arduino_arduino_cli//:arduino_cli",
+    ],
     strip_prefix = "/",
 )
