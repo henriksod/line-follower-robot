@@ -17,11 +17,18 @@ cc_library(
 
 cc_library(
     name = "encoder_data_agent_hardware",
-    srcs = ["hardware/encoder_data_agent.cpp"],
+    srcs = [
+        "hardware/encoder_data_agent.cpp",
+        "hardware/interface/hardware_encoder_interface.cpp",
+    ],
+    hdrs = ["hardware/interface/hardware_encoder_interface.h"],
     visibility = ["__subpackages__"],
     deps = [
+        "//line_follower/deployment/arduino:api",
+        "//line_follower/deployment/arduino:interrupts",
         "//line_follower/external/api:common",
         "//line_follower/external/api:encoder_data_agent_api",
+        "//line_follower/external/api:encoder_interface",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/scheduler:schedulable_base",

@@ -5,3 +5,9 @@ cc_library(
     srcs = ["api.h"],
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "interrupts",
+    srcs = ["interrupts.h"],
+    visibility = ["//visibility:public"],
+)

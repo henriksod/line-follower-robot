@@ -55,7 +55,7 @@ PinState DIGITAL_READ(DigitalPin& pin) {
 }
 
 uint32_t ANALOG_READ(AnalogPin& pin) {
-    uint32_t value{analogRead(pin.id)};
+    uint32_t value{static_cast<uint32_t>(analogRead(pin.id))};
     pin.value = value;
     return value;
 }
@@ -78,6 +78,70 @@ void SET_PIN_MODE(AnalogPin& pin, PinMode const mode) {
         default: pinMode(pin.id, INPUT); break;
     }
     pin.mode = mode;
+}
+
+void ATTACH_INTERRUPT(DigitalPin const& pin, PinEventTrigger const trigger, void (*func)(void)) {
+    switch (trigger) {
+        case PinEventTrigger::kChange: attachInterrupt(pin.id, func, CHANGE); break;
+        case PinEventTrigger::kRising: attachInterrupt(pin.id, func, RISING); break;
+        case PinEventTrigger::kFalling: attachInterrupt(pin.id, func, FALLING); break;
+        default: break;
+    }
+}
+
+namespace interrupts {
+
+namespace detail {
+volatile int32_t last_encoded_left = 0;
+volatile int64_t encoder_value_left = 0;
+volatile int32_t last_encoded_right = 0;
+volatile int64_t encoder_value_right = 0;
+}  // namespace detail
+
+// Interrupt for left encoder
+void ENCODER_LEFT_CHANGE_EVENT() {
+    uint32_t MSB = digitalRead(3);  // MSB = most significant bit
+    uint32_t LSB = digitalRead(7);  // LSB = least significant bit
+
+    uint32_t encoded = (MSB << 1) | LSB;  // converting the 2 pin value to single number
+    uint32_t sum =
+        (detail::last_encoded_left << 2) | encoded;  // adding it to the previous encoded value
+
+    if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
+        detail::encoder_value_left++;
+    if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
+        detail::encoder_value_left--;
+
+    detail::last_encoded_left = encoded;  // store this value for next time
+}
+
+// Interrupt for right encoder
+void ENCODER_RIGHT_CHANGE_EVENT() {
+    int MSB = digitalRead(8);  // MSB = most significant bit
+    int LSB = digitalRead(9);  // LSB = least significant bit
+
+    int encoded = (MSB << 1) | LSB;  // converting the 2 pin value to single number
+    int sum =
+        (detail::last_encoded_right << 2) | encoded;  // adding it to the previous encoded value
+
+    if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
+        detail::encoder_value_right++;
+    if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
+        detail::encoder_value_right--;
+
+    detail::last_encoded_right = encoded;  // store this value for next time
+}
+
+}  // namespace interrupts
+
+/// Get the count number of the left encoder
+int64_t GET_LEFT_ENCODER_VALUE() {
+    return interrupts::detail::encoder_value_left;
+}
+
+/// Get the count number of the left encoder
+int64_t GET_RIGHT_ENCODER_VALUE() {
+    return interrupts::detail::encoder_value_right;
 }
 
 }  // namespace arduino

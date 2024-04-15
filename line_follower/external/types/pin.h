@@ -27,6 +27,16 @@ enum class PinMode : uint32_t {
     kInputPullup
 };
 
+/// The event trigger of a pin (e.g. for interrupts)
+enum class PinEventTrigger : uint32_t {
+    /// Trigger event on change of pin state
+    kChange = 0U,
+    /// Trigger event on rising change of pin state
+    kRising,
+    /// Trigger event on falling change of pin state
+    kFalling
+};
+
 /// The information of a digital pin of a microcontroller
 struct DigitalPin final {
     /// The id of the pin

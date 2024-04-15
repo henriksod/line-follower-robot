@@ -10,7 +10,7 @@ namespace line_follower {
 struct EncoderCharacteristics final {
     /// The number of encoder counts for one
     /// revolution of the rotor shaft
-    uint16_t counts_per_revolution;
+    double counts_per_revolution;
 };
 }  // namespace line_follower
 

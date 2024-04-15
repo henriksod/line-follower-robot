@@ -10,12 +10,17 @@
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/types/encoder_characteristics.h"
 #include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/encoder_pin_configuration.h"
+#include "line_follower/external/types/encoder_tag.h"
 
 namespace line_follower {
 /// An encoder data producer agent
 class EncoderDataProducerAgent final : public ProducerAgent<EncoderData> {
  public:
     explicit EncoderDataProducerAgent(EncoderCharacteristics encoder_characteristics);
+    EncoderDataProducerAgent(EncoderCharacteristics encoder_characteristics,
+                             EncoderPinConfiguration encoder_pin_configuration,
+                             EncoderTag const tag);
     explicit EncoderDataProducerAgent(std::unique_ptr<EncoderInterface> encoder_interface);
     ~EncoderDataProducerAgent() noexcept;
 

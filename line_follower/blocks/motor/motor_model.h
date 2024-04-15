@@ -24,6 +24,7 @@ class MotorModel final : public MotorInterface {
     Torque getMotorTorque() const;
     RotorSpeed getMotorSpeed() const;
     void setMotorSpeed(RotorSpeed const& input) override;
+    void initialize() override {}
 
  private:
     MotorCharacteristics motor_characteristics_;

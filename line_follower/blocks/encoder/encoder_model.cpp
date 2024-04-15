@@ -5,22 +5,19 @@
 #include <chrono>
 
 namespace line_follower {
-void EncoderModel::tick() {
-    auto now{std::chrono::system_clock::now()};
-    auto duration{now.time_since_epoch()};
-    auto current_time{std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count()};
 
-    if (time_at_last_tick_ns_ == 0) {
-        time_at_last_tick_ns_ = current_time;
+void EncoderModel::tick(SystemTime const timestamp) {
+    if (time_at_last_tick_us_ == 0) {
+        time_at_last_tick_us_ = timestamp.system_time_us;
     }
 
-    double time_difference_seconds{(current_time - time_at_last_tick_ns_) * 1e-9};
+    double time_difference_seconds{(timestamp.system_time_us - time_at_last_tick_us_) * 1e-6};
 
     smooth_encoder_step_ += (rotor_speed_.revolutions_per_second * time_difference_seconds) *
                             encoder_characteristics_.counts_per_revolution;
     rotor_position_.step_position = static_cast<uint64_t>(smooth_encoder_step_);
 
-    time_at_last_tick_ns_ = current_time;
+    time_at_last_tick_us_ = timestamp.system_time_us;
 }
 
 bool EncoderModel::getEncoderData(EncoderData& output) const {

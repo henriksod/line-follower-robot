@@ -12,6 +12,7 @@
 #include "line_follower/external/api/motor_signal_agent.h"
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_tag.h"
 #include "line_follower/external/types/ir_sensor_array_characteristics.h"
 #include "line_follower/external/types/line.h"
 #include "line_follower/external/types/motor_characteristics.h"
@@ -56,7 +57,7 @@ Pose createInitialPose() {
 EncoderCharacteristics createEncoderCharacteristics() {
     EncoderCharacteristics encoder_characteristics{};
 
-    encoder_characteristics.counts_per_revolution = 25U;
+    encoder_characteristics.counts_per_revolution = 25.0;
     return encoder_characteristics;
 }
 
@@ -137,12 +138,14 @@ class ExampleRobot final {
         ir_sensor_array_data_producer_agent_ =
             std::make_unique<IrSensorArrayDataProducerAgent>(std::move(ir_sensor_array_model));
 
-        auto left_encoder_model{std::make_unique<EncoderModel>(createEncoderCharacteristics())};
+        auto left_encoder_model{
+            std::make_unique<EncoderModel>(createEncoderCharacteristics(), EncoderTag::kLeft)};
         left_encoder_model_ = left_encoder_model.get();
         left_encoder_data_producer_agent_ =
             std::make_unique<EncoderDataProducerAgent>(std::move(left_encoder_model));
 
-        auto right_encoder_model{std::make_unique<EncoderModel>(createEncoderCharacteristics())};
+        auto right_encoder_model{
+            std::make_unique<EncoderModel>(createEncoderCharacteristics(), EncoderTag::kRight)};
         right_encoder_model_ = right_encoder_model.get();
         right_encoder_data_producer_agent_ =
             std::make_unique<EncoderDataProducerAgent>(std::move(right_encoder_model));

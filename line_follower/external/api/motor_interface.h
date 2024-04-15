@@ -18,6 +18,7 @@ class MotorInterface {
     MotorInterface& operator=(MotorInterface&&) = delete;
 
     virtual void setMotorSpeed(RotorSpeed const& input) = 0;
+    virtual void initialize() = 0;
 };
 }  // namespace line_follower
 

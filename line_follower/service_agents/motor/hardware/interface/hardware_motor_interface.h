@@ -21,9 +21,7 @@ class HardwareMotorInterface final : public MotorInterface {
  public:
     HardwareMotorInterface(MotorCharacteristics motor_characteristics,
                            MotorPinConfiguration pin_configuration)
-        : motor_characteristics_{motor_characteristics}, pin_configuration_{pin_configuration} {
-        initialize();
-    }
+        : motor_characteristics_{motor_characteristics}, pin_configuration_{pin_configuration} {}
 
     ~HardwareMotorInterface() noexcept final = default;
 
@@ -33,12 +31,11 @@ class HardwareMotorInterface final : public MotorInterface {
     HardwareMotorInterface& operator=(HardwareMotorInterface&&) = delete;
 
     void setMotorSpeed(RotorSpeed const& input) override;
+    void initialize() override;
 
  private:
     MotorCharacteristics motor_characteristics_;
     MotorPinConfiguration pin_configuration_;
-
-    void initialize();
 };
 }  // namespace line_follower
 

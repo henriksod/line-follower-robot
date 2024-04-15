@@ -36,6 +36,16 @@ extern void SET_PIN_MODE(DigitalPin& pin, PinMode const mode);
 /// Set mode of an analog pin
 extern void SET_PIN_MODE(AnalogPin& pin, PinMode const mode);
 
+/// Attach a function to a pin which will be called on pin event trigger
+extern void ATTACH_INTERRUPT(DigitalPin const& pin, PinEventTrigger const trigger,
+                             void (*func)(void));
+
+/// Get the count number of the left encoder
+extern int64_t GET_LEFT_ENCODER_VALUE();
+
+/// Get the count number of the left encoder
+extern int64_t GET_RIGHT_ENCODER_VALUE();
+
 }  // namespace arduino
 }  // namespace line_follower
 

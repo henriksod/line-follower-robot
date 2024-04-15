@@ -10,6 +10,7 @@
 #include "line_follower/external/api/encoder_data_agent.h"
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/types/encoder_characteristics.h"
+#include "line_follower/external/types/encoder_tag.h"
 #include "line_follower/external/types/rotor_speed.h"
 
 namespace line_follower {
@@ -19,7 +20,8 @@ class EncoderDataAgentTest : public testing::Test {
     void SetUp() override {
         encoder_characteristics_.counts_per_revolution = 25U;
 
-        auto encoder_model{std::make_unique<EncoderModel>(encoder_characteristics_)};
+        auto encoder_model{
+            std::make_unique<EncoderModel>(encoder_characteristics_, EncoderTag::kLeft)};
         encoder_model_ = encoder_model.get();
         encoder_data_producer_agent_ =
             std::make_unique<EncoderDataProducerAgent>(std::move(encoder_model));

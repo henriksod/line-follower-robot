@@ -29,6 +29,7 @@ class MotorSignalConsumerAgent::Impl final {
     Impl(MotorCharacteristics motor_characteristics, MotorPinConfiguration pin_configuration)
         : motor_interface_{
               std::make_unique<HardwareMotorInterface>(motor_characteristics, pin_configuration)} {
+        motor_interface_->initialize();
         LOG_INFO("Created motor signal consumer agent (hardware)", "");
     }
 

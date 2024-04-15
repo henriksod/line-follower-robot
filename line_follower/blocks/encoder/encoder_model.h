@@ -6,14 +6,16 @@
 #include "line_follower/external/api/encoder_interface.h"
 #include "line_follower/external/types/encoder_characteristics.h"
 #include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/encoder_tag.h"
 #include "line_follower/external/types/rotor_position.h"
 #include "line_follower/external/types/rotor_speed.h"
+#include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
 class EncoderModel final : public EncoderInterface {
  public:
-    explicit EncoderModel(EncoderCharacteristics encoder_characteristics)
-        : encoder_characteristics_{encoder_characteristics} {}
+    EncoderModel(EncoderCharacteristics encoder_characteristics, EncoderTag const tag)
+        : EncoderInterface{tag}, encoder_characteristics_{encoder_characteristics} {}
 
     ~EncoderModel() noexcept final = default;
 
@@ -22,15 +24,16 @@ class EncoderModel final : public EncoderInterface {
     EncoderModel& operator=(EncoderModel const&) = delete;
     EncoderModel& operator=(EncoderModel&&) = delete;
 
-    void tick() override;
+    void tick(SystemTime const timestamp) override;
     bool getEncoderData(EncoderData& output) const override;
     void setRotorSpeed(RotorSpeed const& rotor_speed);
+    void initialize() override {}
 
  private:
     EncoderCharacteristics encoder_characteristics_;
     RotorSpeed rotor_speed_{};
     RotorPosition rotor_position_{};
-    int64_t time_at_last_tick_ns_{};
+    int64_t time_at_last_tick_us_{};
     double smooth_encoder_step_{};
 };
 }  // namespace line_follower
