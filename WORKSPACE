@@ -142,3 +142,11 @@ register_gcc_arm_none_toolchain()
 load("@bazel_embedded//tools/openocd:openocd_repository.bzl", "openocd_deps")
 
 openocd_deps()
+
+# Arduino libraries
+http_archive(
+    name = "com_github_qtr_sensors_arduino",
+    build_file = "//bazel/arduino:qtr_sensors_arduino.bzl",
+    sha256 = "95468f7e5abb244fae8f3906c82334ab1828452ec8c3b8548a68f76efbe64cc7",
+    url = "https://github.com/pololu/qtr-sensors-arduino/archive/refs/tags/4.0.0.tar.gz",
+)

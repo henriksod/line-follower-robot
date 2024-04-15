@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include "line_follower/external/types/ir_sensor_array_pin_configuration.h"
 #include "line_follower/external/types/log_message.h"
 #include "line_follower/external/types/pin.h"
 
@@ -45,6 +46,15 @@ extern int64_t GET_LEFT_ENCODER_VALUE();
 
 /// Get the count number of the left encoder
 extern int64_t GET_RIGHT_ENCODER_VALUE();
+
+/// Initialize ir sensor array
+extern void INITIALIZE_IR_SENSOR_ARRAY(IrSensorArrayPinConfiguration const& pin_configuration);
+
+/// Calibrate ir sensor array for N iterations
+extern void CALIBRATE_IR_SENSOR_ARRAY(size_t const iterations);
+
+/// Read sensors from an ir sensor array
+extern bool READ_IR_SENSOR_ARRAY(uint16_t* data, size_t const data_size);
 
 }  // namespace arduino
 }  // namespace line_follower

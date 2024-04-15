@@ -103,6 +103,7 @@ pkg_tar(
         ":line_follower_library_package",
         ":sketch_sources",
         "@com_github_arduino_arduino_cli//:arduino_cli",
+        "@com_github_qtr_sensors_arduino//:qtr_sensors_arduino",
     ],
     strip_prefix = "/",
 )

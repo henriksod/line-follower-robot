@@ -1,21 +1,27 @@
 // Copyright (c) 2024 Henrik Söderlund
 
+#include <sstream>
+#include <array>
+
 #include <Arduino.h>
 #include <LineFollower.h>
 
 namespace line_follower {
 
 namespace {
-// Update rate
+/// Calibration iterations for ir sensor array
+constexpr size_t kCalibrationIterations{400U};
+
+/// Update rate
 constexpr uint32_t kUpdateRateMicros{10000U};
 
-// Logging update rate
+/// Logging update rate
 constexpr uint32_t kLoggingUpdateRateMicros{100000U};
 
-// Convert rev/min to rev/sec
+/// Convert rev/min to rev/sec
 constexpr double kRevPerMinToRevPerSec{1.0 / 60.0};
 
-// Convert kgmm to Nmm
+/// Convert kgmm to Nmm
 constexpr double kKilogramMmToNewtonMm{9.80665};
 
 EncoderCharacteristics createEncoderCharacteristics() {
@@ -35,6 +41,13 @@ MotorCharacteristics createMotorCharacteristics() {
     motor_characteristics.no_load_speed = 3400 * kRevPerMinToRevPerSec;
     motor_characteristics.stall_torque.newtonmillimeters = 1.7 * kKilogramMmToNewtonMm;
     return motor_characteristics;
+}
+
+IrSensorArrayCharacteristics createIrSensorArrayCharacteristics() {
+    IrSensorArrayCharacteristics ir_sensor_array_characteristics{};
+    ir_sensor_array_characteristics.array_spacing = 4.0;  // mm
+    ir_sensor_array_characteristics.number_of_leds = 15U;
+    return ir_sensor_array_characteristics;
 }
 
 MotorPinConfiguration createLeftMotorPinConfiguration() {
@@ -64,6 +77,20 @@ EncoderPinConfiguration createLeftEncoderPinConfiguration() {
     return pin_configuration;
 }
 
+IrSensorArrayPinConfiguration createIrSensorArrayPinConfiguration() {
+    IrSensorArrayPinConfiguration pin_configuration{};
+    static_assert(kMaxIrSensorArrayNumberOfLeds == 15U, "Maximum number of leds are not 15!");
+    std::array<uint8_t, kMaxIrSensorArrayNumberOfLeds> sensor_pins{
+        A9, A8, A7, A6, A5, A4, A3, A2, A1, A0, A17, A16, A15, A14, A13
+    };
+    std::array<uint8_t, 2U> emitter_pins{
+        37, 36
+    };
+    pin_configuration.sensor_pins = sensor_pins;
+    pin_configuration.emitter_pins = emitter_pins;
+    return pin_configuration;
+}
+
 }  // namespace
 
 class LineFollowerRobot final
@@ -74,7 +101,9 @@ class LineFollowerRobot final
           left_encoder_data_consumer_agent_{},
           left_encoder_data_producer_agent_{createEncoderCharacteristics(), createLeftEncoderPinConfiguration(), EncoderTag::kLeft},
           left_motor_signal_producer_agent_{},
-          left_motor_signal_consumer_agent_{createMotorCharacteristics(), createLeftMotorPinConfiguration()}
+          left_motor_signal_consumer_agent_{createMotorCharacteristics(), createLeftMotorPinConfiguration()},
+          ir_sensor_array_data_consumer_agent_{},
+          ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(), createIrSensorArrayPinConfiguration()}
     {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
     }
@@ -87,6 +116,8 @@ class LineFollowerRobot final
     EncoderDataProducerAgent left_encoder_data_producer_agent_;
     MotorSignalProducerAgent left_motor_signal_producer_agent_;
     MotorSignalConsumerAgent left_motor_signal_consumer_agent_;
+    IrSensorArrayDataConsumerAgent ir_sensor_array_data_consumer_agent_;
+    IrSensorArrayDataProducerAgent ir_sensor_array_data_producer_agent_;
 };
 
 void LineFollowerRobot::setup() {
@@ -94,12 +125,32 @@ void LineFollowerRobot::setup() {
         LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
     });
 
+    ir_sensor_array_data_consumer_agent_.onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
+        std::stringstream stream{};
+        stream << "Read ir data: ";
+
+        for (auto const& reading : ir_sensor_array_data.ir_sensor_readings) {
+            stream << reading.detected_white_surface << " ";
+        }
+        stream << "\n";
+        LOG_INFO(stream.str());
+    });
+
     left_encoder_data_consumer_agent_.attach(left_encoder_data_producer_agent_);
     left_motor_signal_consumer_agent_.attach(left_motor_signal_producer_agent_);
+    ir_sensor_array_data_consumer_agent_.attach(ir_sensor_array_data_producer_agent_);
 
+    LOG_INFO("Starting calibration routine for ir sensor...", "");
+    ir_sensor_array_data_producer_agent_.calibrate(kCalibrationIterations);
+
+    // Send a constant motor signal to the left motor
     MotorSignal signal{};
     signal.speed.revolutions_per_second = 1.0;
     left_motor_signal_producer_agent_.sendData(signal);
+
+    // Start scheduling readings from sensors
+    left_encoder_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
+    ir_sensor_array_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
 
     LOG_INFO("I am alive!", "");
 }

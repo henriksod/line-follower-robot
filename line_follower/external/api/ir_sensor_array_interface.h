@@ -20,6 +20,8 @@ class IrSensorArrayInterface {
 
     virtual void tick(SystemTime const timestamp) = 0;
     virtual bool getIrSensorArrayData(IrSensorArrayData& output) const = 0;
+    virtual void initialize() = 0;
+    virtual void calibrate(size_t const iterations) = 0;
 };
 }  // namespace line_follower
 

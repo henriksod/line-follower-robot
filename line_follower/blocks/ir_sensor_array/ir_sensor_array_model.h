@@ -38,6 +38,8 @@ class IrSensorArrayModel final : public IrSensorArrayInterface {
 
     void tick(SystemTime const timestamp) override;
     bool getIrSensorArrayData(IrSensorArrayData& output) const override;
+    void initialize() override{};
+    void calibrate(size_t const iterations) override { static_cast<void>(iterations); };
 
     /// @brief Set the reference track lines to convert into ir sensor readings.
     /// @param track_segment The track segment which the track lines are part of.

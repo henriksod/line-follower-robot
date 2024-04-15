@@ -18,11 +18,17 @@ cc_library(
 
 cc_library(
     name = "ir_sensor_array_data_agent_hardware",
-    srcs = ["hardware/ir_sensor_array_data_agent.cpp"],
+    srcs = [
+        "hardware/interface/hardware_ir_sensor_array_interface.cpp",
+        "hardware/ir_sensor_array_data_agent.cpp",
+    ],
+    hdrs = ["hardware/interface/hardware_ir_sensor_array_interface.h"],
     visibility = ["__subpackages__"],
     deps = [
+        "//line_follower/deployment/arduino:api",
         "//line_follower/external/api:common",
         "//line_follower/external/api:ir_sensor_array_data_agent_api",
+        "//line_follower/external/api:ir_sensor_array_interface",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/scheduler:schedulable_base",

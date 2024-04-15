@@ -32,6 +32,10 @@ struct IrSensorArrayCharacteristics final {
     /// The horizontal spacing between infrared sensors on the
     /// infrared sensor array. In millimeters.
     double array_spacing;
+
+    /// The threshold value (from 0 to 1) where if the value is
+    /// above this threshold, a line is considered detected
+    double line_detected_threshold;
 };
 }  // namespace line_follower
 

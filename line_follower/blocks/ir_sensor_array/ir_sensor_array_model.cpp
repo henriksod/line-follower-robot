@@ -95,7 +95,8 @@ void IrSensorArrayModel::setTrackLines(TrackSegment const& track_segment,
 
             if (any_overlap) {
                 ir_sensor_array_data_.valid = true;
-                led.detected_white_surface = false;
+                led.detected_white_surface = 1.0 - track_line_segment.whiteness <
+                                             ir_array_characteristics_.line_detected_threshold;
 
                 /// TODO: Calculate digital reading based on distance from track line
                 // edge wrt thickness

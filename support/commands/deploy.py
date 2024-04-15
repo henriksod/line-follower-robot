@@ -41,6 +41,9 @@ def cli():
     teensy_core_path = os.path.join(
         os.path.expanduser("~"), ".arduino15/packages/teensy/hardware/avr/1.59.0"
     )
+    qtr_sensors_arduino_lib_zip_path = os.path.join(
+        build_path, "external/com_github_qtr_sensors_arduino/qtr_sensors_arduino.zip"
+    )
 
     if not os.path.exists(build_path):
         os.makedirs(build_path)
@@ -115,12 +118,21 @@ def cli():
         exit_on_failure=True,
     )
 
+    logger.info("Installing qtr-sensors-arduino library...")
+    exec_subprocess(
+        f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli"
+        f" lib install --zip-path --config-file {build_path}/arduino_cli_config.yaml"
+        f" {qtr_sensors_arduino_lib_zip_path}",
+        msg_on_error="Could not install qtr-sensors-arduino library.",
+        exit_on_failure=True,
+    )
+
     logger.info("Installing line follower library...")
     exec_subprocess(
         f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli"
         f" lib install --zip-path --config-file {build_path}/arduino_cli_config.yaml"
         f" {arduino_lib_zip_path}",
-        msg_on_error="Could not install library.",
+        msg_on_error="Could not install line follower library.",
         exit_on_failure=True,
     )
 

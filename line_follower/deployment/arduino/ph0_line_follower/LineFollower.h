@@ -4,6 +4,7 @@
 #define LINE_FOLLOWER_DEPLOYMENT_ARDUINO_PH0_LINE_FOLLOWER_LINEFOLLOWER_H_
 
 #include <Arduino.h>
+#include <QTRSensors.h>
 
 #include "line_follower/external/api/encoder_data_agent.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
@@ -13,8 +14,13 @@
 #include "line_follower/external/api/motor_signal_agent.h"
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/api/time_agent.h"
+#include "line_follower/external/types/ir_sensor_array_characteristics.h"
+#include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/ir_sensor_array_pin_configuration.h"
 #include "line_follower/external/types/log_message.h"
 #include "line_follower/external/types/pin.h"
+
+QTRSensors qtr;
 
 namespace line_follower {
 namespace arduino {
@@ -142,6 +148,34 @@ int64_t GET_LEFT_ENCODER_VALUE() {
 /// Get the count number of the left encoder
 int64_t GET_RIGHT_ENCODER_VALUE() {
     return interrupts::detail::encoder_value_right;
+}
+
+/// Initialize ir sensor array
+void INITIALIZE_IR_SENSOR_ARRAY(IrSensorArrayPinConfiguration const& pin_configuration) {
+    // LED_BUILTIN indicates if we are in calibration mode or not
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
+    qtr.setTypeAnalog();
+    qtr.setSensorPins(pin_configuration.sensor_pins.data(), kMaxIrSensorArrayNumberOfLeds);
+    qtr.setEmitterPins(pin_configuration.emitter_pins.at(0), pin_configuration.emitter_pins.at(1));
+}
+
+/// Calibrate ir sensor array for N iterations
+void CALIBRATE_IR_SENSOR_ARRAY(size_t const iterations) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    for (size_t idx{0U}; idx < iterations; ++idx) {
+        qtr.calibrate();
+    }
+    digitalWrite(LED_BUILTIN, LOW);
+}
+
+/// Read sensors from an ir sensor array
+bool READ_IR_SENSOR_ARRAY(uint16_t* data, size_t const data_size) {
+    if (data_size == kMaxIrSensorArrayNumberOfLeds) {
+        qtr.readCalibrated(data);
+        return true;
+    }
+    return false;
 }
 
 }  // namespace arduino

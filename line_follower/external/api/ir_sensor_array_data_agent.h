@@ -10,12 +10,15 @@
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/types/ir_sensor_array_characteristics.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
+#include "line_follower/external/types/ir_sensor_array_pin_configuration.h"
 
 namespace line_follower {
 /// An infrared sensor array data producer agent
 class IrSensorArrayDataProducerAgent final : public ProducerAgent<IrSensorArrayData> {
  public:
     explicit IrSensorArrayDataProducerAgent(IrSensorArrayCharacteristics ir_array_characteristics);
+    IrSensorArrayDataProducerAgent(IrSensorArrayCharacteristics ir_array_characteristics,
+                                   IrSensorArrayPinConfiguration pin_configuration);
     explicit IrSensorArrayDataProducerAgent(
         std::unique_ptr<IrSensorArrayInterface> ir_array_interface);
     ~IrSensorArrayDataProducerAgent() noexcept;
@@ -24,6 +27,11 @@ class IrSensorArrayDataProducerAgent final : public ProducerAgent<IrSensorArrayD
     IrSensorArrayDataProducerAgent(IrSensorArrayDataProducerAgent&&) = delete;
     IrSensorArrayDataProducerAgent& operator=(IrSensorArrayDataProducerAgent const&) = delete;
     IrSensorArrayDataProducerAgent& operator=(IrSensorArrayDataProducerAgent&&) = delete;
+
+    /// Start calibration routine to find minimum and maximum values for
+    /// each infra-red sensor on the array
+    /// @param iterations How many iterations to calibrate
+    void calibrate(size_t const iterations);
 
     /// @brief Schedule this producer at a fixed time interval. Infrared sensor
     // array readings
