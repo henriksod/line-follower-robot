@@ -11,6 +11,9 @@ LIBRARIES = [
     "//line_follower/service_agents/line_following:line_following_agent",
     "//line_follower/service_agents/motor:motor_signal_agent",
     "//line_follower/service_agents/scheduler:scheduler_agent",
+    "//line_follower/blocks/line_following:line_following_model",
+    "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+    "//line_follower/blocks/pid",
 ]
 
 filegroup(
@@ -51,6 +54,33 @@ pkg_files(
 )
 
 pkg_files(
+    name = "dead_reckoning_headers",
+    srcs = [
+        "//line_follower/blocks/dead_reckoning:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/blocks/dead_reckoning",
+)
+
+pkg_files(
+    name = "line_following_headers",
+    srcs = [
+        "//line_follower/blocks/line_following:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/blocks/line_following",
+)
+
+pkg_files(
+    name = "pid_headers",
+    srcs = [
+        "//line_follower/blocks/pid:headers",
+    ],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "/line_follower_library_package/src/line_follower/blocks/pid",
+)
+
+pkg_files(
     name = "common_headers",
     srcs = [
         "//line_follower/blocks/common:headers",
@@ -88,11 +118,14 @@ pkg_zip(
     name = "line_follower_library_package",
     srcs = [
         ":common_headers",
+        ":dead_reckoning_headers",
         ":external_api_headers",
         ":external_types_headers",
         ":library",
         ":library_properties",
         ":library_sources",
+        ":line_following_headers",
+        ":pid_headers",
     ],
     strip_prefix = "/",
 )

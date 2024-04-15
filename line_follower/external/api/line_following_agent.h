@@ -5,8 +5,8 @@
 
 #include <memory>
 
+#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
-#include "line_follower/external/api/line_following_interface.h"
 #include "line_follower/external/api/motor_signal_agent.h"
 #include "line_follower/external/types/encoder_data.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
@@ -22,7 +22,7 @@ class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
     LineFollowingAgent(DifferentialDriveRobotCharacteristics robot_characteristics,
                        LineFollowingCharacteristics line_following_characteristics,
                        Pose initial_pose);
-    LineFollowingAgent(std::unique_ptr<LineFollowingInterface> line_following_model);
+    LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model);
     ~LineFollowingAgent() noexcept;
 
     LineFollowingAgent(LineFollowingAgent const&) = delete;

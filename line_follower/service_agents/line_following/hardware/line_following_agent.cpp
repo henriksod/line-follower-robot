@@ -50,7 +50,7 @@ class LineFollowingAgent::Impl final {
         LOG_INFO("Created line following agent (hardware)", "");
     }
 
-    explicit Impl(std::unique_ptr<LineFollowingInterface> line_following_model)
+    explicit Impl(std::unique_ptr<LineFollowingModel> line_following_model)
         : line_following_model_{std::move(line_following_model)},
           left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
@@ -109,7 +109,7 @@ class LineFollowingAgent::Impl final {
     }
 
  private:
-    std::unique_ptr<LineFollowingInterface> line_following_model_;
+    std::unique_ptr<LineFollowingModel> line_following_model_;
     std::unique_ptr<MotorSignalProducerAgent> left_motor_signal_producer_;
     std::unique_ptr<MotorSignalProducerAgent> right_motor_signal_producer_;
     TimeAgent time_agent_;
@@ -124,7 +124,7 @@ LineFollowingAgent::LineFollowingAgent(DifferentialDriveRobotCharacteristics rob
     : pimpl_{std::make_unique<Impl>(robot_characteristics, line_following_characteristics,
                                     initial_pose)} {}
 
-LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingInterface> line_following_model)
+LineFollowingAgent::LineFollowingAgent(std::unique_ptr<LineFollowingModel> line_following_model)
     : pimpl_{std::make_unique<Impl>(std::move(line_following_model))} {}
 
 LineFollowingAgent::~LineFollowingAgent() {}

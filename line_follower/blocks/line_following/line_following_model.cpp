@@ -62,11 +62,11 @@ bool isPerpendicularLine(IrSensorArrayData ir_data) {
 }  // namespace
 
 Pose const& LineFollowingModel::getPose() const {
-    return dead_reckoning_interface_->getPose();
+    return dead_reckoning_model_->getPose();
 }
 
 void LineFollowingModel::setPose(const Pose& new_pose, SystemTime timestamp) {
-    dead_reckoning_interface_->setPose(new_pose, timestamp);
+    dead_reckoning_model_->setPose(new_pose, timestamp);
 }
 
 LineFollowingState LineFollowingModel::getPredictedState() const {
@@ -93,12 +93,12 @@ MotorSignal LineFollowingModel::getMotorSignalRight() const {
 
 void LineFollowingModel::setEncoderLeftData(EncoderData const& encoder_data_left) {
     left_encoder_data_ = encoder_data_left;
-    dead_reckoning_interface_->setEncoderLeftData(encoder_data_left);
+    dead_reckoning_model_->setEncoderLeftData(encoder_data_left);
 }
 
 void LineFollowingModel::setEncoderRightData(EncoderData const& encoder_data_right) {
     right_encoder_data_ = encoder_data_right;
-    dead_reckoning_interface_->setEncoderRightData(encoder_data_right);
+    dead_reckoning_model_->setEncoderRightData(encoder_data_right);
 }
 
 void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
@@ -112,7 +112,7 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
 
     // Control the speed for left motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
-    double const speed_left_setpoint{dead_reckoning_interface_->calculateLeftMotorSpeed(
+    double const speed_left_setpoint{dead_reckoning_model_->calculateLeftMotorSpeed(
         (1.0 - prediction.predicted_position) * characteristics_.max_forward_velocity,
         out_angular_velocity)};
     double const out_left_wheel_speed{pid_left_speed_.calculate(
@@ -120,7 +120,7 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
 
     // Control the speed for right motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
-    double const speed_right_setpoint{dead_reckoning_interface_->calculateRightMotorSpeed(
+    double const speed_right_setpoint{dead_reckoning_model_->calculateRightMotorSpeed(
         (1.0 - prediction.predicted_position) * characteristics_.max_forward_velocity,
         out_angular_velocity)};
     double const out_right_wheel_speed{pid_right_speed_.calculate(
@@ -152,11 +152,11 @@ LineFollowingState LineFollowingModel::preparePredictedState(SystemTime timestam
 
     next_predicted_state.predicted_position_derivative =
         predicted_state_.predicted_position_derivative -
-        sensor_to_origin_distance * dead_reckoning_interface_->getAngularVelocity();
+        sensor_to_origin_distance * dead_reckoning_model_->getAngularVelocity();
 
     next_predicted_state.left_encoder_data_input = left_encoder_data_;
     next_predicted_state.right_encoder_data_input = right_encoder_data_;
-    next_predicted_state.robot_pose = dead_reckoning_interface_->getPose();
+    next_predicted_state.robot_pose = dead_reckoning_model_->getPose();
 
     // Calculate predicted state covariance
     double const m00{predicted_state_.predicted_covariance.m00};
@@ -184,7 +184,7 @@ void LineFollowingModel::predict(SystemTime timestamp) {
         return;
     }
 
-    dead_reckoning_interface_->step(timestamp);
+    dead_reckoning_model_->step(timestamp);
     predicted_state_ = preparePredictedState(timestamp, time_diff);
     calculateMotorSignals(predicted_state_, time_diff);
 
@@ -220,11 +220,10 @@ void LineFollowingModel::update(const IrSensorArrayData& ir_array_data) {
                                              -kalman_gain_position_derivative * m10, m11};
 }
 
-LineFollowingModel::LineFollowingModel(
-    LineFollowingCharacteristics characteristics,
-    std::unique_ptr<DeadReckoningInterface> dead_reckoning_interface)
+LineFollowingModel::LineFollowingModel(LineFollowingCharacteristics characteristics,
+                                       std::unique_ptr<DeadReckoningModel> dead_reckoning_model)
     : characteristics_{characteristics},
-      dead_reckoning_interface_{std::move(dead_reckoning_interface)},
+      dead_reckoning_model_{std::move(dead_reckoning_model)},
       predicted_state_{},
       pid_left_speed_{characteristics.pid_speed_parameters},
       pid_right_speed_{characteristics.pid_speed_parameters},

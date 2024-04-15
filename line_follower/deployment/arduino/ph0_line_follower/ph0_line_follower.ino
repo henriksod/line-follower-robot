@@ -24,6 +24,11 @@ constexpr double kRevPerMinToRevPerSec{1.0 / 60.0};
 /// Convert kgmm to Nmm
 constexpr double kKilogramMmToNewtonMm{9.80665};
 
+// The initial pose of the robot, in world coordinate system
+Pose createInitialPose() {
+    return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}};
+}
+
 EncoderCharacteristics createEncoderCharacteristics() {
     EncoderCharacteristics encoder_characteristics{};
 
@@ -65,12 +70,39 @@ MotorPinConfiguration createLeftMotorPinConfiguration() {
     return pin_configuration;
 }
 
+MotorPinConfiguration createRightMotorPinConfiguration() {
+    MotorPinConfiguration pin_configuration{};
+    AnalogPin pwm_pin{};
+    pwm_pin.id = 6;
+    DigitalPin in1_pin{};
+    in1_pin.id = 4;
+    DigitalPin in2_pin{};
+    in2_pin.id = 5;
+    pin_configuration.pwm_pin = pwm_pin;
+    pin_configuration.in1_pin = in1_pin;
+    pin_configuration.in2_pin = in2_pin;
+    pin_configuration.reverse_direction = false;
+    return pin_configuration;
+}
+
 EncoderPinConfiguration createLeftEncoderPinConfiguration() {
     EncoderPinConfiguration pin_configuration{};
     DigitalPin enc_a_pin{};
     enc_a_pin.id = 3;
     DigitalPin enc_b_pin{};
     enc_b_pin.id = 7;
+    pin_configuration.enc_a_pin = enc_a_pin;
+    pin_configuration.enc_a_pin = enc_b_pin;
+    pin_configuration.reverse_direction = false;
+    return pin_configuration;
+}
+
+EncoderPinConfiguration createRightEncoderPinConfiguration() {
+    EncoderPinConfiguration pin_configuration{};
+    DigitalPin enc_a_pin{};
+    enc_a_pin.id = 8;
+    DigitalPin enc_b_pin{};
+    enc_b_pin.id = 9;
     pin_configuration.enc_a_pin = enc_a_pin;
     pin_configuration.enc_a_pin = enc_b_pin;
     pin_configuration.reverse_direction = false;
@@ -91,6 +123,37 @@ IrSensorArrayPinConfiguration createIrSensorArrayPinConfiguration() {
     return pin_configuration;
 }
 
+DifferentialDriveRobotCharacteristics createRobotCharacteristics() {
+    DifferentialDriveRobotCharacteristics robot_characteristics{};
+    robot_characteristics.wheel_radius = 0.02;
+    robot_characteristics.distance_between_wheels = 0.1;
+    return robot_characteristics;
+}
+
+LineFollowingCharacteristics createLineFollowingCharacteristics() {
+    LineFollowingCharacteristics line_following_characteristics{};
+
+    line_following_characteristics.pid_speed_parameters.proportional_gain = 2.0;
+    line_following_characteristics.pid_speed_parameters.integral_gain = 0.0;
+    line_following_characteristics.pid_speed_parameters.derivative_gain = 0.0;
+    line_following_characteristics.pid_speed_parameters.min_value = 0.0;
+    line_following_characteristics.pid_speed_parameters.max_value = 2.0;
+
+    line_following_characteristics.pid_steer_parameters.proportional_gain = 2.0;
+    line_following_characteristics.pid_steer_parameters.integral_gain = 0.0;
+    line_following_characteristics.pid_steer_parameters.derivative_gain = 0.0;
+    line_following_characteristics.pid_steer_parameters.min_value = -2.0;
+    line_following_characteristics.pid_steer_parameters.max_value = 2.0;
+
+    line_following_characteristics.measurement_noise = 0.1;
+    line_following_characteristics.position_state_noise = 0.1;
+    line_following_characteristics.position_derivative_state_noise = 0.01;
+
+    line_following_characteristics.max_forward_velocity = 0.05;
+
+    return line_following_characteristics;
+}
+
 }  // namespace
 
 class LineFollowerRobot final
@@ -100,10 +163,12 @@ class LineFollowerRobot final
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
           left_encoder_data_consumer_agent_{},
           left_encoder_data_producer_agent_{createEncoderCharacteristics(), createLeftEncoderPinConfiguration(), EncoderTag::kLeft},
-          left_motor_signal_producer_agent_{},
           left_motor_signal_consumer_agent_{createMotorCharacteristics(), createLeftMotorPinConfiguration()},
-          ir_sensor_array_data_consumer_agent_{},
-          ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(), createIrSensorArrayPinConfiguration()}
+          right_encoder_data_consumer_agent_{},
+          right_encoder_data_producer_agent_{createEncoderCharacteristics(), createRightEncoderPinConfiguration(), EncoderTag::kRight},
+          right_motor_signal_consumer_agent_{createMotorCharacteristics(), createRightMotorPinConfiguration()},
+          ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(), createIrSensorArrayPinConfiguration()},
+          line_following_agent_{createRobotCharacteristics(), createLineFollowingCharacteristics(), createInitialPose()}
     {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
     }
@@ -114,18 +179,31 @@ class LineFollowerRobot final
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
     EncoderDataProducerAgent left_encoder_data_producer_agent_;
-    MotorSignalProducerAgent left_motor_signal_producer_agent_;
     MotorSignalConsumerAgent left_motor_signal_consumer_agent_;
-    IrSensorArrayDataConsumerAgent ir_sensor_array_data_consumer_agent_;
+    EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
+    EncoderDataProducerAgent right_encoder_data_producer_agent_;
+    MotorSignalConsumerAgent right_motor_signal_consumer_agent_;
     IrSensorArrayDataProducerAgent ir_sensor_array_data_producer_agent_;
+    LineFollowingAgent line_following_agent_;
 };
 
 void LineFollowerRobot::setup() {
     left_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
         LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
+        line_following_agent_.setEncoderLeftData(encoder_data);
     });
 
-    ir_sensor_array_data_consumer_agent_.onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
+    right_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
+        LOG_INFO("Right encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
+        line_following_agent_.setEncoderRightData(encoder_data);
+    });
+
+    line_following_agent_.onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
+        Pose pose{line_following_agent_.getPose()};
+
+        line_following_agent_.setIrSensorArrayData(ir_sensor_array_data);
+        line_following_agent_.step();
+
         std::stringstream stream{};
         stream << "Read ir data: ";
 
@@ -133,23 +211,28 @@ void LineFollowerRobot::setup() {
             stream << reading.detected_white_surface << " ";
         }
         stream << "\n";
+
+        LOG_INFO("Position: (%.2f, %.2f, %.2f)", pose.position.x, pose.position.y, pose.position.z);
+        LOG_INFO("Rotation: (%.2f, %.2f, %.2f, %.2f)", pose.rotation.w, pose.rotation.x,
+                 pose.rotation.y, pose.rotation.z);
         LOG_INFO(stream.str());
     });
 
+    // Attach consumers to producers
     left_encoder_data_consumer_agent_.attach(left_encoder_data_producer_agent_);
-    left_motor_signal_consumer_agent_.attach(left_motor_signal_producer_agent_);
-    ir_sensor_array_data_consumer_agent_.attach(ir_sensor_array_data_producer_agent_);
+    right_encoder_data_consumer_agent_.attach(right_encoder_data_producer_agent_);
+    line_following_agent_.attach(ir_sensor_array_data_producer_agent_);
+
+    // Attach motors to line follower agent
+    line_following_agent_.attachMotorLeft(left_motor_signal_consumer_agent_);
+    line_following_agent_.attachMotorRight(right_motor_signal_consumer_agent_);
 
     LOG_INFO("Starting calibration routine for ir sensor...", "");
     ir_sensor_array_data_producer_agent_.calibrate(kCalibrationIterations);
 
-    // Send a constant motor signal to the left motor
-    MotorSignal signal{};
-    signal.speed.revolutions_per_second = 1.0;
-    left_motor_signal_producer_agent_.sendData(signal);
-
     // Start scheduling readings from sensors
     left_encoder_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
+    right_encoder_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
     ir_sensor_array_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
 
     LOG_INFO("I am alive!", "");

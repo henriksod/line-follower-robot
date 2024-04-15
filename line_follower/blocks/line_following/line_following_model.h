@@ -5,9 +5,8 @@
 
 #include <memory>
 
+#include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 #include "line_follower/blocks/pid/pid.h"
-#include "line_follower/external/api/dead_reckoning_interface.h"
-#include "line_follower/external/api/line_following_interface.h"
 #include "line_follower/external/types/encoder_data.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
 #include "line_follower/external/types/line_following_characteristics.h"
@@ -19,13 +18,13 @@
 namespace line_follower {
 
 /// Class for modeling line following of a line using a ir array sensor
-class LineFollowingModel : public LineFollowingInterface {
+class LineFollowingModel {
  public:
     /// Constructor for LineFollowingModel
     /// @param characteristics The characteristics of the line following algorithm
-    /// @param dead_reckoning_interface Interface to a dead reckoning model
+    /// @param dead_reckoning_model Interface to a dead reckoning model
     LineFollowingModel(LineFollowingCharacteristics characteristics,
-                       std::unique_ptr<DeadReckoningInterface> dead_reckoning_interface);
+                       std::unique_ptr<DeadReckoningModel> dead_reckoning_model);
 
     /// Destructor for LineFollowingModel
     ~LineFollowingModel() noexcept = default;
@@ -37,10 +36,10 @@ class LineFollowingModel : public LineFollowingInterface {
     LineFollowingModel& operator=(LineFollowingModel&&) = delete;
 
     /// Get the predicted line follower state
-    LineFollowingState getPredictedState() const override;
+    LineFollowingState getPredictedState() const;
 
     /// Set the predicted line follower state
-    void setPredictedState(LineFollowingState const& predicted_state) override;
+    void setPredictedState(LineFollowingState const& predicted_state);
 
     /// Get the predicted line follower state
     /// @param timestamp The timestamp of the prediction
@@ -49,38 +48,38 @@ class LineFollowingModel : public LineFollowingInterface {
 
     /// Get the current pose of the model, in robot coordinates
     /// @return The current pose of the model
-    Pose const& getPose() const override;
+    Pose const& getPose() const;
 
     /// Set the current pose of the model, in robot coordinates
     /// @param new_pose The new pose to set
     /// @param timestamp The timestamp of the pose
-    void setPose(const Pose& new_pose, SystemTime timestamp) override;
+    void setPose(const Pose& new_pose, SystemTime timestamp);
 
     /// Get the desired motor signal for the left motor
-    MotorSignal getMotorSignalLeft() const override;
+    MotorSignal getMotorSignalLeft() const;
 
     /// Get the desired motor signal for the left motor
-    MotorSignal getMotorSignalRight() const override;
+    MotorSignal getMotorSignalRight() const;
 
     /// Update the model with new input data for left encoder
     /// @param encoder_data_left The encoder data from the left wheel
-    void setEncoderLeftData(const EncoderData& encoder_data_left) override;
+    void setEncoderLeftData(const EncoderData& encoder_data_left);
 
     /// Update the model with new input data for right encoder
     /// @param encoder_data_right The encoder data from the right wheel
-    void setEncoderRightData(const EncoderData& encoder_data_right) override;
+    void setEncoderRightData(const EncoderData& encoder_data_right);
 
     /// Predict the next state of the line follower model
     /// @param timestamp The timestamp of the prediction
-    void predict(SystemTime timestamp) override;
+    void predict(SystemTime timestamp);
 
     /// Update the state of the line follower model using ir array data
     /// @param ir_array_data The observed ir sensor array data
-    void update(const IrSensorArrayData& ir_array_data) override;
+    void update(const IrSensorArrayData& ir_array_data);
 
  private:
     LineFollowingCharacteristics characteristics_;
-    std::unique_ptr<DeadReckoningInterface> dead_reckoning_interface_;
+    std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
     LineFollowingState predicted_state_;
     PID pid_left_speed_;
     PID pid_right_speed_;

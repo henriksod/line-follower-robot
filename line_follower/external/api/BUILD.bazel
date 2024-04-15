@@ -25,27 +25,6 @@ cc_library(
 )
 
 cc_library(
-    name = "dead_reckoning_interface",
-    hdrs = ["dead_reckoning_interface.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//line_follower/blocks/geometry:conversion",
-        "//line_follower/blocks/geometry:quaternion",
-        "//line_follower/external/types",
-    ],
-)
-
-cc_library(
-    name = "line_following_interface",
-    hdrs = ["line_following_interface.h"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":dead_reckoning_interface",
-        "//line_follower/external/types",
-    ],
-)
-
-cc_library(
     name = "common",
     hdrs = ["common.h"],
     visibility = ["//visibility:public"],
@@ -103,7 +82,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":motor_signal_agent_api",
-        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/blocks/line_following:line_following_model",
         "//line_follower/external/api:ir_sensor_array_data_agent_api",
         "//line_follower/external/types",
     ],

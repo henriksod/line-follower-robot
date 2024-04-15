@@ -5,6 +5,7 @@ cc_library(
     srcs = ["simulation/line_following_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/geometry:vector",
@@ -12,7 +13,6 @@ cc_library(
         "//line_follower/blocks/line_following:line_following_model",
         "//line_follower/blocks/robot_geometry",
         "//line_follower/external/api:line_following_agent_api",
-        "//line_follower/external/api:line_following_interface",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
     ],
@@ -21,8 +21,10 @@ cc_library(
 cc_library(
     name = "line_following_agent_hardware",
     srcs = ["hardware/line_following_agent.cpp"],
+    linkstatic = True,
     visibility = ["__subpackages__"],
     deps = [
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/geometry:vector",
@@ -30,7 +32,6 @@ cc_library(
         "//line_follower/blocks/line_following:line_following_model",
         "//line_follower/blocks/robot_geometry",
         "//line_follower/external/api:line_following_agent_api",
-        "//line_follower/external/api:line_following_interface",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
     ],
