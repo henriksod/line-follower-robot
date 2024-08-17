@@ -45,6 +45,9 @@ double calculateAverageReadingRelativePosition(IrSensorArrayData ir_data) {
             ++number_of_activated_leds;
         }
     }
+    if (number_of_activated_leds > 0U) {
+        average_reading_position /= static_cast<double>(number_of_activated_leds);
+    }
     average_reading_position /= static_cast<double>(number_of_activated_leds);
     return average_reading_position / middle_led_idx;
 }
@@ -113,7 +116,8 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
     // Control the speed for left motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
     double const speed_left_setpoint{dead_reckoning_model_->calculateLeftMotorSpeed(
-        (1.0 - prediction.predicted_position) * characteristics_.max_forward_velocity,
+        (1.0 - abs(prediction.predicted_position) * characteristics_.turning_speed_ratio) *
+            characteristics_.max_forward_velocity,
         out_angular_velocity)};
     double const out_left_wheel_speed{pid_left_speed_.calculate(
         speed_left_setpoint, left_encoder_data_.revolutions_per_second, delta_time_seconds)};
@@ -121,7 +125,8 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
     // Control the speed for right motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
     double const speed_right_setpoint{dead_reckoning_model_->calculateRightMotorSpeed(
-        (1.0 - prediction.predicted_position) * characteristics_.max_forward_velocity,
+        (1.0 - abs(prediction.predicted_position) * characteristics_.turning_speed_ratio) *
+            characteristics_.max_forward_velocity,
         out_angular_velocity)};
     double const out_right_wheel_speed{pid_right_speed_.calculate(
         speed_right_setpoint, right_encoder_data_.revolutions_per_second, delta_time_seconds)};

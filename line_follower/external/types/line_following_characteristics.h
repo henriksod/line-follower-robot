@@ -25,6 +25,9 @@ struct LineFollowingCharacteristics final {
 
     /// The maximum forward velocity allowed
     double max_forward_velocity;
+
+    /// The ratio of normal speed to apply when turning
+    double turning_speed_ratio;
 };
 }  // namespace line_follower
 

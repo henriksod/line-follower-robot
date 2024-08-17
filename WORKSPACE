@@ -48,7 +48,7 @@ rules_pkg_dependencies()
 http_archive(
     name = "com_github_arduino_arduino_cli",
     build_file = "//bazel/arduino:arduino_cli.bzl",
-    sha256 = "e97380db0f8f2a4e18433e424cd0346d7a3affebfc9aaff5b2a34f9c1671eb56",
+    sha256 = "8f8284793e6594284b0322d1e0cad75cd346749a8e6924e85bf12b1a93d81a32",
     url = "https://downloads.arduino.cc/arduino-cli/nightly/arduino-cli_nightly-latest_Linux_64bit.tar.gz",
 )
 
