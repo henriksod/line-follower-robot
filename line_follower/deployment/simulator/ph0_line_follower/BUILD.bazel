@@ -20,6 +20,6 @@ cc_binary_with_variant(
         "//line_follower/service_agents/motor:motor_signal_agent",
         "//line_follower/service_agents/scheduler:scheduler_agent",
     ] + [
-        "@com_github_nlohmann_json//:json"
+        "@com_github_nlohmann_json//:json",
     ],
 )
