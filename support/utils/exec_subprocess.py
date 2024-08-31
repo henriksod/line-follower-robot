@@ -2,10 +2,9 @@ import subprocess
 from loguru import logger
 
 
-def exec_subprocess(cmd, msg_on_error="", msg_on_success="", exit_on_failure=False, verbose=False):
+def exec_subprocess(cmd, msg_on_error="", msg_on_success="", exit_on_failure=False):
     try:
-        if verbose:
-            logger.info(cmd)
+        logger.debug(cmd)
         output = subprocess.run(cmd, capture_output=True, shell=True, text=True)
         if output.stderr:
             logger.warning(f"\n{output.stderr}")

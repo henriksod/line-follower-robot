@@ -22,5 +22,8 @@ from support.commands import cli  # noqa
 
 if __name__ == "__main__":
     logger.remove()
-    logger.add(sys.stderr, colorize=True, level="INFO")
+    log_level = "INFO"
+    if 'LOGURU_LEVEL' in os.environ:
+        log_level = os.environ['LOGURU_LEVEL']
+    logger.add(sys.stderr, colorize=True, level=log_level)
     cli()  # Main entrypoint

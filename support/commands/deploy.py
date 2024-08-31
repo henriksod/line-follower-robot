@@ -44,6 +44,9 @@ def cli():
     qtr_sensors_arduino_lib_zip_path = os.path.join(
         build_path, "external/com_github_qtr_sensors_arduino/qtr_sensors_arduino.zip"
     )
+    arduino_cli_config_default_path = os.path.join(
+        os.path.expanduser("~"), ".arduino15/arduino-cli.yaml"
+    )
 
     if not os.path.exists(build_path):
         os.makedirs(build_path)
@@ -78,15 +81,14 @@ def cli():
 
     logger.info("Making changes to arduino config to allow unsafe library installations...")
     exec_subprocess(
-        f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli config dump"
-        f' > "{build_path}/arduino_cli_config.yaml"',
-        msg_on_error="Could not dump arduino config to file.",
+        f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli config init --overwrite",
+        msg_on_error="Could not create arduino config file.",
         exit_on_failure=True,
     )
 
     exec_subprocess(
-        "sed -i 's/enable_unsafe_install: false/enable_unsafe_install: true/g'"
-        f" {build_path}/arduino_cli_config.yaml",
+        "echo \"library:\n  enable_unsafe_install: true\n\""
+        f" >> {arduino_cli_config_default_path}",
         msg_on_error="Could not modify arduino config file.",
         exit_on_failure=True,
     )
@@ -96,7 +98,6 @@ def cli():
         f"unzip -o {arduino_lib_zip_path} -d {build_path}",
         msg_on_error="Could not unpack the target to deploy.",
         exit_on_failure=True,
-        verbose=True,
     )
 
     exec_subprocess(
@@ -121,7 +122,7 @@ def cli():
     logger.info("Installing qtr-sensors-arduino library...")
     exec_subprocess(
         f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli"
-        f" lib install --zip-path --config-file {build_path}/arduino_cli_config.yaml"
+        f" lib install --zip-path --config-file {arduino_cli_config_default_path}"
         f" {qtr_sensors_arduino_lib_zip_path}",
         msg_on_error="Could not install qtr-sensors-arduino library.",
         exit_on_failure=True,
@@ -130,7 +131,7 @@ def cli():
     logger.info("Installing line follower library...")
     exec_subprocess(
         f"{build_path}/external/com_github_arduino_arduino_cli/arduino-cli"
-        f" lib install --zip-path --config-file {build_path}/arduino_cli_config.yaml"
+        f" lib install --zip-path --config-file {arduino_cli_config_default_path}"
         f" {arduino_lib_zip_path}",
         msg_on_error="Could not install line follower library.",
         exit_on_failure=True,
