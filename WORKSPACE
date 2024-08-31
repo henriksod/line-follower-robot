@@ -47,7 +47,7 @@ rules_pkg_dependencies()
 # arduino-cli
 http_archive(
     name = "com_github_arduino_arduino_cli",
-    build_file = "//bazel/arduino:arduino_cli.bzl",
+    build_file = "//bazel/arduino:BUILD.arduino_cli.bzl",
     sha256 = "8f8284793e6594284b0322d1e0cad75cd346749a8e6924e85bf12b1a93d81a32",
     url = "https://downloads.arduino.cc/arduino-cli/nightly/arduino-cli_nightly-latest_Linux_64bit.tar.gz",
 )
@@ -146,7 +146,14 @@ openocd_deps()
 # Arduino libraries
 http_archive(
     name = "com_github_qtr_sensors_arduino",
-    build_file = "//bazel/arduino:qtr_sensors_arduino.bzl",
+    build_file = "//bazel/arduino:BUILD.qtr_sensors_arduino.bzl",
     sha256 = "95468f7e5abb244fae8f3906c82334ab1828452ec8c3b8548a68f76efbe64cc7",
     url = "https://github.com/pololu/qtr-sensors-arduino/archive/refs/tags/4.0.0.tar.gz",
+)
+
+# C++ libraries
+http_archive(
+    name = "com_github_nlohmann_json",
+    sha256 = "a22461d13119ac5c78f205d3df1db13403e58ce1bb1794edc9313677313f4a9d",
+    url = "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip",
 )

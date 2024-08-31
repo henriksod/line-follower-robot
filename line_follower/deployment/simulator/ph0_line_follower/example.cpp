@@ -31,6 +31,7 @@
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
 #include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/blocks/motor/motor_model.h"
+#include "nlohmann/json.hpp"
 
 namespace line_follower {
 namespace {
