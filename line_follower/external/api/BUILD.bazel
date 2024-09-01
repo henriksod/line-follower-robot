@@ -77,10 +77,20 @@ cc_library(
 )
 
 cc_library(
+    name = "line_following_interface",
+    hdrs = ["line_following_interface.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
     name = "line_following_agent_api",
     hdrs = ["line_following_agent.h"],
     visibility = ["//visibility:public"],
     deps = [
+        ":line_following_interface",
         ":motor_signal_agent_api",
         "//line_follower/blocks/line_following:line_following_model",
         "//line_follower/external/api:ir_sensor_array_data_agent_api",

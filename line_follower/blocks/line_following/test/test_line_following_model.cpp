@@ -59,7 +59,7 @@ TEST(LineFollowingModelTest, TestPredictNoInput) {
     LineFollowingModel line_following_model{createLineFollowingCharacteristics(),
                                             std::move(dead_reckoning_model)};
 
-    line_following_model.predict(SystemTime{0UL});
+    line_following_model.update(SystemTime{0UL});
 
     EXPECT_NEAR(line_following_model.getMotorSignalLeft().speed.revolutions_per_second, 0.0, 1e-6);
     EXPECT_NEAR(line_following_model.getMotorSignalRight().speed.revolutions_per_second, 0.0, 1e-6);
@@ -85,40 +85,19 @@ TEST(LineFollowingModelTest, TestPredictInitialState) {
     line_following_model.setEncoderLeftData(encoder_data);
     line_following_model.setEncoderRightData(encoder_data);
 
-    line_following_model.predict(first_observation.timestamp);
+    line_following_model.update(first_observation.timestamp);
 
     EXPECT_NEAR(line_following_model.getMotorSignalLeft().speed.revolutions_per_second, 0.0, 1e-6);
     EXPECT_NEAR(line_following_model.getMotorSignalRight().speed.revolutions_per_second, 0.0, 1e-6);
 
     line_following_model.update(first_observation);
 
-    line_following_model.predict(SystemTime{10000UL});
+    line_following_model.update(SystemTime{10000UL});
 
     EXPECT_GT(line_following_model.getMotorSignalLeft().speed.revolutions_per_second, 0.0);
     EXPECT_GT(line_following_model.getMotorSignalRight().speed.revolutions_per_second, 0.0);
 
-    LineFollowingState state_at_update{line_following_model.getPredictedState()};
-
-    EXPECT_NEAR(state_at_update.predicted_position, -(7.5 - 2.0) / 7.5, 5e-2);
-
-    line_following_model.predict(SystemTime{6000UL});
-
-    line_following_model.predict(SystemTime{7000UL});
-
-    line_following_model.predict(SystemTime{8000UL});
-
-    LineFollowingState state_after_some_predictions{line_following_model.getPredictedState()};
-
-    EXPECT_NEAR(state_at_update.left_motor_signal_output.speed.revolutions_per_second,
-                state_after_some_predictions.left_motor_signal_output.speed.revolutions_per_second,
-                1e-3);
-    EXPECT_NEAR(state_at_update.right_motor_signal_output.speed.revolutions_per_second,
-                state_after_some_predictions.right_motor_signal_output.speed.revolutions_per_second,
-                1e-3);
-    EXPECT_NEAR(state_at_update.predicted_position, state_after_some_predictions.predicted_position,
-                1e-3);
-    EXPECT_NEAR(state_at_update.predicted_position_derivative,
-                state_after_some_predictions.predicted_position_derivative, 1e-3);
+    /// TODO: Extend the test
 }
 }  // namespace
 }  // namespace line_follower

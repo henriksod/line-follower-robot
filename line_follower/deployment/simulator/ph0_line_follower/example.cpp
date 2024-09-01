@@ -35,7 +35,7 @@
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/utils/rotation_utils.h"
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
-#include "line_follower/blocks/line_following/line_following_model.h"
+#include "line_follower/blocks/line_following/simple_line_following_model.h"
 #include "line_follower/blocks/motor/motor_model.h"
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
 #include "line_follower/blocks/utilities/track_loader.h"
@@ -86,19 +86,19 @@ IrSensorArrayCharacteristics createIrSensorArrayCharacteristics() {
 
 DifferentialDriveRobotCharacteristics createRobotCharacteristics() {
     DifferentialDriveRobotCharacteristics robot_characteristics{};
-    robot_characteristics.wheel_radius = 0.02;
-    robot_characteristics.distance_between_wheels = 0.1;
+    robot_characteristics.wheel_radius = 0.01;
+    robot_characteristics.distance_between_wheels = 0.2;
     return robot_characteristics;
 }
 
 LineFollowingCharacteristics createLineFollowingCharacteristics() {
     LineFollowingCharacteristics line_following_characteristics{};
 
-    line_following_characteristics.pid_speed_parameters.proportional_gain = 2.0;
+    line_following_characteristics.pid_speed_parameters.proportional_gain = 1.0;
     line_following_characteristics.pid_speed_parameters.integral_gain = 0.0;
     line_following_characteristics.pid_speed_parameters.derivative_gain = 0.0;
     line_following_characteristics.pid_speed_parameters.min_value = 0.0;
-    line_following_characteristics.pid_speed_parameters.max_value = 2.0;
+    line_following_characteristics.pid_speed_parameters.max_value = 100.0;
 
     line_following_characteristics.pid_steer_parameters.proportional_gain = 2.0;
     line_following_characteristics.pid_steer_parameters.integral_gain = 0.0;
@@ -111,6 +111,7 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
     line_following_characteristics.position_derivative_state_noise = 0.01;
 
     line_following_characteristics.max_forward_velocity = 0.05;
+    line_following_characteristics.turning_speed_ratio = 0.25;
 
     return line_following_characteristics;
 }
@@ -137,7 +138,7 @@ class ExampleRobot final {
             std::make_unique<DeadReckoningModel>(createRobotCharacteristics(), initial_pose_)};
         dead_reckoning_model_ = dead_reckoning_model.get();
 
-        auto line_following_model{std::make_unique<LineFollowingModel>(
+        auto line_following_model{std::make_unique<SimpleLineFollowingModel>(
             createLineFollowingCharacteristics(), std::move(dead_reckoning_model))};
         line_following_model_ = line_following_model.get();
 
@@ -182,7 +183,7 @@ class ExampleRobot final {
     EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
     Pose initial_pose_;
     DeadReckoningModel* dead_reckoning_model_;
-    LineFollowingModel* line_following_model_;
+    SimpleLineFollowingModel* line_following_model_;
     EncoderModel* left_encoder_model_;
     MotorModel* left_motor_model_;
     EncoderModel* right_encoder_model_;

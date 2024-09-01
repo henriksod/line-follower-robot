@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <utility>
 
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
@@ -113,8 +112,6 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
     double const out_angular_velocity{
         pid_steer_.calculate(steer_setpoint, prediction.predicted_position, delta_time_seconds)};
 
-    std::cerr << "out_angular_velocity = " << out_angular_velocity << "\n";
-
     // Control the speed for left motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
     double const speed_left_setpoint{dead_reckoning_model_->calculateLeftMotorSpeed(
@@ -180,7 +177,7 @@ LineFollowingState LineFollowingModel::preparePredictedState(SystemTime timestam
     return next_predicted_state;
 }
 
-void LineFollowingModel::predict(SystemTime timestamp) {
+void LineFollowingModel::update(SystemTime timestamp) {
     if (time_at_last_predict_.system_time_us == 0U) {
         time_at_last_predict_.system_time_us = timestamp.system_time_us;
     }

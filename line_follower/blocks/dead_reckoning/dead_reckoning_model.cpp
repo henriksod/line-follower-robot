@@ -3,7 +3,6 @@
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 
 #include <cmath>
-#include <iostream>
 
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/quaternion.h"
@@ -62,8 +61,8 @@ void DeadReckoningModel::step(SystemTime timestamp) {
                         (2.0 * characteristics_.distance_between_wheels);
 
     // Update pose
-    pose_.position.x += forward_velocity_ * cos(angular_velocity_);
-    pose_.position.y += forward_velocity_ * sin(angular_velocity_);
+    pose_.position.x += forward_velocity_ * sin(angular_velocity_);
+    pose_.position.y += forward_velocity_ * cos(angular_velocity_);
 
     geometry::Quaternion<double> rotation{eulerToQuat(EulerRotation{0.0, 0.0, angular_velocity_})};
     pose_.rotation = convert(convert(pose_.rotation) * rotation);

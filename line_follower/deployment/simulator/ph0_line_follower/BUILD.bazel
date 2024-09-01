@@ -22,7 +22,7 @@ cc_binary_with_variant(
         "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
         "//line_follower/blocks/encoder:encoder_model",
         "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
-        "//line_follower/blocks/line_following:line_following_model",
+        "//line_follower/blocks/line_following:simple_line_following_model",
         "//line_follower/blocks/motor:motor_model",
         "//line_follower/blocks/utilities:track_loader",
         "@com_github_jarro2783_cxxopts//:cxxopts",

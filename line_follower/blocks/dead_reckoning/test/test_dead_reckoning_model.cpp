@@ -42,8 +42,8 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
     dead_reckoning_model.step(SystemTime{1000000U});
 
-    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, PI * kRobotWheelRadiusMeters, 1e-9);
-    EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0, 1e-9);
+    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0, 1e-9);
+    EXPECT_NEAR(dead_reckoning_model.getPose().position.y, PI * kRobotWheelRadiusMeters, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.z, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.w, 1.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.x, 0.0, 1e-9);
@@ -86,8 +86,8 @@ TEST(DeadReckoningModelTest, TestCorrectPoseAfterUpdate) {
     dead_reckoning_model.setEncoderRightData(encoder_data_right);
     dead_reckoning_model.step(SystemTime{3500000U});
 
-    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0896, 1e-4);
-    EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0291, 1e-4);
+    EXPECT_NEAR(dead_reckoning_model.getPose().position.x, 0.0291, 1e-4);
+    EXPECT_NEAR(dead_reckoning_model.getPose().position.y, 0.0896, 1e-4);
     EXPECT_NEAR(dead_reckoning_model.getPose().position.z, 0.0, 1e-9);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.w, 0.9877, 1e-4);
     EXPECT_NEAR(dead_reckoning_model.getPose().rotation.x, 0.0, 1e-9);

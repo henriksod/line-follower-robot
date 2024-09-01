@@ -1,10 +1,10 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#include <sstream>
-#include <array>
-
 #include <Arduino.h>
 #include <LineFollower.h>
+
+#include <array>
+#include <sstream>
 
 namespace line_follower {
 
@@ -35,7 +35,6 @@ EncoderCharacteristics createEncoderCharacteristics() {
     encoder_characteristics.counts_per_revolution = 12.0;
     return encoder_characteristics;
 }
-
 
 MotorCharacteristics createMotorCharacteristics() {
     MotorCharacteristics motor_characteristics{};
@@ -113,11 +112,8 @@ IrSensorArrayPinConfiguration createIrSensorArrayPinConfiguration() {
     IrSensorArrayPinConfiguration pin_configuration{};
     static_assert(kMaxIrSensorArrayNumberOfLeds == 15U, "Maximum number of leds are not 15!");
     std::array<uint8_t, kMaxIrSensorArrayNumberOfLeds> sensor_pins{
-        A9, A8, A7, A6, A5, A4, A3, A2, A1, A0, A17, A16, A15, A14, A13
-    };
-    std::array<uint8_t, 2U> emitter_pins{
-        37, 36
-    };
+        A9, A8, A7, A6, A5, A4, A3, A2, A1, A0, A17, A16, A15, A14, A13};
+    std::array<uint8_t, 2U> emitter_pins{37, 36};
     pin_configuration.sensor_pins = sensor_pins;
     pin_configuration.emitter_pins = emitter_pins;
     return pin_configuration;
@@ -149,32 +145,38 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
     line_following_characteristics.position_state_noise = 0.1;
     line_following_characteristics.position_derivative_state_noise = 0.01;
 
-    line_following_characteristics.max_forward_velocity = 0.05;
+    line_following_characteristics.max_forward_velocity = 1.0;
 
     return line_following_characteristics;
 }
 
 }  // namespace
 
-class LineFollowerRobot final
-{
+class LineFollowerRobot final {
  public:
     LineFollowerRobot()
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
           left_encoder_data_consumer_agent_{},
-          left_encoder_data_producer_agent_{createEncoderCharacteristics(), createLeftEncoderPinConfiguration(), EncoderTag::kLeft},
-          left_motor_signal_consumer_agent_{createMotorCharacteristics(), createLeftMotorPinConfiguration()},
+          left_encoder_data_producer_agent_{createEncoderCharacteristics(),
+                                            createLeftEncoderPinConfiguration(), EncoderTag::kLeft},
+          left_motor_signal_consumer_agent_{createMotorCharacteristics(),
+                                            createLeftMotorPinConfiguration()},
           right_encoder_data_consumer_agent_{},
-          right_encoder_data_producer_agent_{createEncoderCharacteristics(), createRightEncoderPinConfiguration(), EncoderTag::kRight},
-          right_motor_signal_consumer_agent_{createMotorCharacteristics(), createRightMotorPinConfiguration()},
-          ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(), createIrSensorArrayPinConfiguration()},
-          line_following_agent_{createRobotCharacteristics(), createLineFollowingCharacteristics(), createInitialPose()}
-    {
+          right_encoder_data_producer_agent_{createEncoderCharacteristics(),
+                                             createRightEncoderPinConfiguration(),
+                                             EncoderTag::kRight},
+          right_motor_signal_consumer_agent_{createMotorCharacteristics(),
+                                             createRightMotorPinConfiguration()},
+          ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(),
+                                               createIrSensorArrayPinConfiguration()},
+          line_following_agent_{createRobotCharacteristics(), createLineFollowingCharacteristics(),
+                                createInitialPose()} {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
     }
 
     void setup();
     void loop();
+
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
@@ -245,13 +247,11 @@ void LineFollowerRobot::loop() {
 
 }  // namespace line_follower
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
 }
 
-void loop()
-{
+void loop() {
     line_follower::LineFollowerRobot robot{};
     robot.setup();
     while (true) robot.loop();

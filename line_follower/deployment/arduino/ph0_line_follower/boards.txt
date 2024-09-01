@@ -45,7 +45,7 @@ teensy41.build.flags.defs=-D__IMXRT1062__ -DTEENSYDUINO=159
 teensy41.build.flags.cpp=-std=gnu++17 -fno-exceptions -fpermissive -fno-rtti -fno-threadsafe-statics -felide-constructors -Wno-error=narrowing
 teensy41.build.flags.c=
 teensy41.build.flags.S=-x assembler-with-cpp
-teensy41.build.flags.libs=-lencoder_data_agent_hardware -lir_sensor_array_data_agent_hardware -lline_following_agent_hardware -llogging_agent_hardware -lmotor_signal_agent_hardware -lscheduler_agent_hardware -ltime_agent_hardware -lline_following_model -ldead_reckoning_model -lpid -larm_cortexM7lfsp_math -lm -lstdc++ --specs=nosys.specs
+teensy41.build.flags.libs=-lencoder_data_agent_hardware -lir_sensor_array_data_agent_hardware -lline_following_agent_hardware -llogging_agent_hardware -lmotor_signal_agent_hardware -lscheduler_agent_hardware -ltime_agent_hardware -lsimple_line_following_model -ldead_reckoning_model -lpid -larm_cortexM7lfsp_math -lm -lstdc++ --specs=nosys.specs
 teensy41.serial.restart_cmd=false
 teensy41.menu.usb.serial=Serial
 teensy41.menu.usb.serial.build.usbtype=USB_SERIAL

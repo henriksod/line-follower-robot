@@ -4,7 +4,6 @@
 
 #include <cstdint>
 #include <fstream>
-#include <iostream>
 #include <vector>
 
 #include "line_follower/external/api/logging.h"

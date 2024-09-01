@@ -17,6 +17,23 @@ cc_library(
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/pid",
         "//line_follower/blocks/robot_geometry",
+        "//line_follower/external/api:line_following_interface",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
+    name = "simple_line_following_model",
+    srcs = ["simple_line_following_model.cpp"],
+    hdrs = ["simple_line_following_model.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/pid",
+        "//line_follower/blocks/robot_geometry",
+        "//line_follower/external/api:line_following_interface",
         "//line_follower/external/types",
     ],
 )

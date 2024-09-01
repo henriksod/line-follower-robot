@@ -11,7 +11,7 @@ LIBRARIES = [
     "//line_follower/service_agents/line_following:line_following_agent",
     "//line_follower/service_agents/motor:motor_signal_agent",
     "//line_follower/service_agents/scheduler:scheduler_agent",
-    "//line_follower/blocks/line_following:line_following_model",
+    "//line_follower/blocks/line_following:simple_line_following_model",
     "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
     "//line_follower/blocks/pid",
 ]

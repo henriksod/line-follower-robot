@@ -4,7 +4,6 @@
 
 #include <chrono>
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <tuple>
 #include <vector>
@@ -130,7 +129,19 @@ TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
         std::vector<TrackSegment> track_segments{};
         TrackSegment track_segment{};
         track_segment.track_lines[0] = segment;
+
+        // Add an extra visible line to exercise multiple lines
+        TrackLineSegment dummy_track_line{};
+        dummy_track_line.visible = true;
+        track_segment.track_lines[1] = dummy_track_line;
+
         track_segments.push_back(track_segment);
+
+        // Add an extra track segment to exercise multiple segments
+        TrackSegment dummy_track_segment{};
+        dummy_track_segment.track_lines[0] = dummy_track_line;
+        track_segments.push_back(dummy_track_segment);
+
         ir_sensor_array_model_->setTrackLines(track_segments, ir_sensor_array_pose);
 
         bool receiveDataWasCalled{false};

@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_LINE_FOLLOWING_MODEL_H_
-#define LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_LINE_FOLLOWING_MODEL_H_
+#ifndef LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_SIMPLE_LINE_FOLLOWING_MODEL_H_
+#define LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_SIMPLE_LINE_FOLLOWING_MODEL_H_
 
 #include <memory>
 
@@ -19,33 +19,22 @@
 namespace line_follower {
 
 /// Class for modeling line following of a line using a ir array sensor
-class LineFollowingModel : public LineFollowingInterface {
+class SimpleLineFollowingModel : public LineFollowingInterface {
  public:
-    /// Constructor for LineFollowingModel
+    /// Constructor for SimpleLineFollowingModel
     /// @param characteristics The characteristics of the line following algorithm
     /// @param dead_reckoning_model Interface to a dead reckoning model
-    LineFollowingModel(LineFollowingCharacteristics characteristics,
-                       std::unique_ptr<DeadReckoningModel> dead_reckoning_model);
+    SimpleLineFollowingModel(LineFollowingCharacteristics characteristics,
+                             std::unique_ptr<DeadReckoningModel> dead_reckoning_model);
 
-    /// Destructor for LineFollowingModel
-    ~LineFollowingModel() noexcept final = default;
+    /// Destructor for SimpleLineFollowingModel
+    ~SimpleLineFollowingModel() noexcept final = default;
 
     // Deleted copy and move constructors and assignment operators
-    LineFollowingModel(const LineFollowingModel&) = delete;
-    LineFollowingModel(LineFollowingModel&&) = delete;
-    LineFollowingModel& operator=(const LineFollowingModel&) = delete;
-    LineFollowingModel& operator=(LineFollowingModel&&) = delete;
-
-    /// Get the predicted line follower state
-    LineFollowingState getPredictedState() const;
-
-    /// Set the predicted line follower state
-    void setPredictedState(LineFollowingState const& predicted_state);
-
-    /// Get the predicted line follower state
-    /// @param timestamp The timestamp of the prediction
-    /// @param delta_time_seconds The delta time between predicted states
-    LineFollowingState preparePredictedState(SystemTime timestamp, double delta_time_seconds) const;
+    SimpleLineFollowingModel(const SimpleLineFollowingModel&) = delete;
+    SimpleLineFollowingModel(SimpleLineFollowingModel&&) = delete;
+    SimpleLineFollowingModel& operator=(const SimpleLineFollowingModel&) = delete;
+    SimpleLineFollowingModel& operator=(SimpleLineFollowingModel&&) = delete;
 
     /// Get the current pose of the model, in robot coordinates
     /// @return The current pose of the model
@@ -81,7 +70,6 @@ class LineFollowingModel : public LineFollowingInterface {
  private:
     LineFollowingCharacteristics characteristics_;
     std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
-    LineFollowingState predicted_state_;
     PID pid_left_speed_;
     PID pid_right_speed_;
     PID pid_steer_;
@@ -89,13 +77,13 @@ class LineFollowingModel : public LineFollowingInterface {
     MotorSignal right_motor_signal_{};
     EncoderData left_encoder_data_{};
     EncoderData right_encoder_data_{};
-    SystemTime time_at_last_predict_{};
+    SystemTime time_at_last_update_{};
 
     /// Calculate the desired motor signals based on predicted state
     /// of the ir array sensor
-    void calculateMotorSignals(LineFollowingState prediction, double delta_time_seconds);
+    void calculateMotorSignals(double position, double delta_time_seconds);
 };
 
 }  // namespace line_follower
 
-#endif  // LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_LINE_FOLLOWING_MODEL_H_
+#endif  // LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_SIMPLE_LINE_FOLLOWING_MODEL_H_
