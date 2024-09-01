@@ -38,7 +38,7 @@ class IrSensorArrayDataProducerAgent final : public ProducerAgent<IrSensorArrayD
     ///        will occur each tick determined by the given time interval.
     /// @param scheduler The global scheduler
     /// @param time_interval_us Time interval to get ticks from the scheduler.
-    void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us);
+    void schedule(SchedulerProducerAgent& scheduler, uint32_t time_interval_us);
 
  private:
     using ProducerAgent<IrSensorArrayData>::sendData;

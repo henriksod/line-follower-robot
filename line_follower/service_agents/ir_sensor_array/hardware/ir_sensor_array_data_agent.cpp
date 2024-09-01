@@ -73,7 +73,7 @@ void IrSensorArrayDataProducerAgent::calibrate(size_t const iterations) {
     pimpl_->calibrate(iterations);
 }
 
-void IrSensorArrayDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,
+void IrSensorArrayDataProducerAgent::schedule(SchedulerProducerAgent& scheduler,
                                               uint32_t time_interval_us) {
     pimpl_->schedule(scheduler, time_interval_us, [this]() {
         IrSensorArrayData data{};

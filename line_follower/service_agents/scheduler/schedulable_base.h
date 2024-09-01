@@ -34,10 +34,9 @@ class SchedulableBase {
     /// @param time_interval_us Time interval to get ticks from the scheduler.
     /// @param func The callback function
     template <typename FunctorT>
-    void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us,
-                  FunctorT&& func) {
+    void schedule(SchedulerProducerAgent& scheduler, uint32_t time_interval_us, FunctorT&& func) {
         scheduler_consumer_->onReceiveData(std::move(func));
-        scheduler->registerScheduler(*scheduler_consumer_, time_interval_us);
+        scheduler.registerScheduler(*scheduler_consumer_, time_interval_us);
     }
 
  private:

@@ -8,6 +8,7 @@
 
 #include "line_follower/blocks/common/string.h"
 #include "line_follower/external/api/logging_agent.h"
+#include "line_follower/external/types/logging_verbosity_level.h"
 
 namespace line_follower {
 
@@ -17,22 +18,22 @@ namespace line_follower {
 
 // Use these macros for logging
 #define LOG_DEBUG(format, ...) \
-    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kDebug)
+    LOG_(string_format(format, "", ##__VA_ARGS__), LoggingVerbosityLevel::kDebug)
 #define LOG_INFO(format, ...) \
-    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kInfo)
+    LOG_(string_format(format, "", ##__VA_ARGS__), LoggingVerbosityLevel::kInfo)
 #define LOG_WARN(format, ...) \
-    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kWarn)
+    LOG_(string_format(format, "", ##__VA_ARGS__), LoggingVerbosityLevel::kWarn)
 #define LOG_ERROR(format, ...) \
-    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kError)
+    LOG_(string_format(format, "", ##__VA_ARGS__), LoggingVerbosityLevel::kError)
 #define LOG_FATAL_ABORT(format, ...) \
-    LOG_(string_format(format, "", ##__VA_ARGS__), detail::LoggingVerbosityLevel::kFatal)
+    LOG_(string_format(format, "", ##__VA_ARGS__), LoggingVerbosityLevel::kFatal)
 
-inline detail::LoggingVerbosityLevel parseVerbosityLevel(std::string const& str) {
-    if (str == "debug") return detail::LoggingVerbosityLevel::kDebug;
-    if (str == "info") return detail::LoggingVerbosityLevel::kInfo;
-    if (str == "warn") return detail::LoggingVerbosityLevel::kWarn;
-    if (str == "error") return detail::LoggingVerbosityLevel::kError;
-    return detail::LoggingVerbosityLevel::kFatal;
+inline LoggingVerbosityLevel parseVerbosityLevel(std::string const& str) {
+    if (str == "debug") return LoggingVerbosityLevel::kDebug;
+    if (str == "info") return LoggingVerbosityLevel::kInfo;
+    if (str == "warn") return LoggingVerbosityLevel::kWarn;
+    if (str == "error") return LoggingVerbosityLevel::kError;
+    return LoggingVerbosityLevel::kFatal;
 }
 
 }  // namespace line_follower

@@ -14,6 +14,10 @@ cc_library(
         "//line_follower/blocks/robot_geometry",
         "//line_follower/external/api:line_following_agent_api",
         "//line_follower/external/api:line_following_interface",
+<<<<<<< HEAD
+=======
+        "//line_follower/external/api:logging_api",
+>>>>>>> 746e44f (Fix line following)
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
     ],
@@ -34,6 +38,10 @@ cc_library(
         "//line_follower/blocks/robot_geometry",
         "//line_follower/external/api:line_following_agent_api",
         "//line_follower/external/api:line_following_interface",
+<<<<<<< HEAD
+=======
+        "//line_follower/external/api:logging_api",
+>>>>>>> 746e44f (Fix line following)
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
     ],

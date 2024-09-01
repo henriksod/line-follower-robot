@@ -21,6 +21,7 @@ class SchedulerConsumerAgent;
 class SchedulerProducerAgent final : ProducerAgent<UniqueID> {
  public:
     SchedulerProducerAgent();
+
     ~SchedulerProducerAgent() noexcept;
 
     SchedulerProducerAgent(SchedulerProducerAgent const&) = delete;

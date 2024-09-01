@@ -16,6 +16,8 @@ class PID {
     // Returns the manipulated variable given a setpoint and current measurement
     double calculate(double setpoint, double measurement, double dt);
 
+    void reset();
+
  private:
     double _dt;
     double _max;

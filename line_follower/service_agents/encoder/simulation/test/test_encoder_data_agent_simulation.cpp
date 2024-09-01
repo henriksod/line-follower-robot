@@ -71,7 +71,7 @@ TEST_F(EncoderDataAgentTest, GetEncoderData) {
     });
     encoder_data_consumer_agent.attach(*encoder_data_producer_agent_);
 
-    encoder_data_producer_agent_->schedule(scheduler_, kUpdateIntervalMicros);
+    encoder_data_producer_agent_->schedule(*scheduler_, kUpdateIntervalMicros);
 
     auto now = std::chrono::steady_clock::now;
     using std::chrono_literals::operator""s;

@@ -1,0 +1,38 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+cc_library(
+    name = "event_logger_agent_simulation",
+    srcs = ["simulation/event_logger_agent.cpp"],
+    visibility = ["__subpackages__"],
+    deps = [
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:event_logger_agent_api",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
+    ] + [
+        "@com_github_nlohmann_json//:json",
+    ],
+)
+
+cc_library(
+    name = "event_logger_agent_stub",
+    srcs = ["stub/event_logger_agent.cpp"],
+    visibility = ["__subpackages__"],
+    deps = [
+        "//line_follower/external/api:common",
+        "//line_follower/external/api:event_logger_agent_api",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
+    ],
+)
+
+alias(
+    name = "event_logger_agent",
+    actual = select({
+        "//bazel/flags/agents:simulation": ":event_logger_agent_simulation",
+        "//bazel/flags/agents:hardware": ":event_logger_agent_stub",
+        "//bazel/flags/agents:stub": ":event_logger_agent_stub",
+        "//conditions:default": ":event_logger_agent_simulation",
+    }),
+    visibility = ["//visibility:public"],
+)

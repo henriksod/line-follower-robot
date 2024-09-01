@@ -40,7 +40,7 @@ EncoderDataProducerAgent::EncoderDataProducerAgent(
 
 EncoderDataProducerAgent::~EncoderDataProducerAgent() {}
 
-void EncoderDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,
+void EncoderDataProducerAgent::schedule(SchedulerProducerAgent& scheduler,
                                         uint32_t time_interval_us) {
     static_cast<void>(scheduler);
     static_cast<void>(time_interval_us);

@@ -44,7 +44,7 @@ IrSensorArrayDataProducerAgent::IrSensorArrayDataProducerAgent(
 
 IrSensorArrayDataProducerAgent::~IrSensorArrayDataProducerAgent() {}
 
-void IrSensorArrayDataProducerAgent::schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,
+void IrSensorArrayDataProducerAgent::schedule(SchedulerProducerAgent& scheduler,
                                               uint32_t time_interval_us) {
     static_cast<void>(scheduler);
     static_cast<void>(time_interval_us);

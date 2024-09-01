@@ -2,6 +2,8 @@
 
 #include <math.h>
 
+#include <atomic>
+#include <csignal>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -11,6 +13,7 @@
 // clang-format on
 
 #include "line_follower/external/api/encoder_data_agent.h"
+#include "line_follower/external/api/event_logger_agent.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
 #include "line_follower/external/api/line_following_agent.h"
 #include "line_follower/external/api/logging.h"
@@ -21,6 +24,8 @@
 #include "line_follower/external/types/encoder_tag.h"
 #include "line_follower/external/types/ir_sensor_array_characteristics.h"
 #include "line_follower/external/types/line.h"
+#include "line_follower/external/types/line_follower_event_state.h"
+#include "line_follower/external/types/logging_verbosity_level.h"
 #include "line_follower/external/types/motor_characteristics.h"
 #include "line_follower/external/types/motor_signal.h"
 #include "line_follower/external/types/pose.h"
@@ -115,21 +120,29 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
 
     return line_following_characteristics;
 }
+
 }  // namespace
 
 class ExampleRobot final {
- public:
-    ExampleRobot(std::string const& scenario_file, detail::LoggingVerbosityLevel const verbosity)
-        : scheduler_{std::make_shared<SchedulerProducerAgent>()},
-          left_encoder_data_consumer_agent_{},
-          right_encoder_data_consumer_agent_{},
-          initial_pose_{} {
+    bool initializeLogging_(LoggingVerbosityLevel const verbosity) {
         LoggingAgent::getInstance().setVerbosityLevel(verbosity);
-        LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
+        LoggingAgent::getInstance().schedule(*scheduler_, kLoggingUpdateRateMicros);
+        return true;
+    }
 
+ public:
+    ExampleRobot(std::string const& scenario_file, std::string const& event_file,
+                 bool const log_events, LoggingVerbosityLevel const verbosity)
+        : scheduler_{std::make_shared<SchedulerProducerAgent>()},
+          logging_initialized_{initializeLogging_(verbosity)},
+          event_logger_agent_{event_file, log_events},
+          left_encoder_data_consumer_agent_{},
+          right_encoder_data_consumer_agent_{} {
         // Load the track segments
-        line_follower::track_loader::loadScenarioFromJson(scenario_file, track_segments_,
-                                                          initial_pose_);
+        if (!line_follower::track_loader::loadScenarioFromJson(scenario_file, track_segments_,
+                                                               initial_pose_)) {
+            LOG_FATAL_ABORT("Could not load scenario!");
+        }
         // Convert initial pose from world coordinates to robot coordinates
         initial_pose_ =
             geometry::transformedPose(robot_geometry::kWorldToRobotRotation, initial_pose_);
@@ -179,6 +192,8 @@ class ExampleRobot final {
 
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
+    bool logging_initialized_;
+    EventLoggerAgent<IrSensorArrayData, LineFollowerEventState> event_logger_agent_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
     EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
     Pose initial_pose_;
@@ -200,6 +215,16 @@ class ExampleRobot final {
 
 void ExampleRobot::setup() {
     // Define callbacks
+    event_logger_agent_.onReceiveData(
+        [this](IrSensorArrayData const& ir_sensor_array_data) -> LineFollowerEventState {
+            LineFollowerEventState event_state{};
+            event_state.timestamp = ir_sensor_array_data.timestamp;
+            left_encoder_model_->getEncoderData(event_state.left_encoder_data_input);
+            right_encoder_model_->getEncoderData(event_state.right_encoder_data_input);
+            event_state.global_pose = line_following_agent_->getPose();
+            return event_state;
+        });
+
     left_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
         LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
         line_following_agent_->setEncoderLeftData(encoder_data);
@@ -213,10 +238,6 @@ void ExampleRobot::setup() {
         Pose pose{line_following_agent_->getPose()};
         Pose ir_pose{line_following_agent_->getIrSensorArrayPose()};
         ir_sensor_array_model_->setTrackLines(track_segments_, ir_pose);
-
-        if (!ir_sensor_array_data.valid) {
-            LOG_WARN("IR data invalid!");
-        }
 
         line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
         line_following_agent_->step();
@@ -239,15 +260,16 @@ void ExampleRobot::setup() {
     left_encoder_data_consumer_agent_.attach(*left_encoder_data_producer_agent_);
     right_encoder_data_consumer_agent_.attach(*right_encoder_data_producer_agent_);
     line_following_agent_->attach(*ir_sensor_array_data_producer_agent_);
+    event_logger_agent_.attach(*ir_sensor_array_data_producer_agent_);
 
     // Attach motors to line follower agent
     line_following_agent_->attachMotorLeft(*left_motor_signal_consumer_agent_);
     line_following_agent_->attachMotorRight(*right_motor_signal_consumer_agent_);
 
     // Start scheduling readings from sensors
-    left_encoder_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
-    right_encoder_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
-    ir_sensor_array_data_producer_agent_->schedule(scheduler_, kUpdateRateMicros);
+    left_encoder_data_producer_agent_->schedule(*scheduler_, kUpdateRateMicros);
+    right_encoder_data_producer_agent_->schedule(*scheduler_, kUpdateRateMicros);
+    ir_sensor_array_data_producer_agent_->schedule(*scheduler_, kUpdateRateMicros);
 }
 
 void ExampleRobot::loop() {
@@ -259,13 +281,29 @@ void ExampleRobot::loop() {
 }
 }  // namespace line_follower
 
+// A global atomic flag to indicate the shutdown process
+std::atomic<bool> shutdown_requested(false);
+
+// Signal handler function
+void signalHandler(int signum) {
+    std::cout << "Signal (" << signum << ") received.\n";
+    shutdown_requested = true;
+}
+
 int main(int argc, char* argv[]) {
+    // Register signal handler for SIGINT (Ctrl+C)
+    std::signal(SIGINT, signalHandler);
+    std::signal(SIGTERM, signalHandler);  // Also handle SIGTERM
+
     cxxopts::Options options("Example Line Follower Simulator", "Runs line follower simulation");
 
     options.add_options()("scenario_file", "Scenario file containing the track to run",
                           cxxopts::value<std::string>())(
         "verbosity", "The verbosity of logging (debug, info, warn, error)",
-        cxxopts::value<std::string>()->default_value("info"));
+        cxxopts::value<std::string>()->default_value("info"))(
+        "events_log_json", "Json file to store event logs", cxxopts::value<std::string>())(
+        "log_events", "Whether to log events or not",
+        cxxopts::value<bool>()->default_value("false"));
 
     auto result = options.parse(argc, argv);
 
@@ -274,14 +312,24 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    auto log_events = result["log_events"].as<bool>();
+    std::string events_log_json{""};
+    if (log_events) {
+        if (result.count("events_log_json") == 0) {
+            std::cerr << "Log events set to true but no events log file provided!\n";
+            return 1;
+        }
+        events_log_json = result["events_log_json"].as<std::string>();
+    }
+
     auto scenario_file = result["scenario_file"].as<std::string>();
     auto verbosity = result["verbosity"].as<std::string>();
     auto verbosity_level = line_follower::parseVerbosityLevel(verbosity);
 
-    line_follower::ExampleRobot robot{scenario_file, verbosity_level};
+    line_follower::ExampleRobot robot{scenario_file, events_log_json, log_events, verbosity_level};
 
     robot.setup();
 
-    while (true) robot.loop();
+    while (!shutdown_requested) robot.loop();
     return 0;
 }

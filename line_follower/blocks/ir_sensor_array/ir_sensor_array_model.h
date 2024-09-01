@@ -17,6 +17,8 @@ namespace line_follower {
 class IrSensorArrayModel final : public IrSensorArrayInterface {
     void resetIrSensorArrayData(IrSensorArrayData& ir_sensor_array_data) {
         ir_sensor_array_data.valid = false;
+        ir_sensor_array_data_.timestamp.system_time_us = 0U;
+        ir_sensor_array_data_.number_of_leds = ir_array_characteristics_.number_of_leds;
         for (auto& ir_sensor_data : ir_sensor_array_data.ir_sensor_readings) {
             ir_sensor_data.detected_white_surface = true;
             ir_sensor_data.intensity = 1.0;

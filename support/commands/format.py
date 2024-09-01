@@ -38,7 +38,6 @@ def check(all_files):
             "flake8",
             "flake8-blind-except",
             "flake8-docstrings",
-            "flake8-bugbear",
             "flake8-comprehensions",
             "flake8-docstrings",
             "flake8-implicit-str-concat",

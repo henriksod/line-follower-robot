@@ -8,6 +8,7 @@ cc_binary_with_variant(
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/encoder:encoder_data_agent",
+        "//line_follower/service_agents/event_logger:event_logger_agent",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/line_following:line_following_agent",
         "//line_follower/service_agents/logging:logging_agent",

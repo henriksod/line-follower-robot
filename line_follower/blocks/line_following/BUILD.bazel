@@ -28,12 +28,15 @@ cc_library(
     hdrs = ["simple_line_following_model.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//line_follower/blocks/common",
         "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
         "//line_follower/blocks/pid",
         "//line_follower/blocks/robot_geometry",
+        "//line_follower/blocks/state_machine",
         "//line_follower/external/api:line_following_interface",
+        "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
     ],
 )

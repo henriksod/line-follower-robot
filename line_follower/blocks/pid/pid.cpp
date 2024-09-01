@@ -49,4 +49,9 @@ double PID::calculate(double setpoint, double measurement, double dt) {
     return output;
 }
 
+void PID::reset() {
+    _pre_error = 0.0;
+    _integral = 0.0;
+}
+
 }  // namespace line_follower

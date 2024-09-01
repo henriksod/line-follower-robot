@@ -153,9 +153,18 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
 }  // namespace
 
 class LineFollowerRobot final {
+<<<<<<< HEAD
+=======
+    bool initializeLogging_() {
+        LoggingAgent::getInstance().schedule(*scheduler_, kLoggingUpdateRateMicros);
+        return true;
+    }
+
+>>>>>>> 746e44f (Fix line following)
  public:
     LineFollowerRobot()
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
+          initialized_logging_{initializeLogging_()},
           left_encoder_data_consumer_agent_{},
           left_encoder_data_producer_agent_{createEncoderCharacteristics(),
                                             createLeftEncoderPinConfiguration(), EncoderTag::kLeft},
@@ -170,15 +179,20 @@ class LineFollowerRobot final {
           ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(),
                                                createIrSensorArrayPinConfiguration()},
           line_following_agent_{createRobotCharacteristics(), createLineFollowingCharacteristics(),
+<<<<<<< HEAD
                                 createInitialPose()} {
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
     }
+=======
+                                createInitialPose()} {}
+>>>>>>> 746e44f (Fix line following)
 
     void setup();
     void loop();
 
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
+    bool initialized_logging_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
     EncoderDataProducerAgent left_encoder_data_producer_agent_;
     MotorSignalConsumerAgent left_motor_signal_consumer_agent_;
@@ -233,9 +247,9 @@ void LineFollowerRobot::setup() {
     ir_sensor_array_data_producer_agent_.calibrate(kCalibrationIterations);
 
     // Start scheduling readings from sensors
-    left_encoder_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
-    right_encoder_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
-    ir_sensor_array_data_producer_agent_.schedule(scheduler_, kUpdateRateMicros);
+    left_encoder_data_producer_agent_.schedule(*scheduler_, kUpdateRateMicros);
+    right_encoder_data_producer_agent_.schedule(*scheduler_, kUpdateRateMicros);
+    ir_sensor_array_data_producer_agent_.schedule(*scheduler_, kUpdateRateMicros);
 
     LOG_INFO("I am alive!", "");
 }

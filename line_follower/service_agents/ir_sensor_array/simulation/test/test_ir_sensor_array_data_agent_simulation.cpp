@@ -160,7 +160,7 @@ TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
             });
         ir_sensor_array_data_consumer_agent.attach(*ir_sensor_array_data_producer_agent_);
 
-        ir_sensor_array_data_producer_agent_->schedule(scheduler_, kUpdateIntervalMicros);
+        ir_sensor_array_data_producer_agent_->schedule(*scheduler_, kUpdateIntervalMicros);
 
         auto now = std::chrono::steady_clock::now;
         using std::chrono_literals::operator""ms;

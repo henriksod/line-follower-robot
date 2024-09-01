@@ -56,6 +56,17 @@ cc_library(
 )
 
 cc_library(
+    name = "event_logger_agent_api",
+    hdrs = ["event_logger_agent.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":common",
+        "//line_follower/blocks/common",
+        "//line_follower/external/types",
+    ],
+)
+
+cc_library(
     name = "ir_sensor_array_data_agent_api",
     hdrs = ["ir_sensor_array_data_agent.h"],
     visibility = ["//visibility:public"],

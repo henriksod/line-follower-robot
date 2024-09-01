@@ -39,6 +39,8 @@ void IrSensorArrayModel::setTrackLines(std::vector<TrackSegment> const& track_se
     using geometry::Line;
     using geometry::Vector3;
     resetIrSensorArrayData(ir_sensor_array_data_);
+    /// TODO: data validity should be determined based on sanity checks of data.
+    ir_sensor_array_data_.valid = true;
     ir_sensor_array_data_.number_of_leds = ir_array_characteristics_.number_of_leds;
 
     for (auto const& track_segment : track_segments) {
@@ -87,6 +89,7 @@ void IrSensorArrayModel::setTrackLines(std::vector<TrackSegment> const& track_se
                     led_line.center() - orthogonal_led_line_vector * array_spacing / 2.0};
 
                 Line<double> const track_line{convert(track_line_segment.line)};
+
                 auto const track_line_strip{geometry::sweepAlongWidth(
                     track_line, track_line_segment.width * kMillimetersToMeters)};
                 bool any_overlap{led_line.intersectsWithAny(track_line_strip) ||
@@ -95,7 +98,6 @@ void IrSensorArrayModel::setTrackLines(std::vector<TrackSegment> const& track_se
                 auto& led = ir_sensor_array_data_.ir_sensor_readings.at(idx);
 
                 if (any_overlap) {
-                    ir_sensor_array_data_.valid = true;
                     led.detected_white_surface = 1.0 - track_line_segment.whiteness <
                                                  ir_array_characteristics_.line_detected_threshold;
 

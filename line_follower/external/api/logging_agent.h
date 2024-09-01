@@ -8,13 +8,9 @@
 
 #include "line_follower/blocks/common/badge.h"
 #include "line_follower/external/api/scheduler_agent.h"
+#include "line_follower/external/types/logging_verbosity_level.h"
 
 namespace line_follower {
-
-namespace detail {
-/// Verbosity level for logging
-enum class LoggingVerbosityLevel : std::uint8_t { kFatal = 0U, kError, kWarn, kInfo, kDebug };
-}  // namespace detail
 
 /// Provides the system time
 class LoggingAgent final {
@@ -32,19 +28,19 @@ class LoggingAgent final {
     LoggingAgent& operator=(LoggingAgent&&) = delete;
 
     void dispatchMessage(std::string message, std::string file, int line,
-                         detail::LoggingVerbosityLevel verbosity) const;
+                         LoggingVerbosityLevel verbosity) const;
 
     /// @brief Schedule this agent at a fixed time interval. Logging output
     ///        will occur each tick determined by the given time interval.
     ///        Data will end up in a queue and be dispatched at each tick.
     /// @param scheduler The global scheduler
     /// @param time_interval_us Time interval to get ticks from the scheduler.
-    void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us);
+    void schedule(SchedulerProducerAgent& scheduler, uint32_t time_interval_us);
 
     /// @brief Set the logging verbosity level. All logging with higher verbosity
     ///        than this level will be discarded.
     /// @param verbosity The desired verbosity level
-    void setVerbosityLevel(detail::LoggingVerbosityLevel const verbosity);
+    void setVerbosityLevel(LoggingVerbosityLevel const verbosity);
 
  private:
     LoggingAgent();
