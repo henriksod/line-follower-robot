@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <memory>
@@ -21,7 +22,10 @@ class LoggingAgent::Impl final : public SchedulableBase {
 
     void queueMessage(std::string message, std::string file, int line,
                       detail::LoggingVerbosityLevel verbosity) {
-        /// TODO: Only push if verbosity level is below the set level
+        if (verbosity > maximum_verbosity) {
+            return;
+        }
+
         LogMessage log_message{};
         log_message.timestamp = time_agent_->getSystemTime();
         static_cast<void>(std::memcpy(log_message.message, message.c_str(),
@@ -30,6 +34,13 @@ class LoggingAgent::Impl final : public SchedulableBase {
             std::memcpy(log_message.file, file.c_str(), std::min(kMaxFileNameLength, file.size())));
         log_message.line = line;
         message_queue_.push(log_message);
+
+        // For simulation we dispatch immediately
+        dispatchMessages();
+
+        if (verbosity == detail::LoggingVerbosityLevel::kFatal) {
+            std::abort();
+        }
     }
 
     void dispatchMessages() {
@@ -42,9 +53,14 @@ class LoggingAgent::Impl final : public SchedulableBase {
         }
     }
 
+    void setVerbosityLevel(detail::LoggingVerbosityLevel const verbosity) {
+        maximum_verbosity = verbosity;
+    }
+
  private:
     std::unique_ptr<TimeAgent> time_agent_;
     std::queue<LogMessage> message_queue_{};
+    detail::LoggingVerbosityLevel maximum_verbosity{};
 };
 
 LoggingAgent::LoggingAgent() : pimpl_{std::make_unique<Impl>()} {}
@@ -60,4 +76,9 @@ void LoggingAgent::schedule(std::shared_ptr<SchedulerProducerAgent> scheduler,
                             uint32_t time_interval_us) {
     pimpl_->schedule(scheduler, time_interval_us, [this]() { pimpl_->dispatchMessages(); });
 }
+
+void LoggingAgent::setVerbosityLevel(detail::LoggingVerbosityLevel const verbosity) {
+    pimpl_->setVerbosityLevel(verbosity);
+}
+
 }  // namespace line_follower

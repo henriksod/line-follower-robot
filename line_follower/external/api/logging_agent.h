@@ -41,6 +41,11 @@ class LoggingAgent final {
     /// @param time_interval_us Time interval to get ticks from the scheduler.
     void schedule(std::shared_ptr<SchedulerProducerAgent> scheduler, uint32_t time_interval_us);
 
+    /// @brief Set the logging verbosity level. All logging with higher verbosity
+    ///        than this level will be discarded.
+    /// @param verbosity The desired verbosity level
+    void setVerbosityLevel(detail::LoggingVerbosityLevel const verbosity);
+
  private:
     LoggingAgent();
     class Impl;

@@ -87,8 +87,7 @@ def cli():
     )
 
     exec_subprocess(
-        "echo \"library:\n  enable_unsafe_install: true\n\""
-        f" >> {arduino_cli_config_default_path}",
+        'echo "library:\n  enable_unsafe_install: true\n"' f" >> {arduino_cli_config_default_path}",
         msg_on_error="Could not modify arduino config file.",
         exit_on_failure=True,
     )

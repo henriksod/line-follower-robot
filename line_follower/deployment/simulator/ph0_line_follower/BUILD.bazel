@@ -5,21 +5,26 @@ cc_binary_with_variant(
     srcs = ["example.cpp"],
     variant = "simulation",
     deps = [
-        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
-        "//line_follower/blocks/encoder:encoder_model",
-        "//line_follower/blocks/geometry:conversion",
-        "//line_follower/blocks/geometry/utils:rotation_utils",
-        "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
-        "//line_follower/blocks/line_following:line_following_model",
-        "//line_follower/blocks/motor:motor_model",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/encoder:encoder_data_agent",
         "//line_follower/service_agents/ir_sensor_array:ir_sensor_array_data_agent",
         "//line_follower/service_agents/line_following:line_following_agent",
+        "//line_follower/service_agents/logging:logging_agent",
         "//line_follower/service_agents/motor:motor_signal_agent",
         "//line_follower/service_agents/scheduler:scheduler_agent",
-    ] + [
-        "@com_github_nlohmann_json//:json",
+    ] +
+    # Simulation only deps
+    [
+        "//line_follower/blocks/robot_geometry",
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry/utils:rotation_utils",
+        "//line_follower/blocks/dead_reckoning:dead_reckoning_model",
+        "//line_follower/blocks/encoder:encoder_model",
+        "//line_follower/blocks/ir_sensor_array:ir_sensor_array_model",
+        "//line_follower/blocks/line_following:line_following_model",
+        "//line_follower/blocks/motor:motor_model",
+        "//line_follower/blocks/utilities:track_loader",
+        "@com_github_jarro2783_cxxopts//:cxxopts",
     ],
 )

@@ -1,0 +1,22 @@
+# Copyright (c) 2023 Henrik Söderlund
+
+filegroup(
+    name = "test_data",
+    srcs = glob([
+        "data/*.json",
+    ]),
+)
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = ["test_track_loader.cpp"],
+    data = [
+        ":test_data",
+    ],
+    deps = [
+        "//line_follower/blocks/utilities:track_loader",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@com_google_googletest//:gtest_main",
+    ],
+)

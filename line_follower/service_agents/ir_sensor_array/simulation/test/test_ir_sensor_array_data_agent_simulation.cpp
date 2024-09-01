@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <tuple>
+#include <vector>
 
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
@@ -19,6 +20,7 @@
 namespace line_follower {
 namespace {
 constexpr double kMillimetersToMeters{0.001};
+constexpr double kMetersToMillimeters{1000.0};
 
 constexpr IrSensorData white{true, 1.0};
 constexpr IrSensorData black{false, 0.0};
@@ -32,36 +34,36 @@ constexpr double kMiddleLedPositionX{0.0};
 
 std::vector<TrackLineSegment> input_track_line_list = {
     {{{kLeftmostLedPositionX, 1.0, 0.0}, {kLeftmostLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters / 3.0,
+     kMetersToMillimeters* kLedArraySpacingMeters / 3.0,
      0U,
      true},
     {{{kRightmostLedPositionX, 1.0, 0.0}, {kRightmostLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters / 3.0,
+     kMetersToMillimeters* kLedArraySpacingMeters / 3.0,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters / 3.0,
+     kMetersToMillimeters* kLedArraySpacingMeters / 3.0,
      0U,
      true},
     {{{1.0, 1.0, 0.0}, {1.0, 1.0, 0.0}}, kLedArraySpacingMeters / 3.0, 0U, true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters / 3.0,
+     kMetersToMillimeters* kLedArraySpacingMeters / 3.0,
      0U,
      false},
     {{{kLeftmostLedPositionX, 0.0, 0.0}, {kRightmostLedPositionX, 0.0, 0.0}},
-     kLedArraySpacingMeters / 3.0,
+     kMetersToMillimeters* kLedArraySpacingMeters / 3.0,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters * 0.5,
+     kMetersToMillimeters* kLedArraySpacingMeters * 0.5,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters * 1.5,
+     kMetersToMillimeters* kLedArraySpacingMeters * 1.5,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kLedArraySpacingMeters* kNumberOfLeds,
+     kMetersToMillimeters* kLedArraySpacingMeters* kNumberOfLeds,
      0U,
      true}};
 std::vector<std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> > expected_activated_leds_list =
@@ -83,6 +85,10 @@ std::vector<std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> > expected_a
       white, white},
      {black, black, black, black, black, black, black, black, black, black, black, black, black,
       black, black}};
+
+Pose createInitialPose() {
+    return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}};
+}
 
 class IrSensorArrayDataAgentTest : public ::testing::Test {
  protected:
@@ -108,6 +114,7 @@ class IrSensorArrayDataAgentTest : public ::testing::Test {
 };
 
 TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
+    /// TODO: Add test where we have multiple track lines and track segments
     auto iter1 = input_track_line_list.begin();
     auto iter2 = expected_activated_leds_list.begin();
 
@@ -118,11 +125,13 @@ TEST_F(IrSensorArrayDataAgentTest, GetIrSensorArrayData) {
         constexpr uint32_t kUpdateIntervalMicros{10000U};
         IrSensorArrayData received_ir_sensor_array_data{};
 
-        Pose ir_sensor_array_pose_in_track_segment{};
+        Pose ir_sensor_array_pose{createInitialPose()};
 
+        std::vector<TrackSegment> track_segments{};
         TrackSegment track_segment{};
         track_segment.track_lines[0] = segment;
-        ir_sensor_array_model_->setTrackLines(track_segment, ir_sensor_array_pose_in_track_segment);
+        track_segments.push_back(track_segment);
+        ir_sensor_array_model_->setTrackLines(track_segments, ir_sensor_array_pose);
 
         bool receiveDataWasCalled{false};
         IrSensorArrayDataConsumerAgent ir_sensor_array_data_consumer_agent{};

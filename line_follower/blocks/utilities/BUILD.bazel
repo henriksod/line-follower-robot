@@ -1,0 +1,12 @@
+cc_library(
+    name = "track_loader",
+    srcs = ["track_loader.cpp"],
+    hdrs = ["track_loader.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
+    ] + [
+        "@com_github_nlohmann_json//:json",
+    ],
+)

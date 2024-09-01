@@ -2,13 +2,19 @@
 
 #include <math.h>
 
+#include <iostream>
 #include <memory>
 #include <sstream>
+
+// clang-format off
+#include <cxxopts.hpp>
+// clang-format on
 
 #include "line_follower/external/api/encoder_data_agent.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
 #include "line_follower/external/api/line_following_agent.h"
 #include "line_follower/external/api/logging.h"
+#include "line_follower/external/api/logging_agent.h"
 #include "line_follower/external/api/motor_signal_agent.h"
 #include "line_follower/external/api/scheduler_agent.h"
 #include "line_follower/external/types/encoder_characteristics.h"
@@ -31,7 +37,8 @@
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
 #include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/blocks/motor/motor_model.h"
-#include "nlohmann/json.hpp"
+#include "line_follower/blocks/robot_geometry/robot_geometry.h"
+#include "line_follower/blocks/utilities/track_loader.h"
 
 namespace line_follower {
 namespace {
@@ -49,11 +56,6 @@ constexpr double kKilogramMmToNewtonMm{9.80665};
 
 // Convert microseconds to seconds
 // constexpr double kMicrosToSeconds{1e-6};
-
-// The initial pose of the robot, in world coordinate system
-Pose createInitialPose() {
-    return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}};
-}
 
 EncoderCharacteristics createEncoderCharacteristics() {
     EncoderCharacteristics encoder_characteristics{};
@@ -78,6 +80,7 @@ IrSensorArrayCharacteristics createIrSensorArrayCharacteristics() {
 
     ir_sensor_array_characteristics.array_spacing = 4.0;  // mm
     ir_sensor_array_characteristics.number_of_leds = 15U;
+    ir_sensor_array_characteristics.line_detected_threshold = 0.75;
     return ir_sensor_array_characteristics;
 }
 
@@ -115,12 +118,20 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
 
 class ExampleRobot final {
  public:
-    ExampleRobot()
+    ExampleRobot(std::string const& scenario_file, detail::LoggingVerbosityLevel const verbosity)
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
           left_encoder_data_consumer_agent_{},
           right_encoder_data_consumer_agent_{},
-          initial_pose_{createInitialPose()} {
+          initial_pose_{} {
+        LoggingAgent::getInstance().setVerbosityLevel(verbosity);
         LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
+
+        // Load the track segments
+        line_follower::track_loader::loadScenarioFromJson(scenario_file, track_segments_,
+                                                          initial_pose_);
+        // Convert initial pose from world coordinates to robot coordinates
+        initial_pose_ =
+            geometry::transformedPose(robot_geometry::kWorldToRobotRotation, initial_pose_);
 
         auto dead_reckoning_model{
             std::make_unique<DeadReckoningModel>(createRobotCharacteristics(), initial_pose_)};
@@ -183,19 +194,10 @@ class ExampleRobot final {
     std::unique_ptr<EncoderDataProducerAgent> right_encoder_data_producer_agent_;
     std::unique_ptr<MotorSignalConsumerAgent> right_motor_signal_consumer_agent_;
     std::unique_ptr<IrSensorArrayDataProducerAgent> ir_sensor_array_data_producer_agent_;
-    TrackSegment current_track_segment_{};
+    std::vector<line_follower::TrackSegment> track_segments_{};
 };
 
 void ExampleRobot::setup() {
-    // Set up example track segment with one line
-    current_track_segment_.pose.position = {0.0, 0.0, 0.0};
-    current_track_segment_.pose.rotation = {1.0, 0.0, 0.0, 0.0};
-    current_track_segment_.track_lines[0].visible = true;
-    current_track_segment_.track_lines[0].whiteness = 0.0;
-    current_track_segment_.track_lines[0].width = 0.01;
-    current_track_segment_.track_lines[0].line.start = {-10.0 * 0.004, 0.0, 0.0};
-    current_track_segment_.track_lines[0].line.end = {10.0 * 0.004, 1.0, 0.0};
-
     // Define callbacks
     left_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
         LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
@@ -209,10 +211,11 @@ void ExampleRobot::setup() {
     line_following_agent_->onReceiveData([this](IrSensorArrayData const& ir_sensor_array_data) {
         Pose pose{line_following_agent_->getPose()};
         Pose ir_pose{line_following_agent_->getIrSensorArrayPose()};
-        ir_sensor_array_model_->setTrackLines(
-            current_track_segment_,
-            geometry::transformedPose(convert(current_track_segment_.pose.rotation),
-                                      convert(current_track_segment_.pose.position), ir_pose));
+        ir_sensor_array_model_->setTrackLines(track_segments_, ir_pose);
+
+        if (!ir_sensor_array_data.valid) {
+            LOG_WARN("IR data invalid!");
+        }
 
         line_following_agent_->setIrSensorArrayData(ir_sensor_array_data);
         line_following_agent_->step();
@@ -256,7 +259,25 @@ void ExampleRobot::loop() {
 }  // namespace line_follower
 
 int main(int argc, char* argv[]) {
-    line_follower::ExampleRobot robot{};
+    cxxopts::Options options("Example Line Follower Simulator", "Runs line follower simulation");
+
+    options.add_options()("scenario_file", "Scenario file containing the track to run",
+                          cxxopts::value<std::string>())(
+        "verbosity", "The verbosity of logging (debug, info, warn, error)",
+        cxxopts::value<std::string>()->default_value("info"));
+
+    auto result = options.parse(argc, argv);
+
+    if (result.count("scenario_file") == 0) {
+        std::cerr << "No scenario file provided!\n";
+        return 1;
+    }
+
+    auto scenario_file = result["scenario_file"].as<std::string>();
+    auto verbosity = result["verbosity"].as<std::string>();
+    auto verbosity_level = line_follower::parseVerbosityLevel(verbosity);
+
+    line_follower::ExampleRobot robot{scenario_file, verbosity_level};
 
     robot.setup();
 

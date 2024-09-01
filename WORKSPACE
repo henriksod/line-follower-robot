@@ -157,3 +157,11 @@ http_archive(
     sha256 = "a22461d13119ac5c78f205d3df1db13403e58ce1bb1794edc9313677313f4a9d",
     url = "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip",
 )
+
+http_archive(
+    name = "com_github_jarro2783_cxxopts",
+    build_file = "//bazel/cpp:BUILD.cxxopts.bzl",
+    sha256 = "9f43fa972532e5df6c5fd5ad0f5bac606cdec541ccaf1732463d8070bbb7f03b",
+    strip_prefix = "cxxopts-3.2.0",
+    url = "https://github.com/jarro2783/cxxopts/archive/refs/tags/v3.2.0.tar.gz",
+)

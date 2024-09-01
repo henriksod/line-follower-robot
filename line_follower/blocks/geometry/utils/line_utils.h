@@ -17,7 +17,7 @@ namespace geometry {
 
 /// @brief Sweep over the width of a line
 /// @param line The line
-/// @param width The width of the line to sweep over
+/// @param width The width of the line to sweep over, in meters
 /// @param resolution Optionally set the resolution of the sweep (number of
 // lines)
 /// @returns A vector of lines along the width of the line

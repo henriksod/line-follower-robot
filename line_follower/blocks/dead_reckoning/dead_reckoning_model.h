@@ -15,7 +15,7 @@ class DeadReckoningModel final {
  public:
     /// Constructor for DeadReckoningModel
     /// @param characteristics The characteristics of the differential drive robot
-    /// @param initial_pose The initial pose of the robot
+    /// @param initial_pose The initial pose of the robot, in robot coordinates
     DeadReckoningModel(DifferentialDriveRobotCharacteristics characteristics, Pose initial_pose)
         : characteristics_{characteristics}, pose_{initial_pose} {}
 

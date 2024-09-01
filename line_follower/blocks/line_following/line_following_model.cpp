@@ -113,6 +113,8 @@ void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,
     double const out_angular_velocity{
         pid_steer_.calculate(steer_setpoint, prediction.predicted_position, delta_time_seconds)};
 
+    std::cerr << "out_angular_velocity = " << out_angular_velocity << "\n";
+
     // Control the speed for left motor. We want the robot to go slow in turns and fast on straight
     // paths. The calculation is based on a differential drive robot model.
     double const speed_left_setpoint{dead_reckoning_model_->calculateLeftMotorSpeed(

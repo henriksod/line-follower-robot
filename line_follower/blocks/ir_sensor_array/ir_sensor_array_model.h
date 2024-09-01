@@ -3,6 +3,8 @@
 #ifndef LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_MODEL_H_
 #define LINE_FOLLOWER_BLOCKS_IR_SENSOR_ARRAY_IR_SENSOR_ARRAY_MODEL_H_
 
+#include <vector>
+
 #include "line_follower/external/api/ir_sensor_array_interface.h"
 #include "line_follower/external/types/ir_sensor_array_characteristics.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
@@ -23,9 +25,7 @@ class IrSensorArrayModel final : public IrSensorArrayInterface {
 
  public:
     explicit IrSensorArrayModel(IrSensorArrayCharacteristics ir_array_characteristics)
-        : ir_array_characteristics_{ir_array_characteristics},
-          ir_sensor_array_data_{},
-          current_track_segment_{} {
+        : ir_array_characteristics_{ir_array_characteristics}, ir_sensor_array_data_{} {
         resetIrSensorArrayData(ir_sensor_array_data_);
     }
 
@@ -38,20 +38,19 @@ class IrSensorArrayModel final : public IrSensorArrayInterface {
 
     void tick(SystemTime const timestamp) override;
     bool getIrSensorArrayData(IrSensorArrayData& output) const override;
-    void initialize() override{};
+    void initialize() override {};
     void calibrate(size_t const iterations) override { static_cast<void>(iterations); };
 
     /// @brief Set the reference track lines to convert into ir sensor readings.
-    /// @param track_segment The track segment which the track lines are part of.
-    /// @param ir_sensor_array_pose_in_track_segment The pose of the ir sensor
-    /// array  relative to the track segment pose.
-    void setTrackLines(TrackSegment const& track_segment,
-                       Pose const& ir_sensor_array_pose_in_track_segment);
+    /// @param track_segments The track segments of the track to detect lines in.
+    /// @param ir_sensor_array_pose The pose of the ir sensor
+    /// array relative to world coordinates.
+    void setTrackLines(std::vector<TrackSegment> const& track_segments,
+                       Pose const& ir_sensor_array_pose);
 
  private:
     IrSensorArrayCharacteristics const ir_array_characteristics_;
     IrSensorArrayData ir_sensor_array_data_;
-    TrackSegment current_track_segment_;
 };
 }  // namespace line_follower
 
