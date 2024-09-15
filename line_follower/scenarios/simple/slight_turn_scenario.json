@@ -1,0 +1,64 @@
+{
+    "robot_initial_pose": {
+        "position": {
+            "x": 0.0,
+            "y": 0.02,
+            "z": 0.0
+        },
+        "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "track_segments": [
+        {
+            "pose": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            },
+            "track_lines": [
+                {
+                    "start": {
+                        "x": -1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "end": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "width": 10.0,
+                    "whiteness": 0.0,
+                    "visible": true
+                },
+                {
+                    "start": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "end": {
+                        "x": 1.99619,
+                        "y": 0.08716,
+                        "z": 0.0
+                    },
+                    "width": 10.0,
+                    "whiteness": 0.0,
+                    "visible": true
+                }
+            ]
+        }
+    ]
+}

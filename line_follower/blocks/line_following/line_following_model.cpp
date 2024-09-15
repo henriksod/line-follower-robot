@@ -47,7 +47,6 @@ double calculateAverageReadingRelativePosition(IrSensorArrayData ir_data) {
     if (number_of_activated_leds > 0U) {
         average_reading_position /= static_cast<double>(number_of_activated_leds);
     }
-    average_reading_position /= static_cast<double>(number_of_activated_leds);
     return average_reading_position / middle_led_idx;
 }
 

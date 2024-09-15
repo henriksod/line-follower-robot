@@ -46,6 +46,10 @@
 #include "line_follower/blocks/utilities/track_loader.h"
 
 namespace line_follower {
+
+// A global atomic flag to indicate the shutdown process
+std::atomic<bool> shutdown_requested(false);
+
 namespace {
 // Update rate
 constexpr uint32_t kUpdateRateMicros{10000U};
@@ -281,13 +285,10 @@ void ExampleRobot::loop() {
 }
 }  // namespace line_follower
 
-// A global atomic flag to indicate the shutdown process
-std::atomic<bool> shutdown_requested(false);
-
 // Signal handler function
 void signalHandler(int signum) {
     std::cout << "Signal (" << signum << ") received.\n";
-    shutdown_requested = true;
+    line_follower::shutdown_requested = true;
 }
 
 int main(int argc, char* argv[]) {
@@ -297,8 +298,9 @@ int main(int argc, char* argv[]) {
 
     cxxopts::Options options("Example Line Follower Simulator", "Runs line follower simulation");
 
-    options.add_options()("scenario_file", "Scenario file containing the track to run",
-                          cxxopts::value<std::string>())(
+    options.add_options()("h,help", "Print usage")("scenario_file",
+                                                   "Scenario file containing the track to run",
+                                                   cxxopts::value<std::string>())(
         "verbosity", "The verbosity of logging (debug, info, warn, error)",
         cxxopts::value<std::string>()->default_value("info"))(
         "events_log_json", "Json file to store event logs", cxxopts::value<std::string>())(
@@ -306,6 +308,11 @@ int main(int argc, char* argv[]) {
         cxxopts::value<bool>()->default_value("false"));
 
     auto result = options.parse(argc, argv);
+
+    if (result.count("help") > 0) {
+        std::cout << options.help() << std::endl;
+        return 0;
+    }
 
     if (result.count("scenario_file") == 0) {
         std::cerr << "No scenario file provided!\n";
@@ -330,6 +337,6 @@ int main(int argc, char* argv[]) {
 
     robot.setup();
 
-    while (!shutdown_requested) robot.loop();
+    while (!line_follower::shutdown_requested) robot.loop();
     return 0;
 }

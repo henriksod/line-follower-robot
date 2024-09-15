@@ -153,14 +153,11 @@ LineFollowingCharacteristics createLineFollowingCharacteristics() {
 }  // namespace
 
 class LineFollowerRobot final {
-<<<<<<< HEAD
-=======
     bool initializeLogging_() {
         LoggingAgent::getInstance().schedule(*scheduler_, kLoggingUpdateRateMicros);
         return true;
     }
 
->>>>>>> 746e44f (Fix line following)
  public:
     LineFollowerRobot()
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
@@ -179,13 +176,7 @@ class LineFollowerRobot final {
           ir_sensor_array_data_producer_agent_{createIrSensorArrayCharacteristics(),
                                                createIrSensorArrayPinConfiguration()},
           line_following_agent_{createRobotCharacteristics(), createLineFollowingCharacteristics(),
-<<<<<<< HEAD
-                                createInitialPose()} {
-        LoggingAgent::getInstance().schedule(scheduler_, kLoggingUpdateRateMicros);
-    }
-=======
                                 createInitialPose()} {}
->>>>>>> 746e44f (Fix line following)
 
     void setup();
     void loop();

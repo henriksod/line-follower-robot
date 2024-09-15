@@ -3,12 +3,6 @@
 #ifndef LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_SIMPLE_LINE_FOLLOWING_MODEL_H_
 #define LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_SIMPLE_LINE_FOLLOWING_MODEL_H_
 
-<<<<<<< HEAD
-#include <memory>
-
-#include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
-#include "line_follower/blocks/pid/pid.h"
-=======
 #include <cstdint>
 #include <memory>
 #include <utility>
@@ -17,7 +11,6 @@
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 #include "line_follower/blocks/pid/pid.h"
 #include "line_follower/blocks/state_machine/state_machine.h"
->>>>>>> 746e44f (Fix line following)
 #include "line_follower/external/api/line_following_interface.h"
 #include "line_follower/external/types/encoder_data.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
@@ -29,8 +22,6 @@
 
 namespace line_follower {
 
-<<<<<<< HEAD
-=======
 namespace detail {
 
 class StartState;
@@ -208,7 +199,6 @@ class StopState : public LineFollowerState {
 
 }  // namespace detail
 
->>>>>>> 746e44f (Fix line following)
 /// Class for modeling line following of a line using a ir array sensor
 class SimpleLineFollowingModel : public LineFollowingInterface {
  public:
@@ -259,22 +249,9 @@ class SimpleLineFollowingModel : public LineFollowingInterface {
     void update(const IrSensorArrayData& ir_array_data) override;
 
  private:
-<<<<<<< HEAD
-    LineFollowingCharacteristics characteristics_;
-    std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
-    PID pid_left_speed_;
-    PID pid_right_speed_;
-    PID pid_steer_;
-    MotorSignal left_motor_signal_{};
-    MotorSignal right_motor_signal_{};
-    EncoderData left_encoder_data_{};
-    EncoderData right_encoder_data_{};
-    SystemTime time_at_last_update_{};
-=======
     std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
     detail::LineFollowingContext line_following_context_;
     StateMachine<detail::LineFollowingContext> state_machine_;
->>>>>>> 746e44f (Fix line following)
 
     /// Calculate the desired motor signals based on predicted state
     /// of the ir array sensor

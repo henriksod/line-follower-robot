@@ -47,7 +47,7 @@ class LoggingAgent::Impl final : public SchedulableBase {
         }
 
         // For simulation we dispatch immediately
-        dispatchMessages();
+        // dispatchMessages();
 
         if (verbosity == LoggingVerbosityLevel::kFatal) {
             std::abort();
