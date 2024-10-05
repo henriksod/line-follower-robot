@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Henrik Söderlund
 
+#include <bits/types/sig_atomic_t.h>
 #include <math.h>
 
-#include <atomic>
 #include <csignal>
 #include <iostream>
 #include <memory>
@@ -45,10 +45,19 @@
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
 #include "line_follower/blocks/utilities/track_loader.h"
 
-namespace line_follower {
+/// A global atomic flag to indicate the shutdown process
+sig_atomic_t volatile should_exit{0};
 
-// A global atomic flag to indicate the shutdown process
-std::atomic<bool> shutdown_requested(false);
+namespace {
+
+/// Intended to take care of exit requests by setting termination flag
+extern "C" void signalHandler(int /*signo*/) {
+    should_exit = 1;
+}
+
+}  // namespace
+
+namespace line_follower {
 
 namespace {
 // Update rate
@@ -285,16 +294,10 @@ void ExampleRobot::loop() {
 }
 }  // namespace line_follower
 
-// Signal handler function
-void signalHandler(int signum) {
-    std::cout << "Signal (" << signum << ") received.\n";
-    line_follower::shutdown_requested = true;
-}
-
 int main(int argc, char* argv[]) {
     // Register signal handler for SIGINT (Ctrl+C)
-    std::signal(SIGINT, signalHandler);
-    std::signal(SIGTERM, signalHandler);  // Also handle SIGTERM
+    static_cast<void>(signal(SIGINT, signalHandler));
+    static_cast<void>(signal(SIGTERM, signalHandler));
 
     cxxopts::Options options("Example Line Follower Simulator", "Runs line follower simulation");
 
@@ -337,6 +340,6 @@ int main(int argc, char* argv[]) {
 
     robot.setup();
 
-    while (!line_follower::shutdown_requested) robot.loop();
+    while (!should_exit) robot.loop();
     return 0;
 }
