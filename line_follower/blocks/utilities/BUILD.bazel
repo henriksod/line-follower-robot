@@ -10,3 +10,10 @@ cc_library(
         "@com_github_nlohmann_json//:json",
     ],
 )
+
+cc_library(
+    name = "should_exit",
+    srcs = ["should_exit.cpp"],
+    hdrs = ["should_exit.h"],
+    visibility = ["//visibility:public"],
+)

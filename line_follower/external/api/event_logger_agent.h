@@ -3,25 +3,41 @@
 #ifndef LINE_FOLLOWER_EXTERNAL_API_EVENT_LOGGER_AGENT_H_
 #define LINE_FOLLOWER_EXTERNAL_API_EVENT_LOGGER_AGENT_H_
 
+#include <atomic>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
+#include <queue>
 #include <string>
+#include <thread>
 #include <utility>
 
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/external/api/common.h"
-#include "line_follower/external/api/logging.h"
 
 namespace line_follower {
 
 /// An event logger triggered by a producer of some data
 template <typename T, typename EventState>
 class EventLoggerAgent final : public ConsumerAgent<T> {
+    struct StoreEventTask {
+        std::string filepath;
+        EventState data;
+    };
+
  public:
     EventLoggerAgent(std::string const& filename, bool const log_events)
-        : json_file_path_{filename}, log_events_{log_events} {
-        LOG_INFO("Created event logger agent (simulation)");
+        : stop_thread_(false), json_file_path_{filename}, log_events_{log_events} {
+        // Start the worker thread
+        worker_ = std::thread(&EventLoggerAgent<T, EventState>::workerThread, this);
     }
-    ~EventLoggerAgent() noexcept = default;
+    ~EventLoggerAgent() noexcept {
+        // Signal the thread to stop and join it
+        stop_thread_ = true;
+        if (worker_.joinable()) {
+            worker_.join();
+        }
+    }
 
     EventLoggerAgent(EventLoggerAgent const&) = delete;
     EventLoggerAgent(EventLoggerAgent&&) = delete;
@@ -44,9 +60,16 @@ class EventLoggerAgent final : public ConsumerAgent<T> {
     }
 
  private:
+    void workerThread();
+
+    std::atomic<bool> stop_thread_;
     std::string const json_file_path_;
     bool const log_events_;
     FunctionObject<EventState(T const&)> callback_;
+    std::queue<StoreEventTask> task_queue_;
+    std::mutex queue_mutex_;
+    std::condition_variable cv_;
+    std::thread worker_;
 };
 
 }  // namespace line_follower

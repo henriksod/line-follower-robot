@@ -11,6 +11,9 @@
 namespace line_follower {
 
 template <>
+void EventLoggerAgent<IrSensorArrayData, LineFollowerEventState>::workerThread() {}
+
+template <>
 void EventLoggerAgent<IrSensorArrayData, LineFollowerEventState>::logEvent(
     std::string const& filename, LineFollowerEventState const event_state) {
     static_cast<void>(filename);

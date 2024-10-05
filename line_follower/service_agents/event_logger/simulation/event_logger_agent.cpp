@@ -2,9 +2,14 @@
 
 #include "line_follower/external/api/event_logger_agent.h"
 
+#include <condition_variable>
 #include <fstream>
+#include <mutex>
+#include <queue>
 #include <string>
+#include <thread>
 
+#include "line_follower/blocks/utilities/should_exit.h"
 #include "line_follower/external/api/common.h"
 #include "line_follower/external/api/logging.h"
 #include "line_follower/external/types/encoder_data.h"
@@ -84,34 +89,66 @@ void from_json(const nlohmann::json& j, LineFollowerEventState& l) {
     j.at("global_pose").get_to(l.global_pose);
 }
 
+// Worker thread function to persistently process tasks
+template <>
+void EventLoggerAgent<IrSensorArrayData, LineFollowerEventState>::workerThread() {
+    while (!stop_thread_) {
+        StoreEventTask task;
+
+        // Scope for unique_lock
+        {
+            std::unique_lock<std::mutex> lock(queue_mutex_);
+
+            // Wait until there's work to do or we're stopping the worker
+            cv_.wait(lock, [this] { return !task_queue_.empty() || should_exit; });
+
+            // If stopping and no more tasks, exit the loop
+            if (should_exit && task_queue_.empty()) {
+                break;
+            }
+
+            // Get the next task from the queue
+            task = task_queue_.front();
+            task_queue_.pop();
+        }
+
+        // Process the task (append JSON to file)
+        std::ifstream infile(task.filepath);
+        nlohmann::json json_data;
+
+        // Read existing content of the file if it exists
+        if (infile.is_open()) {
+            infile >> json_data;
+            infile.close();
+        }
+
+        // If file is empty or doesn't contain an array, initialize it as an array
+        if (!json_data.is_array()) {
+            json_data = nlohmann::json::array();
+        }
+
+        // Append the new event
+        json_data.push_back(task.data);
+
+        // Write the updated data back to the file
+        std::ofstream outfile(task.filepath);
+        if (outfile.is_open()) {
+            outfile << json_data.dump(4);  // Pretty print with an indentation of 4 spaces
+            outfile.close();
+        } else {
+            LOG_ERROR("Error opening the file for writing!");
+        }
+    }
+}
+
 template <>
 void EventLoggerAgent<IrSensorArrayData, LineFollowerEventState>::logEvent(
     std::string const& filename, LineFollowerEventState const event_state) {
-    std::ifstream infile(filename);
-    nlohmann::json json_data;
-
-    // Read existing content of the file if it exists
-    if (infile.is_open()) {
-        infile >> json_data;
-        infile.close();
+    {
+        std::lock_guard<std::mutex> lock(queue_mutex_);
+        task_queue_.push({filename, event_state});  // Add task to queue
     }
-
-    // If file is empty or doesn't contain an array, initialize it as an array
-    if (!json_data.is_array()) {
-        json_data = nlohmann::json::array();
-    }
-
-    // Append the new event
-    json_data.push_back(event_state);
-
-    // Write the updated data back to the file
-    std::ofstream outfile(filename);
-    if (outfile.is_open()) {
-        outfile << json_data.dump(4);  // Pretty print with an indentation of 4 spaces
-        outfile.close();
-    } else {
-        LOG_ERROR("Error opening the file for writing!");
-    }
+    cv_.notify_one();  // Notify the worker thread
 }
 
 }  // namespace line_follower

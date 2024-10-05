@@ -43,10 +43,8 @@
 #include "line_follower/blocks/line_following/simple_line_following_model.h"
 #include "line_follower/blocks/motor/motor_model.h"
 #include "line_follower/blocks/robot_geometry/robot_geometry.h"
+#include "line_follower/blocks/utilities/should_exit.h"
 #include "line_follower/blocks/utilities/track_loader.h"
-
-/// A global atomic flag to indicate the shutdown process
-sig_atomic_t volatile should_exit{0};
 
 namespace {
 

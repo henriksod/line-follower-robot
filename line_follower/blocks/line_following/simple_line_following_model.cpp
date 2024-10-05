@@ -200,10 +200,13 @@ void StartState::enter(LineFollowingContext& context) {
 void StartState::step(LineFollowingContext& context) {
     // Move forward slowly
     context.left_motor_signal.speed.revolutions_per_second = 1.0;
-    context.right_motor_signal.speed.revolutions_per_second = 1.0;
+    context.right_motor_signal.speed.revolutions_per_second = -1.0;
 }
 
 Maybe<LineFollowerState*> StartState::transition(LineFollowingContext& context) {
+    /// TODO: Remove
+    return Nothing<LineFollowerState*>();
+
     if (noLineDetected(context.ir_array_data)) {
         return Nothing<LineFollowerState*>();
     }

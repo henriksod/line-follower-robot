@@ -5,6 +5,7 @@ cc_binary_with_variant(
     srcs = ["example.cpp"],
     variant = "simulation",
     deps = [
+        "//line_follower/blocks/utilities:should_exit",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/encoder:encoder_data_agent",
