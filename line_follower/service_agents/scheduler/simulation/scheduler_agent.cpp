@@ -9,6 +9,7 @@
 
 #include "line_follower/blocks/common/badge.h"
 #include "line_follower/blocks/common/maybe.h"
+#include "line_follower/blocks/utilities/should_exit.h"
 #include "line_follower/external/api/time_agent.h"
 #include "line_follower/external/types/system_time.h"
 #include "line_follower/external/types/unique_id.h"
@@ -90,8 +91,13 @@ SchedulerProducerAgent::SchedulerProducerAgent() : pimpl_{std::make_unique<Impl>
 SchedulerProducerAgent::~SchedulerProducerAgent() {}
 
 void SchedulerProducerAgent::tick() {
-    while (Maybe<UniqueID> maybe_unique_id{pimpl_->getNextToNotify()})
-        sendData(maybe_unique_id.value);
+    Maybe<UniqueID> maybe_unique_id{};
+    do {
+        maybe_unique_id = pimpl_->getNextToNotify();
+        if (maybe_unique_id) {
+            sendData(maybe_unique_id.value);
+        }
+    } while (!should_exit && maybe_unique_id);
 }
 
 void SchedulerProducerAgent::registerScheduler(SchedulerConsumerAgent& consumer_agent,

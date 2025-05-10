@@ -92,7 +92,7 @@ void from_json(const nlohmann::json& j, LineFollowerEventState& l) {
 // Worker thread function to persistently process tasks
 template <>
 void EventLoggerAgent<IrSensorArrayData, LineFollowerEventState>::workerThread() {
-    while (!stop_thread_) {
+    while (!should_exit && !stop_thread_) {
         StoreEventTask task;
 
         // Scope for unique_lock

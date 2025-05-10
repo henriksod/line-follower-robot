@@ -5,7 +5,6 @@ cc_binary_with_variant(
     srcs = ["example.cpp"],
     variant = "simulation",
     deps = [
-        "//line_follower/blocks/utilities:should_exit",
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
         "//line_follower/service_agents/encoder:encoder_data_agent",
@@ -18,6 +17,7 @@ cc_binary_with_variant(
     ] +
     # Simulation only deps
     [
+        "//line_follower/blocks/utilities:should_exit",
         "//line_follower/blocks/robot_geometry",
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry/utils:rotation_utils",
@@ -28,5 +28,18 @@ cc_binary_with_variant(
         "//line_follower/blocks/motor:motor_model",
         "//line_follower/blocks/utilities:track_loader",
         "@com_github_jarro2783_cxxopts//:cxxopts",
+    ],
+)
+
+cc_binary_with_variant(
+    name = "minimal",
+    srcs = ["minimal.cpp"],
+    variant = "simulation",
+    deps = [
+        "//line_follower/blocks/utilities:should_exit",
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
+        "//line_follower/service_agents/logging:logging_agent",
+        "//line_follower/service_agents/scheduler:scheduler_agent",
     ],
 )

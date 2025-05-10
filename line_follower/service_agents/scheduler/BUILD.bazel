@@ -5,6 +5,7 @@ cc_library(
     srcs = ["simulation/scheduler_agent.cpp"],
     visibility = ["__subpackages__"],
     deps = [
+        "//line_follower/blocks/utilities:should_exit",
         "//line_follower/external/api:common",
         "//line_follower/external/api:scheduler_agent_api",
         "//line_follower/external/types",

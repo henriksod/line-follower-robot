@@ -10,6 +10,7 @@
 #include <memory>
 #include <queue>
 
+#include "line_follower/blocks/utilities/should_exit.h"
 #include "line_follower/external/api/time_agent.h"
 #include "line_follower/external/types/log_message.h"
 #include "line_follower/external/types/logging_verbosity_level.h"
@@ -55,7 +56,7 @@ class LoggingAgent::Impl final : public SchedulableBase {
     }
 
     void dispatchMessages() {
-        while (!message_queue_.empty()) {
+        while (!should_exit && !message_queue_.empty()) {
             LogMessage message{message_queue_.front()};
             std::cerr << "[" << message.timestamp.system_time_us << "]"
                       << " (" << message.file << ":" << message.line << "):"

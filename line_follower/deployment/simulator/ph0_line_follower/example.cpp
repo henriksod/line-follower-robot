@@ -51,6 +51,7 @@ namespace {
 /// Intended to take care of exit requests by setting termination flag
 extern "C" void signalHandler(int /*signo*/) {
     should_exit = 1;
+    std::cerr << "Received signal to exit. Exiting..." << std::endl;
 }
 
 }  // namespace
@@ -146,7 +147,7 @@ class ExampleRobot final {
                  bool const log_events, LoggingVerbosityLevel const verbosity)
         : scheduler_{std::make_shared<SchedulerProducerAgent>()},
           logging_initialized_{initializeLogging_(verbosity)},
-          event_logger_agent_{event_file, log_events},
+          // event_logger_agent_{event_file, log_events},
           left_encoder_data_consumer_agent_{},
           right_encoder_data_consumer_agent_{} {
         // Load the track segments
@@ -204,7 +205,7 @@ class ExampleRobot final {
  private:
     std::shared_ptr<SchedulerProducerAgent> scheduler_;
     bool logging_initialized_;
-    EventLoggerAgent<IrSensorArrayData, LineFollowerEventState> event_logger_agent_;
+    // EventLoggerAgent<IrSensorArrayData, LineFollowerEventState> event_logger_agent_;
     EncoderDataConsumerAgent left_encoder_data_consumer_agent_;
     EncoderDataConsumerAgent right_encoder_data_consumer_agent_;
     Pose initial_pose_;
@@ -226,7 +227,7 @@ class ExampleRobot final {
 
 void ExampleRobot::setup() {
     // Define callbacks
-    event_logger_agent_.onReceiveData(
+    /*event_logger_agent_.onReceiveData(
         [this](IrSensorArrayData const& ir_sensor_array_data) -> LineFollowerEventState {
             LineFollowerEventState event_state{};
             event_state.timestamp = ir_sensor_array_data.timestamp;
@@ -234,7 +235,7 @@ void ExampleRobot::setup() {
             right_encoder_model_->getEncoderData(event_state.right_encoder_data_input);
             event_state.global_pose = line_following_agent_->getPose();
             return event_state;
-        });
+        });*/
 
     left_encoder_data_consumer_agent_.onReceiveData([this](EncoderData const& encoder_data) {
         LOG_INFO("Left encoder data: %.2f rev/s", encoder_data.revolutions_per_second);
@@ -271,7 +272,7 @@ void ExampleRobot::setup() {
     left_encoder_data_consumer_agent_.attach(*left_encoder_data_producer_agent_);
     right_encoder_data_consumer_agent_.attach(*right_encoder_data_producer_agent_);
     line_following_agent_->attach(*ir_sensor_array_data_producer_agent_);
-    event_logger_agent_.attach(*ir_sensor_array_data_producer_agent_);
+    // event_logger_agent_.attach(*ir_sensor_array_data_producer_agent_);
 
     // Attach motors to line follower agent
     line_following_agent_->attachMotorLeft(*left_motor_signal_consumer_agent_);
@@ -339,5 +340,6 @@ int main(int argc, char* argv[]) {
     robot.setup();
 
     while (!should_exit) robot.loop();
+    std::cerr << "Exiting..." << std::endl;
     return 0;
 }
