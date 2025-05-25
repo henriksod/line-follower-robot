@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#include "line_follower/blocks/line_following/line_following_model.h"
+#include "line_follower/blocks/line_following/kalman_line_following_model.h"
 
 #include <algorithm>
 #include <cmath>
@@ -100,6 +100,10 @@ void LineFollowingModel::setEncoderLeftData(EncoderData const& encoder_data_left
 void LineFollowingModel::setEncoderRightData(EncoderData const& encoder_data_right) {
     right_encoder_data_ = encoder_data_right;
     dead_reckoning_model_->setEncoderRightData(encoder_data_right);
+}
+
+LineFollowingStatistics LineFollowingModel::getStatistics() {
+    return {};
 }
 
 void LineFollowingModel::calculateMotorSignals(LineFollowingState prediction,

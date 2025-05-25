@@ -5,6 +5,7 @@
 
 #include <array>
 
+#include "line_follower/blocks/common/maybe.h"
 #include "line_follower/blocks/geometry/line.h"
 #include "line_follower/blocks/geometry/quaternion.h"
 #include "line_follower/blocks/geometry/vector.h"
@@ -52,8 +53,8 @@ inline QuaternionRotation convert(geometry::Quaternion<T> const& q) {
     return QuaternionRotation{q.w(), q.x(), q.y(), q.z()};
 }
 
-/// Convert a EulerRotation to ageometry:: Quaternion
-inline geometry::Quaternion<double> eulerToQuat(EulerRotation const& a) {
+/// Convert a EulerRotation to a geometry:: Quaternion
+inline Maybe<geometry::Quaternion<double>> eulerToQuat(EulerRotation const& a) {
     return from_euler(convert(a));
 }
 
@@ -66,7 +67,7 @@ inline EulerRotation quatToEuler(geometry::Quaternion<T> const& q) {
 /// Convert a geometry::Line to a Line
 template <typename T>
 inline Line convert(geometry::Line<T> const& line) {
-    return Line{line.from(), line.to()};
+    return Line{convert(line.from()), convert(line.to())};
 }
 
 /// Convert a Line to a geometry::Line

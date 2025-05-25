@@ -4,6 +4,7 @@
 #define LINE_FOLLOWER_EXTERNAL_TYPES_LINE_FOLLOWER_EVENT_STATE_H_
 
 #include "line_follower/external/types/encoder_data.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/pose.h"
 #include "line_follower/external/types/system_time.h"
 
@@ -21,6 +22,12 @@ struct LineFollowerEventState final {
 
     /// The robot pose in world coordinates at state
     Pose global_pose;
+
+    /// The ir array pose in world coordinates at state
+    Pose ir_pose;
+
+    /// The statistics of the line follower performance
+    LineFollowingStatistics line_following_statistics;
 };
 }  // namespace line_follower
 

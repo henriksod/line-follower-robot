@@ -3,9 +3,11 @@
 #include "line_follower/blocks/dead_reckoning/dead_reckoning_model.h"
 
 #include <cmath>
+#include <iostream>
 
 #include "line_follower/blocks/geometry/conversion.h"
 #include "line_follower/blocks/geometry/quaternion.h"
+#include "line_follower/blocks/geometry/vector.h"
 #include "line_follower/external/types/rotation.h"
 
 namespace line_follower {
@@ -43,29 +45,36 @@ void DeadReckoningModel::setEncoderRightData(EncoderData const& encoder_data_rig
 }
 
 void DeadReckoningModel::step(SystemTime timestamp) {
-    if (time_at_last_step_.system_time_us == 0U) {
-        time_at_last_step_ = timestamp;
+    if (timestamp.system_time_us < time_at_last_step_.system_time_us) {
+        return;
     }
+
     auto const time_diff{(timestamp.system_time_us - time_at_last_step_.system_time_us) *
                          kMicrosToSeconds};
 
     // Calculate wheel velocities
-    double left_wheel_velocity = 2.0 * PI * characteristics_.wheel_radius *
-                                 left_encoder_data_.revolutions_per_second * time_diff;
-    double right_wheel_velocity = 2.0 * PI * characteristics_.wheel_radius *
-                                  right_encoder_data_.revolutions_per_second * time_diff;
+    double left_wheel_velocity =
+        2.0 * PI * characteristics_.wheel_radius * left_encoder_data_.revolutions_per_second;
+    double right_wheel_velocity =
+        2.0 * PI * characteristics_.wheel_radius * right_encoder_data_.revolutions_per_second;
 
     // Calculate forward and angular velocities
     forward_velocity_ = (right_wheel_velocity + left_wheel_velocity) / 2.0;
     angular_velocity_ = (right_wheel_velocity - left_wheel_velocity) /
                         (2.0 * characteristics_.distance_between_wheels);
 
-    // Update pose
-    pose_.position.x += forward_velocity_ * sin(angular_velocity_);
-    pose_.position.y += forward_velocity_ * cos(angular_velocity_);
+    auto rotation_delta = eulerToQuat(EulerRotation{0.0, 0.0, angular_velocity_ * time_diff});
+    if (rotation_delta.has_value()) {
+        pose_.rotation = convert(convert(pose_.rotation) * rotation_delta.value());
+    }
 
-    geometry::Quaternion<double> rotation{eulerToQuat(EulerRotation{0.0, 0.0, angular_velocity_})};
-    pose_.rotation = convert(convert(pose_.rotation) * rotation);
+    // Update pose
+    geometry::Vector3<double> forward_vector{forward_velocity_ * time_diff, 0.0, 0.0};
+    geometry::Vector3<double> rotated_forward_vector{
+        rotated(convert(pose_.rotation), forward_vector)};
+    pose_.position.x += rotated_forward_vector.x();
+    pose_.position.y += rotated_forward_vector.y();
+    pose_.position.z += rotated_forward_vector.z();
 
     time_at_last_step_ = timestamp;
 }

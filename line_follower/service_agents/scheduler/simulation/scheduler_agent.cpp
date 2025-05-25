@@ -64,17 +64,17 @@ class SchedulerProducerAgent::Impl final {
     }
 
     void deregisterScheduler(Maybe<UniqueID> maybe_unique_id) {
-        if (!maybe_unique_id.isNothing) {
+        if (maybe_unique_id.has_value()) {
             Maybe<ScheduledItem> item_to_remove{Nothing<ScheduledItem>()};
 
             for (ScheduledItem const& item : scheduled_items_) {
-                if (item.unique_id.id == maybe_unique_id.value.id) {
+                if (item.unique_id.id == maybe_unique_id.value().id) {
                     item_to_remove = Just(item);
                 }
             }
 
-            if (!item_to_remove.isNothing) {
-                scheduled_items_.remove(item_to_remove.value);
+            if (item_to_remove.has_value()) {
+                scheduled_items_.remove(item_to_remove.value());
             }
         }
     }
@@ -95,7 +95,7 @@ void SchedulerProducerAgent::tick() {
     do {
         maybe_unique_id = pimpl_->getNextToNotify();
         if (maybe_unique_id) {
-            sendData(maybe_unique_id.value);
+            sendData(maybe_unique_id.value());
         }
     } while (!should_exit && maybe_unique_id);
 }

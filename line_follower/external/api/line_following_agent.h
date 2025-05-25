@@ -5,13 +5,13 @@
 
 #include <memory>
 
-#include "line_follower/blocks/line_following/line_following_model.h"
 #include "line_follower/external/api/ir_sensor_array_data_agent.h"
 #include "line_follower/external/api/line_following_interface.h"
 #include "line_follower/external/api/motor_signal_agent.h"
 #include "line_follower/external/types/encoder_data.h"
 #include "line_follower/external/types/ir_sensor_array_data.h"
 #include "line_follower/external/types/line_following_characteristics.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/pose.h"
 #include "line_follower/external/types/robot_characteristics.h"
 #include "line_follower/external/types/system_time.h"
@@ -50,6 +50,9 @@ class LineFollowingAgent final : public IrSensorArrayDataConsumerAgent {
     /// Update the ir sensor array data input of the line following model
     /// @param ir_array_data Infrared sensor array data
     void setIrSensorArrayData(const IrSensorArrayData& ir_array_data);
+
+    /// Get the line following statistics
+    LineFollowingStatistics getStatistics();
 
     /// Attach the left motor to receive signals from the line follower agent
     void attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer);

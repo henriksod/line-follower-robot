@@ -6,6 +6,56 @@ cc_test(
     srcs = ["test_line.cpp"],
     deps = [
         "//line_follower/blocks/geometry:line",
+        "//line_follower/blocks/geometry:vector",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "test_vector",
+    size = "small",
+    srcs = ["test_vector.cpp"],
+    deps = [
+        "//line_follower/blocks/geometry:vector",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "test_quaternion",
+    size = "small",
+    srcs = ["test_quaternion.cpp"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/blocks/geometry:euler_angles",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "test_euler_angles",
+    size = "small",
+    srcs = ["test_euler_angles.cpp"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/blocks/geometry:euler_angles",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "test_conversion",
+    size = "small",
+    srcs = ["test_conversion.cpp"],
+    deps = [
+        "//line_follower/blocks/common",
+        "//line_follower/blocks/geometry:conversion",
+        "//line_follower/blocks/geometry:euler_angles",
+        "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
+        "//line_follower/external/types",
         "@com_google_googletest//:gtest_main",
     ],
 )

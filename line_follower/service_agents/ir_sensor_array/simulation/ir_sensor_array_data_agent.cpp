@@ -43,6 +43,7 @@ class IrSensorArrayDataProducerAgent::Impl final : public SchedulableBase {
 
     bool getIrSensorArrayData(IrSensorArrayData& output) const {
         ir_array_interface_->tick(time_agent_.getSystemTime());
+        LOG_INFO("Getting ir sensor array data %lu", time_agent_.getSystemTime().system_time_us);
         return ir_array_interface_->getIrSensorArrayData(output);
     }
 

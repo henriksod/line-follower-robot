@@ -12,8 +12,46 @@ cc_library(
 )
 
 cc_library(
+    name = "calibration_loader",
+    srcs = ["calibration_loader.cpp"],
+    hdrs = ["calibration_loader.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/api:logging_api",
+        "//line_follower/external/types",
+    ] + [
+        "@com_github_nlohmann_json//:json",
+    ],
+)
+
+cc_library(
     name = "should_exit",
     srcs = ["should_exit.cpp"],
     hdrs = ["should_exit.h"],
     visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "json_conversion",
+    srcs = ["json_conversion.cpp"],
+    hdrs = ["json_conversion.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//line_follower/external/types",
+    ] + [
+        "@com_github_nlohmann_json//:json",
+    ],
+)
+
+cc_library(
+    name = "event_logger",
+    srcs = ["event_logger.cpp"],
+    hdrs = ["event_logger.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":json_conversion",
+        "//line_follower/external/types",
+    ] + [
+        "@com_github_nlohmann_json//:json",
+    ],
 )

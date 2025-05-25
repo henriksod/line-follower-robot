@@ -23,7 +23,7 @@ constexpr double kMillimetersToMeters{0.001};
 }  // namespace
 
 void IrSensorArrayModel::tick(SystemTime const timestamp) {
-    ir_sensor_array_data_.timestamp = timestamp;
+    current_time_ = timestamp;
 }
 
 bool IrSensorArrayModel::getIrSensorArrayData(IrSensorArrayData& output) const {
@@ -39,8 +39,13 @@ void IrSensorArrayModel::setTrackLines(std::vector<TrackSegment> const& track_se
     using geometry::Line;
     using geometry::Vector3;
     resetIrSensorArrayData(ir_sensor_array_data_);
-    /// TODO: data validity should be determined based on sanity checks of data.
+
+    if (track_segments.empty()) {
+        return;
+    }
+
     ir_sensor_array_data_.valid = true;
+    ir_sensor_array_data_.timestamp = current_time_;
     ir_sensor_array_data_.number_of_leds = ir_array_characteristics_.number_of_leds;
 
     for (auto const& track_segment : track_segments) {

@@ -16,6 +16,7 @@
 #include "line_follower/external/types/ir_sensor_array_data.h"
 #include "line_follower/external/types/line_following_characteristics.h"
 #include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/motor_signal.h"
 #include "line_follower/external/types/pose.h"
 #include "line_follower/external/types/system_time.h"
@@ -42,6 +43,7 @@ struct LineFollowingContext {
     EncoderData left_encoder_data;
     EncoderData right_encoder_data;
     SystemTime time_at_last_update;
+    LineFollowingStatistics line_following_statistics;
 
     std::unique_ptr<detail::StartState> start_state;
     std::unique_ptr<detail::LineTrackingState> line_tracking_state;
@@ -67,6 +69,7 @@ struct LineFollowingContext {
           left_encoder_data{},
           right_encoder_data{},
           time_at_last_update{},
+          line_following_statistics{},
           start_state{std::move(start_state_)},
           line_tracking_state{std::move(line_tracking_state_)},
           sharp_turn_right_state{std::move(sharp_turn_right_state_)},
@@ -208,6 +211,12 @@ class SimpleLineFollowingModel : public LineFollowingInterface {
     SimpleLineFollowingModel(LineFollowingCharacteristics characteristics,
                              std::unique_ptr<DeadReckoningModel> dead_reckoning_model);
 
+    /// Constructor for SimpleLineFollowingModel
+    /// @param dead_reckoning_model Interface to a dead reckoning model
+    /// @param line_following_context The line following context, to be used in direct injection
+    SimpleLineFollowingModel(std::unique_ptr<DeadReckoningModel> dead_reckoning_model,
+                             std::unique_ptr<detail::LineFollowingContext> line_following_context);
+
     /// Destructor for SimpleLineFollowingModel
     ~SimpleLineFollowingModel() noexcept final = default;
 
@@ -240,6 +249,9 @@ class SimpleLineFollowingModel : public LineFollowingInterface {
     /// @param encoder_data_right The encoder data from the right wheel
     void setEncoderRightData(const EncoderData& encoder_data_right) override;
 
+    /// Get the line following statistics
+    LineFollowingStatistics getStatistics();
+
     /// Update the line follower model using timestamp
     /// @param timestamp The current timestamp
     void update(SystemTime timestamp) override;
@@ -250,7 +262,7 @@ class SimpleLineFollowingModel : public LineFollowingInterface {
 
  private:
     std::unique_ptr<DeadReckoningModel> dead_reckoning_model_;
-    detail::LineFollowingContext line_following_context_;
+    std::unique_ptr<detail::LineFollowingContext> line_following_context_;
     StateMachine<detail::LineFollowingContext> state_machine_;
 
     /// Calculate the desired motor signals based on predicted state

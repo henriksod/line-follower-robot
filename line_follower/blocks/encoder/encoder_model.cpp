@@ -6,16 +6,24 @@
 
 namespace line_follower {
 
+namespace {
+
+// Convert microseconds to seconds
+constexpr double kMicrosToSeconds{1e-6};
+
+}  // namespace
+
 void EncoderModel::tick(SystemTime const timestamp) {
-    if (time_at_last_tick_us_ == 0) {
-        time_at_last_tick_us_ = timestamp.system_time_us;
+    if (timestamp.system_time_us < time_at_last_tick_us_) {
+        return;
     }
 
-    double time_difference_seconds{(timestamp.system_time_us - time_at_last_tick_us_) * 1e-6};
+    double time_difference_seconds{(timestamp.system_time_us - time_at_last_tick_us_) *
+                                   kMicrosToSeconds};
 
     smooth_encoder_step_ += (rotor_speed_.revolutions_per_second * time_difference_seconds) *
                             encoder_characteristics_.counts_per_revolution;
-    rotor_position_.step_position = static_cast<uint64_t>(smooth_encoder_step_);
+    rotor_position_.step_position = static_cast<int64_t>(smooth_encoder_step_);
 
     time_at_last_tick_us_ = timestamp.system_time_us;
 }

@@ -33,7 +33,7 @@ class EncoderModel final : public EncoderInterface {
     EncoderCharacteristics encoder_characteristics_;
     RotorSpeed rotor_speed_{};
     RotorPosition rotor_position_{};
-    int64_t time_at_last_tick_us_{};
+    uint64_t time_at_last_tick_us_{};
     double smooth_encoder_step_{};
 };
 }  // namespace line_follower

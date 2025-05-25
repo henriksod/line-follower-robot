@@ -28,7 +28,9 @@ class EulerAngles {
 
     template <typename T1>
     explicit EulerAngles(const EulerAngles<T1>& other)
-        : roll_{other.roll()}, pitch_{other.pitch()}, yaw_{other.yaw()} {}
+        : roll_{static_cast<T>(other.roll())},
+          pitch_{static_cast<T>(other.pitch())},
+          yaw_{static_cast<T>(other.yaw())} {}
 
     template <typename T1>
     EulerAngles& operator=(const EulerAngles<T1>& other) {

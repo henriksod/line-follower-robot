@@ -23,14 +23,13 @@ double PID::calculate(double setpoint, double measurement, double dt) {
     double p_out{_Kp * error};
 
     // Integral term
-    _integral += error * _dt;
+    _integral += error * dt;
     double i_out{_Ki * _integral};
 
     // Derivative term
     double derivative{0.0};
     if (dt > 0.0) {
-        /// TODO: Somehow this goes to -nan
-        // derivative = (error - _pre_error) / _dt;
+        derivative = (error - _pre_error) / dt;
     }
     double d_out{_Kd * derivative};
 

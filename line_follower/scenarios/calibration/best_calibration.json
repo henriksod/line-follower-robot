@@ -1,0 +1,20 @@
+{
+  "pid_speed_parameters": {
+    "proportional_gain": 1.9743875852990027,
+    "integral_gain": 0.09329503112579755,
+    "derivative_gain": 0.0374291272482141,
+    "max_value": 99.447219802542,
+    "min_value": 0.5464559968679831
+  },
+  "pid_steer_parameters": {
+    "proportional_gain": 2.7434739610520458,
+    "integral_gain": 0.061456161424774586,
+    "derivative_gain": 0.02453830809624927,
+    "max_value": 2.043918470485853,
+    "min_value": -2.032778270073629
+  },
+  "max_forward_velocity": 0.1616605187095659,
+  "turning_speed_ratio": 0.02207353269071525,
+  "sharp_turn_forward_velocity": 0.0550738342887315,
+  "sharp_turn_angular_velocity": 2.0193431937048154
+}

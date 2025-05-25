@@ -12,6 +12,9 @@ namespace robot_geometry {
 
 const geometry::Quaternion<double> kRobotToWorldRotation{0.7071068, 0.0, 0.0, -0.7071068};
 const geometry::Quaternion<double> kWorldToRobotRotation{0.7071068, 0.0, 0.0, 0.7071068};
+const geometry::Vector3<double> kRobotToWorldPosition{0.0, 0.0, 0.0};
+const geometry::Vector3<double> kWorldToRobotPosition{0.0, 0.0, 0.0};
+
 const geometry::Quaternion<double> kIrSensorToRobotRotation{0.7071068, 0.0, 0.0, -0.7071068};
 const geometry::Vector3<double> kIrSensorToRobotPosition{0.1, 0.0, 0.0};
 

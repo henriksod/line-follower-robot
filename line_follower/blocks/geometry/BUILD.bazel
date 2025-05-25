@@ -41,6 +41,7 @@ cc_library(
         ":line",
         ":quaternion",
         ":vector",
+        "//line_follower/blocks/common",
         "//line_follower/external/types",
     ],
 )

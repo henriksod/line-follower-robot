@@ -14,6 +14,7 @@ cc_library(
     deps = [
         "//line_follower/blocks/geometry:conversion",
         "//line_follower/blocks/geometry:quaternion",
+        "//line_follower/blocks/geometry:vector",
         "//line_follower/external/types",
     ],
 )

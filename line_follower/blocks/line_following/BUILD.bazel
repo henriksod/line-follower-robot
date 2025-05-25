@@ -7,9 +7,9 @@ filegroup(
 )
 
 cc_library(
-    name = "line_following_model",
-    srcs = ["line_following_model.cpp"],
-    hdrs = ["line_following_model.h"],
+    name = "kalman_line_following_model",
+    srcs = ["kalman_line_following_model.cpp"],
+    hdrs = ["kalman_line_following_model.h"],
     visibility = ["//visibility:public"],
     deps = [
         "//line_follower/blocks/dead_reckoning:dead_reckoning_model",

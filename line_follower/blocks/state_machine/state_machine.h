@@ -40,6 +40,19 @@ class State {
     /// @param[in, out] context A state machine context
     /// @returns A pointer to new state or noop
     virtual Maybe<State<Context>*> transition(Context& context) = 0;
+
+    /// @brief Check if the state is active
+    ///
+    /// @returns True if the state is active, false otherwise
+    bool is_active() const { return is_active_; }
+
+    /// @brief Set the state as active or inactive
+    ///
+    /// @param active True to set the state as active, false to set it as inactive
+    void set_active(bool active) { is_active_ = active; }
+
+ private:
+    bool is_active_{false};
 };
 
 template <class Context>
@@ -49,6 +62,7 @@ class StateMachine {
 
     StateMachine(State<Context>* initial_state, Context& context)
         : current_state_{initial_state}, context_{context} {
+        current_state_->set_active(true);
         current_state_->enter(context_);
     }
 
@@ -63,7 +77,9 @@ class StateMachine {
         Maybe<State<Context>*> maybe_state = current_state_->transition(context_);
 
         if (maybe_state) {
-            current_state_ = maybe_state.value;
+            current_state_->set_active(false);
+            current_state_ = maybe_state.value();
+            current_state_->set_active(true);
             current_state_->enter(context_);
         }
     }

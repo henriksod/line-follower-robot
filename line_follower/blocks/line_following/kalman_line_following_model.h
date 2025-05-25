@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Henrik Söderlund
 
-#ifndef LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_LINE_FOLLOWING_MODEL_H_
-#define LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_LINE_FOLLOWING_MODEL_H_
+#ifndef LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_KALMAN_LINE_FOLLOWING_MODEL_H_
+#define LINE_FOLLOWER_BLOCKS_LINE_FOLLOWING_KALMAN_LINE_FOLLOWING_MODEL_H_
 
 #include <memory>
 
@@ -12,6 +12,7 @@
 #include "line_follower/external/types/ir_sensor_array_data.h"
 #include "line_follower/external/types/line_following_characteristics.h"
 #include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/motor_signal.h"
 #include "line_follower/external/types/pose.h"
 #include "line_follower/external/types/system_time.h"
@@ -69,6 +70,9 @@ class LineFollowingModel : public LineFollowingInterface {
     /// Update the model with new input data for right encoder
     /// @param encoder_data_right The encoder data from the right wheel
     void setEncoderRightData(const EncoderData& encoder_data_right) override;
+
+    /// Get the line following statistics
+    LineFollowingStatistics getStatistics();
 
     /// Update the line follower model using timestamp
     /// @param timestamp The current timestamp

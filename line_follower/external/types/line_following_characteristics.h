@@ -28,6 +28,12 @@ struct LineFollowingCharacteristics final {
 
     /// The ratio of normal speed to apply when turning
     double turning_speed_ratio;
+
+    /// The forward velocity to apply when performing a sharp turn
+    double sharp_turn_forward_velocity;
+
+    /// The angular velocity to apply when performing a sharp turn
+    double sharp_turn_angular_velocity;
 };
 }  // namespace line_follower
 

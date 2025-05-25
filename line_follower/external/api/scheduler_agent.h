@@ -81,8 +81,8 @@ class SchedulerConsumerAgent final : public ConsumerAgent<UniqueID> {
             [this, func_ = std::move(callback)](UniqueID const& unique_id) {
                 Maybe<UniqueID> this_unique_id{getUniqueID()};
 
-                if (!this_unique_id.isNothing) {
-                    if (unique_id.id == this_unique_id.value.id) {
+                if (this_unique_id.has_value()) {
+                    if (unique_id.id == this_unique_id.value().id) {
                         func_();
                     }
                 }

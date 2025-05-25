@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -18,6 +19,7 @@
 #include "line_follower/external/api/logging.h"
 #include "line_follower/external/api/time_agent.h"
 #include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/system_time.h"
 
 namespace line_follower {
@@ -41,9 +43,7 @@ class LineFollowingAgent::Impl final {
          LineFollowingCharacteristics line_following_characteristics, Pose initial_pose)
         : line_following_model_{std::make_unique<SimpleLineFollowingModel>(
               line_following_characteristics,
-              std::make_unique<DeadReckoningModel>(
-                  robot_characteristics,
-                  geometry::transformedPose(robot_geometry::kWorldToRobotRotation, initial_pose)))},
+              std::make_unique<DeadReckoningModel>(robot_characteristics, initial_pose))},
           left_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           right_motor_signal_producer_{std::make_unique<MotorSignalProducerAgent>()},
           time_agent_{},
@@ -62,16 +62,17 @@ class LineFollowingAgent::Impl final {
 
     Pose getPose() const {
         return geometry::transformedPose(robot_geometry::kRobotToWorldRotation,
+                                         robot_geometry::kRobotToWorldPosition,
                                          line_following_model_->getPose());
     }
 
     Pose getIrSensorArrayPose() const {
-        return geometry::transformedPose(
-            robot_geometry::kRobotToWorldRotation,
-            geometry::transformedPose(convert(line_following_model_->getPose().rotation),
-                                      convert(line_following_model_->getPose().position),
-                                      {convert(robot_geometry::kIrSensorToRobotPosition),
-                                       convert(robot_geometry::kIrSensorToRobotRotation)}));
+        Pose const robot_pose_in_world{getPose()};
+        Pose const ir_pose_in_world{geometry::transformedPose(
+            convert(robot_pose_in_world.rotation), convert(robot_pose_in_world.position),
+            {convert(robot_geometry::kIrSensorToRobotPosition),
+             convert(robot_geometry::kIrSensorToRobotRotation)})};
+        return ir_pose_in_world;
     }
 
     void setEncoderLeftData(const EncoderData& encoder_data_left) {
@@ -85,6 +86,8 @@ class LineFollowingAgent::Impl final {
     void setIrSensorArrayData(const IrSensorArrayData& ir_array_data) {
         new_ir_array_data_ = ir_array_data;
     }
+
+    LineFollowingStatistics getStatistics() { return line_following_model_->getStatistics(); }
 
     void attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer) {
         motor_signal_consumer.attach(*left_motor_signal_producer_);
@@ -190,6 +193,10 @@ void LineFollowingAgent::setEncoderRightData(const EncoderData& encoder_data_rig
 
 void LineFollowingAgent::setIrSensorArrayData(const IrSensorArrayData& ir_array_data) {
     pimpl_->setIrSensorArrayData(ir_array_data);
+}
+
+LineFollowingStatistics LineFollowingAgent::getStatistics() {
+    return pimpl_->getStatistics();
 }
 
 void LineFollowingAgent::attachMotorLeft(MotorSignalConsumerAgent& motor_signal_consumer) {

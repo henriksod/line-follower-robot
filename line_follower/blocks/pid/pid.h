@@ -19,7 +19,6 @@ class PID {
     void reset();
 
  private:
-    double _dt;
     double _max;
     double _min;
     double _Kp;

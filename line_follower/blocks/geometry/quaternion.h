@@ -191,31 +191,31 @@ class Quaternion {
  */
 template <typename T>
 inline EulerAngles<T> to_euler(Quaternion<T> const& q, T eps = 1e-7) {
-    const T w2 = q.w() * q.w();
-    const T x2 = q.x() * q.x();
-    const T y2 = q.y() * q.y();
-    const T z2 = q.z() * q.z();
-    const T unit_length = w2 + x2 + y2 + z2;
-    const T abcd = q.w() * q.x() + q.y() * q.z();
-    const T pi = PI;
-    T yaw{};
-    T pitch{};
-    T roll{};
-    if (abcd > (0.5 - eps) * unit_length) {
-        yaw = 2.0 * atan2(q.y(), q.w());
-        pitch = pi;
-        roll = 0.0;
-    } else if (abcd < (-0.5 + eps) * unit_length) {
-        yaw = -2.0 * std::atan2(q.y(), q.w());
-        pitch = -pi;
-        roll = 0.0;
-    } else {
-        const double adbc = q.w() * q.z() - q.x() * q.y();
-        const double acbd = q.w() * q.y() - q.x() * q.z();
-        yaw = std::atan2(2.0 * adbc, 1.0 - 2.0 * (z2 + x2));
-        pitch = std::asin(2.0 * abcd / unit_length);
-        roll = std::atan2(2.0 * acbd, 1.0 - 2.0 * (y2 + x2));
-    }
+    // Normalize quaternion to be safe
+    auto norm = std::sqrt(q.w() * q.w() + q.x() * q.x() + q.y() * q.y() + q.z() * q.z());
+    T w = q.w() / norm;
+    T x = q.x() / norm;
+    T y = q.y() / norm;
+    T z = q.z() / norm;
+
+    T roll, pitch, yaw;
+
+    // roll (x-axis rotation)
+    T sinr_cosp = 2 * (w * x + y * z);
+    T cosr_cosp = 1 - 2 * (x * x + y * y);
+    roll = std::atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    T sinp = 2 * (w * y - z * x);
+    if (std::abs(sinp) >= 1)
+        pitch = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+    else
+        pitch = std::asin(sinp);
+
+    // yaw (z-axis rotation)
+    T siny_cosp = 2 * (w * z + x * y);
+    T cosy_cosp = 1 - 2 * (y * y + z * z);
+    yaw = std::atan2(siny_cosp, cosy_cosp);
 
     return EulerAngles<T>{roll, pitch, yaw};
 }
@@ -226,14 +226,21 @@ inline EulerAngles<T> to_euler(Quaternion<T> const& q, T eps = 1e-7) {
  * The conventions used are with the 3,2,1 convention ??? TODO: verify
  */
 template <typename T>
-inline Quaternion<T> from_euler(EulerAngles<T> const& x) {
-    T c0 = std::cos(x.yaw() / 2), s0 = std::sin(x.yaw() / 2);
-    T c1 = std::cos(x.pitch() / 2), s1 = std::sin(x.pitch() / 2);
-    T c2 = std::cos(x.roll() / 2), s2 = std::sin(x.roll() / 2);
-    T c0c1 = c0 * c1, s0s1 = s0 * s1, s0c1 = s0 * c1, c0s1 = c0 * s1;
+inline Maybe<Quaternion<T> > from_euler(EulerAngles<T> const& x) {
+    T cy = std::cos(x.yaw() * 0.5);
+    T sy = std::sin(x.yaw() * 0.5);
+    T cp = std::cos(x.pitch() * 0.5);
+    T sp = std::sin(x.pitch() * 0.5);
+    T cr = std::cos(x.roll() * 0.5);
+    T sr = std::sin(x.roll() * 0.5);
 
-    return {c0c1 * c2 + s0s1 * s2, c0c1 * s2 - s0s1 * c2, c0s1 * c2 + s0c1 * s2,
-            s0c1 * c2 - c0c1 * s2};
+    Quaternion<T> q{
+        cr * cp * cy + sr * sp * sy,  // w
+        sr * cp * cy - cr * sp * sy,  // x
+        cr * sp * cy + sr * cp * sy,  // y
+        cr * cp * sy - sr * sp * cy   // z
+    };
+    return normalize(q);
 }
 
 /** +
@@ -250,12 +257,6 @@ inline Quaternion<T> conj(const Quaternion<T>& x) {
 template <typename T>
 inline T norm_squared(const Quaternion<T>& x) {
     return x.norm_squared();
-}
-
-// abs = l2 norm = euclidean norm
-template <typename T>
-inline T abs(const Quaternion<T>& x) {
-    return x.abs();
 }
 
 template <typename T>
@@ -287,6 +288,12 @@ template <typename T>
 inline T norm_sup(const Quaternion<T>& x) {
     return std::max(std::max(std::abs(x.w()), std::abs(x.x())),
                     std::max(std::abs(x.y()), std::abs(x.z())));
+}
+
+// abs = l2 norm = euclidean norm
+template <typename T>
+inline T abs(const Quaternion<T>& x) {
+    return norm_lk(x, 2);
 }
 
 /**
@@ -347,16 +354,6 @@ inline bool operator!=(T2 y, const Quaternion<T>& x) {
     return !(x == y);
 }
 
-template <typename T, typename T2, typename T3>
-inline bool nearly_equal(const Quaternion<T>& x, T2 y, T3 eps) {
-    return x.is_real() && is_nearly_equal(x.w(), y, eps);
-}
-
-template <typename T, typename T2, typename T3>
-inline bool nearly_equal(T2 y, const Quaternion<T>& x, T3 eps) {
-    return x.is_real() && is_nearly_equal(x.w(), y, eps);
-}
-
 /**
  * Quaternion <-> Quaternion
  */
@@ -370,10 +367,10 @@ inline bool operator!=(const Quaternion<T>& x, const Quaternion<T>& y) {
     return !(x == y);
 }
 
-template <typename T1, typename T2, typename T3>
-inline bool nearly_equal(const Quaternion<T1>& x, const Quaternion<T2>& other, T3 eps) {
-    return is_nearly_equal(x.w(), other.w(), eps) && is_nearly_equal(x.x(), other.x(), eps) &&
-           is_nearly_equal(x.y(), other.y(), eps) && is_nearly_equal(x.z(), other.z(), eps);
+template <typename T, typename T2>
+inline bool nearly_equal(const Quaternion<T>& q1, const Quaternion<T>& q2, T2 tol) {
+    // Quaternions represent same rotation if q1 == q2 or q1 == -q2
+    return (q1 - q2).norm() < tol || (q1 + q2).norm() < tol;
 }
 
 template <typename T, typename T1>
@@ -466,11 +463,11 @@ inline Quaternion<T> commutator(const Quaternion<T>& x, const Quaternion<T>& y) 
 
 template <typename T>
 inline Maybe<Quaternion<T> > normalize(const Quaternion<T>& x) {
-    if (abs(x) > 0) {
+    if (x.norm() < 1e-12) {
         return Nothing<Quaternion<T> >();
     }
 
-    return Just(x / abs(x));
+    return Just(x / x.norm());
 }
 
 template <typename T>
@@ -478,9 +475,7 @@ inline void rotate(Quaternion<T> const& q, Vector3<T>& v) {
     Quaternion<T> const p{v};
     auto const result{q * p * conj(q)};
 
-    v.x = result.x();
-    v.y = result.y();
-    v.z = result.z();
+    v.set(result.x(), result.y(), result.z());
 }
 
 template <typename T>

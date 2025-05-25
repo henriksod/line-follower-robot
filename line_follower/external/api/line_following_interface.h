@@ -7,6 +7,7 @@
 #include "line_follower/external/types/ir_sensor_array_data.h"
 #include "line_follower/external/types/line_following_characteristics.h"
 #include "line_follower/external/types/line_following_state.h"
+#include "line_follower/external/types/line_following_statistics.h"
 #include "line_follower/external/types/motor_signal.h"
 #include "line_follower/external/types/pose.h"
 #include "line_follower/external/types/system_time.h"
@@ -45,6 +46,9 @@ class LineFollowingInterface {
     /// Update the model with new input data for right encoder
     /// @param encoder_data_right The encoder data from the right wheel
     virtual void setEncoderRightData(const EncoderData& encoder_data_right) = 0;
+
+    /// Get the line following statistics
+    virtual LineFollowingStatistics getStatistics() = 0;
 
     /// Update the line follower model using timestamp
     /// @param timestamp The current timestamp

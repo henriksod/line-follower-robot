@@ -17,15 +17,17 @@ const geometry::Quaternion<double> k90DegreesAroundZ{0.7071068, 0.0, 0.0, 0.7071
 
 inline Pose transformedPose(Quaternion<double> const& quaternion, Vector3<double> const& offset,
                             Pose const& pose) {
-    Pose new_pose{pose};
-    new_pose.position = convert(rotated(quaternion, convert(new_pose.position)) + offset);
-    new_pose.rotation = convert(convert(new_pose.rotation) * quaternion);
-    return new_pose;
-}
+    Pose result;
 
-inline Pose transformedPose(Quaternion<double> const& quaternion, Pose const& pose) {
-    Vector3<double> zero_offset{};
-    return transformedPose(quaternion, zero_offset, pose);
+    // Rotate the original pose's position, then apply the transform
+    Vector3<double> rotated_position = rotated(quaternion, convert(pose.position)) + offset;
+    result.position = convert(rotated_position);
+
+    // Compose rotations: new = quaternion * old
+    Quaternion<double> combined_rotation = quaternion * convert(pose.rotation);
+    result.rotation = convert(combined_rotation);
+
+    return result;
 }
 
 }  // namespace geometry

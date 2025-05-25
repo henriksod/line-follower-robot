@@ -3,6 +3,8 @@
 #ifndef LINE_FOLLOWER_BLOCKS_GEOMETRY_VECTOR_H_
 #define LINE_FOLLOWER_BLOCKS_GEOMETRY_VECTOR_H_
 
+#include <cmath>
+
 namespace line_follower {
 namespace geometry {
 /// @brief A 3-element vector class
@@ -60,8 +62,8 @@ class Vector3 {
     const Vector3<T> operator<(const Vector3<T>& v);
     const Vector3<T> operator>(const Vector3<T>& v);
 
-    bool operator==(const Vector3<T>& v);
-    bool operator!=(const Vector3<T>& v);
+    bool operator==(const Vector3<T>& v) const;
+    bool operator!=(const Vector3<T>& v) const;
 
     T* ptr() { return _v; }
 
@@ -139,7 +141,7 @@ inline const Vector3<T> Vector3<T>::cross(const Vector3<T>& v) const {
 
 template <class T>
 inline const T Vector3<T>::norm() const {
-    return (T)sqrt(dot(*this));  // cast to type
+    return (T)std::sqrt(dot(*this));  // cast to type
 }
 
 template <class T>
@@ -266,12 +268,12 @@ inline const Vector3<T> Vector3<T>::operator-() {
 }
 
 template <class T>
-inline bool Vector3<T>::operator==(const Vector3<T>& v) {
+inline bool Vector3<T>::operator==(const Vector3<T>& v) const {
     return _v[0] == v[0] && _v[1] == v[1] && _v[2] == v[2];
 }
 
 template <class T>
-inline bool Vector3<T>::operator!=(const Vector3<T>& v) {
+inline bool Vector3<T>::operator!=(const Vector3<T>& v) const {
     return _v[0] != v[0] || _v[1] != v[1] || _v[2] != v[2];
 }
 

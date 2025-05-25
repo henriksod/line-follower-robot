@@ -53,6 +53,7 @@ class IrSensorArrayModel final : public IrSensorArrayInterface {
  private:
     IrSensorArrayCharacteristics const ir_array_characteristics_;
     IrSensorArrayData ir_sensor_array_data_;
+    SystemTime current_time_{0U};
 };
 }  // namespace line_follower
 

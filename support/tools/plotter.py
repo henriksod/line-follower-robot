@@ -25,9 +25,15 @@ def plot_map_and_robot(map_data, robot_log_data):
 
     ax.plot(x_positions, y_positions, "ro-", markersize=5, label="Robot Path")
 
+    # Plot ir's path
+    x_positions = [entry["ir_pose"]["position"]["x"] for entry in robot_log_data]
+    y_positions = [entry["ir_pose"]["position"]["y"] for entry in robot_log_data]
+
+    ax.plot(x_positions, y_positions, "bo-", markersize=5, label="IR Path")
+
     # Set plot limits and labels
-    ax.set_xlim(-2, 2)
-    ax.set_ylim(-2, 2)
+    ax.set_xlim(-3, 3)
+    ax.set_ylim(-3, 3)
     ax.set_aspect("equal")
     ax.set_xlabel("X position")
     ax.set_ylabel("Y position")
@@ -45,7 +51,7 @@ def main(scenario_file, robot_log_file):
 
     # Load the robot log data
     with open(robot_log_file, "r") as f:
-        robot_log_data = json.load(f)
+        robot_log_data = [json.loads(line) for line in f]
 
     # Plot the map and robot path
     plot_map_and_robot(map_data, robot_log_data)

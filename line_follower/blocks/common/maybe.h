@@ -8,10 +8,12 @@
 namespace line_follower {
 template <typename T>
 struct Maybe {
-    T value;
-    bool isNothing;
+    T value_;
+    bool is_nothing_;
 
-    operator bool() const { return !isNothing; }
+    operator bool() const { return !is_nothing_; }
+    bool has_value() const { return !is_nothing_; }
+    T& value() { return value_; }
 };
 
 template <typename T>

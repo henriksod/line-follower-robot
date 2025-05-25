@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -168,28 +169,39 @@ void SimpleLineFollowingModel::setEncoderRightData(EncoderData const& encoder_da
 }
 
 void SimpleLineFollowingModel::update(SystemTime timestamp) {
-    state_machine_.step();
     dead_reckoning_model_->step(timestamp);
+    state_machine_.step();
+}
+
+LineFollowingStatistics SimpleLineFollowingModel::getStatistics() {
+    auto const& context = state_machine_.context();
+    return context.line_following_statistics;
 }
 
 void SimpleLineFollowingModel::update(const IrSensorArrayData& ir_array_data) {
     state_machine_.context().ir_array_data = ir_array_data;
     state_machine_.step();
-
-    dead_reckoning_model_->step(ir_array_data.timestamp);
 }
 
 SimpleLineFollowingModel::SimpleLineFollowingModel(
     LineFollowingCharacteristics characteristics,
     std::unique_ptr<DeadReckoningModel> dead_reckoning_model)
     : dead_reckoning_model_{std::move(dead_reckoning_model)},
-      line_following_context_{detail::LineFollowingContext{
-          characteristics, *dead_reckoning_model_, std::make_unique<detail::StartState>(),
-          std::make_unique<detail::LineTrackingState>(),
-          std::make_unique<detail::SharpTurnState>(detail::SharpTurnState::Type::kRight),
-          std::make_unique<detail::SharpTurnState>(detail::SharpTurnState::Type::kLeft),
-          std::make_unique<detail::StopState>()}},
-      state_machine_{line_following_context_.line_tracking_state.get(), line_following_context_} {}
+      line_following_context_{
+          std::make_unique<detail::LineFollowingContext>(detail::LineFollowingContext{
+              characteristics, *dead_reckoning_model_, std::make_unique<detail::StartState>(),
+              std::make_unique<detail::LineTrackingState>(),
+              std::make_unique<detail::SharpTurnState>(detail::SharpTurnState::Type::kRight),
+              std::make_unique<detail::SharpTurnState>(detail::SharpTurnState::Type::kLeft),
+              std::make_unique<detail::StopState>()})},
+      state_machine_{line_following_context_->start_state.get(), *line_following_context_} {}
+
+SimpleLineFollowingModel::SimpleLineFollowingModel(
+    std::unique_ptr<DeadReckoningModel> dead_reckoning_model,
+    std::unique_ptr<detail::LineFollowingContext> line_following_context)
+    : dead_reckoning_model_{std::move(dead_reckoning_model)},
+      line_following_context_{std::move(line_following_context)},
+      state_machine_{line_following_context_->start_state.get(), *line_following_context_} {}
 
 namespace detail {
 
@@ -199,14 +211,17 @@ void StartState::enter(LineFollowingContext& context) {
 
 void StartState::step(LineFollowingContext& context) {
     // Move forward slowly
-    context.left_motor_signal.speed.revolutions_per_second = 1.0;
-    context.right_motor_signal.speed.revolutions_per_second = -1.0;
+    double const speed_left_setpoint{
+        context.dead_reckoning_model.calculateLeftMotorSpeed(0.1, 0.0)};
+
+    double const speed_right_setpoint{
+        context.dead_reckoning_model.calculateRightMotorSpeed(0.1, 0.0)};
+
+    context.left_motor_signal.speed.revolutions_per_second = speed_left_setpoint;
+    context.right_motor_signal.speed.revolutions_per_second = speed_right_setpoint;
 }
 
 Maybe<LineFollowerState*> StartState::transition(LineFollowingContext& context) {
-    /// TODO: Remove
-    return Nothing<LineFollowerState*>();
-
     if (noLineDetected(context.ir_array_data)) {
         return Nothing<LineFollowerState*>();
     }
@@ -226,18 +241,16 @@ void SharpTurnState::enter(LineFollowingContext& context) {
 }
 
 void SharpTurnState::step(LineFollowingContext& context) {
-    // double const forward_velocity{context.characteristics.max_forward_velocity *
-    //                               context.characteristics.turning_speed_ratio};
-    double const forward_velocity{0.1};
+    double const forward_velocity{context.characteristics.sharp_turn_forward_velocity};
     double angular_velocity{0.0};
 
     switch (type_) {
         case Type::kRight: {
-            angular_velocity = -1.0;
+            angular_velocity = -context.characteristics.sharp_turn_angular_velocity;
             break;
         }
         case Type::kLeft: {
-            angular_velocity = 1.0;
+            angular_velocity = context.characteristics.sharp_turn_angular_velocity;
             break;
         }
         default: break;
@@ -292,10 +305,25 @@ void LineTrackingState::enter(LineFollowingContext& context) {
 }
 
 void LineTrackingState::step(LineFollowingContext& context) {
+    if (!context.ir_array_data.valid) {
+        return;
+    }
+
     if (context.time_at_last_update.system_time_us >
         context.ir_array_data.timestamp.system_time_us) {
         return;
     }
+
+    double const average_steering_error_normalized{
+        calculateAverageReadingRelativePosition(context.ir_array_data)};
+
+    // Update statistics
+    context.line_following_statistics.timestamp = context.ir_array_data.timestamp;
+    context.line_following_statistics.tracking_error = fabs(average_steering_error_normalized);
+    context.line_following_statistics.average_speed =
+        (context.left_encoder_data.revolutions_per_second +
+         context.right_encoder_data.revolutions_per_second) /
+        2.0;
 
     if (isPerpendicularLine(context.ir_array_data)) {
         context.time_at_last_update = context.ir_array_data.timestamp;
@@ -316,10 +344,10 @@ void LineTrackingState::step(LineFollowingContext& context) {
         return;
     }
 
-    double const average_steering_error_normalized{
-        calculateAverageReadingRelativePosition(context.ir_array_data)};
-
     calculateMotorSignals(context, average_steering_error_normalized, time_diff);
+
+    // Update statistics again
+    context.line_following_statistics.time_spent_on_line += time_diff;
 
     context.time_at_last_update = context.ir_array_data.timestamp;
 }

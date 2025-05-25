@@ -29,18 +29,16 @@ inline std::vector<Line<T> > sweepAlongWidth(Line<T> const& line, double width,
     Vector3<double> line_vector{normalized(line.to() - line.from())};
     auto orthogonal_vector{rotated(detail::k90DegreesAroundZ, line_vector)};
 
-    Line<double> left_line{line.from() + orthogonal_vector * width / 2.0,
-                           line.to() + orthogonal_vector * width / 2.0};
-    Line<double> right_line{line.from() - orthogonal_vector * width / 2.0,
-                            line.to() - orthogonal_vector * width / 2.0};
+    Line<double> left_line{line.from() - orthogonal_vector * width / 2.0,
+                           line.to() - orthogonal_vector * width / 2.0};
+    Line<double> right_line{line.from() + orthogonal_vector * width / 2.0,
+                            line.to() + orthogonal_vector * width / 2.0};
 
-    double lerp_value{0.0};
+    for (std::size_t idx = 0U; idx < resolution; ++idx) {
+        double lerp_value = static_cast<double>(idx) / static_cast<double>(resolution - 1);
 
-    for (std::size_t idx{0U}; idx < resolution; ++idx) {
         lines.push_back(Line<double>(lerp(left_line.from(), right_line.from(), lerp_value),
                                      lerp(left_line.to(), right_line.to(), lerp_value)));
-
-        lerp_value = std::min(1.0, lerp_value + 1.0 / static_cast<double>(resolution));
     }
 
     return lines;
