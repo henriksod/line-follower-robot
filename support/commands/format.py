@@ -115,7 +115,9 @@ def check(all_files):
         )
 
     buildifier = _ensure_buildifier()
-    cmd_buildifier = f"{buildifier} --lint=warn --warnings=-constant-glob,-module-docstring,-external-path -r ."
+    cmd_buildifier = (
+        f"{buildifier} --lint=warn --warnings=-constant-glob,-module-docstring,-external-path -r ."
+    )
     cmd_codespell = "codespell --count"
     exec_subprocess(
         "%s && %s && %s && %s"
@@ -164,7 +166,9 @@ def fix(all_files):
         )
 
     buildifier = _ensure_buildifier()
-    cmd_buildifier = f"{buildifier} --lint=fix --warnings=-constant-glob,-module-docstring,-external-path -r ."
+    cmd_buildifier = (
+        f"{buildifier} --lint=fix --warnings=-constant-glob,-module-docstring,-external-path -r ."
+    )
     exec_subprocess(
         "%s && %s && %s"
         % (

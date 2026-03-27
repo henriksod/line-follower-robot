@@ -39,6 +39,9 @@ user.bazelrc
 # Dazel auto generated file
 .dazel_run
 
+# Simulator live events log (generated at runtime)
+sim_events.json
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
