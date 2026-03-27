@@ -1,5 +1,7 @@
 # Copyright (c) 2023 Henrik Söderlund
 
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
 cc_library(
     name = "logging_agent_simulation",
     srcs = ["simulation/logging_agent.cpp"],

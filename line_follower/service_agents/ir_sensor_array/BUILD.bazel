@@ -1,5 +1,7 @@
 # Copyright (c) 2023 Henrik Söderlund
 
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
 cc_library(
     name = "ir_sensor_array_data_agent_simulation",
     srcs = ["simulation/ir_sensor_array_data_agent.cpp"],

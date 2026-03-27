@@ -31,6 +31,10 @@ test --test_output=errors
 
 build:debug --verbose_failures --sandbox_debug --toolchain_resolution_debug --compilation_mode=dbg
 
+# macOS: processwrapper-sandbox is unreliable on macOS; use local execution instead.
+build:macos --spawn_strategy=local
+build:macos --strategy=Genrule=local
+
 # To use a clang compiler, invoke Bazel with `--config=clang`.
 build:clang --repo_env=CC=clang
 build:clang --repo_env=CXX=clang++

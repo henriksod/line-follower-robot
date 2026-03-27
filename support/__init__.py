@@ -1,8 +1,8 @@
 import sys
-import pkg_resources
 import subprocess
 import logging as LOGGING
 from collections.abc import Iterable
+from importlib.metadata import version, PackageNotFoundError
 
 try:
     from loguru import logger
@@ -40,9 +40,11 @@ def check_packages(requirements, cmds=""):
     s = ""  # missing packages
     for r in requirements:
         r = str(r)
+        # Strip version specifiers to get the bare package name for the lookup.
+        bare = r.split(">")[0].split("<")[0].split("=")[0].split("!")[0].strip()
         try:
-            pkg_resources.require(r)
-        except pkg_resources.DistributionNotFound as e:
+            version(bare)
+        except PackageNotFoundError as e:
             logger.error(e)
             s += f"{r!r} "
     if s:

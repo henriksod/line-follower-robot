@@ -1,3 +1,4 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("//bazel/rules/transitions:defs.bzl", "build_variant")
 
 def _add_transition_variant(variant, kwargs):
@@ -20,7 +21,6 @@ def cc_binary_with_variant(variant, **kwargs):
     """
 
     kwargs = _add_transition_variant(variant, kwargs)
-
-    native.cc_binary(
+    cc_binary(
         **kwargs
     )

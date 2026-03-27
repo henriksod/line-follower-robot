@@ -6,6 +6,7 @@
 #include <cmath>
 #include <memory>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "line_follower/blocks/ir_sensor_array/ir_sensor_array_model.h"
@@ -54,15 +55,15 @@ std::vector<TrackLineSegment> input_track_line_list = {
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kMetersToMillimeters* kLedArraySpacingMeters * 0.5,
+     kMetersToMillimeters * kLedArraySpacingMeters * 0.5,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kMetersToMillimeters* kLedArraySpacingMeters * 1.5,
+     kMetersToMillimeters * kLedArraySpacingMeters * 1.5,
      0U,
      true},
     {{{kMiddleLedPositionX, 1.0, 0.0}, {kMiddleLedPositionX, -1.0, 0.0}},
-     kMetersToMillimeters* kLedArraySpacingMeters* kNumberOfLeds,
+     kMetersToMillimeters * kLedArraySpacingMeters * kNumberOfLeds,
      0U,
      true}};
 std::vector<std::array<IrSensorData, kMaxIrSensorArrayNumberOfLeds> > expected_activated_leds_list =

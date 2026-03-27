@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Henrik Söderlund
 
-load("@rules_pkg//pkg:pkg.bzl", "pkg_tar", "pkg_zip")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
+load("@rules_pkg//pkg:pkg.bzl", "pkg_tar", "pkg_zip")
 
 LIBRARIES = [
     "//line_follower/service_agents/time:time_agent",

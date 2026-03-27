@@ -3,6 +3,7 @@
 #include "line_follower/external/api/encoder_data_agent.h"
 
 #include <memory>
+#include <utility>
 
 #include "line_follower/blocks/common/function.h"
 #include "line_follower/blocks/encoder/encoder_model.h"
@@ -20,8 +21,8 @@ namespace line_follower {
 class EncoderDataProducerAgent::Impl final : public SchedulableBase {
  public:
     explicit Impl(EncoderCharacteristics encoder_characteristics)
-        : encoder_interface_{std::make_unique<EncoderModel>(encoder_characteristics,
-                                                            EncoderTag::kNone)},
+        : encoder_interface_{
+              std::make_unique<EncoderModel>(encoder_characteristics, EncoderTag::kNone)},
           time_agent_{} {
         LOG_INFO("Created encoder data producer agent (simulation)");
     }

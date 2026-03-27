@@ -1,4 +1,5 @@
 # The name of the docker container to run.
+import os
 DAZEL_INSTANCE_NAME="dazel"
 
 # The name of the dazel image to build or pull.
@@ -23,14 +24,14 @@ DAZEL_DIRECTORY="$PWD"
 # The command to run inside the container.
 # NOTE: You should add flags to the .bazelrc file instead of here, since it is
 #       also shared in the volume and it is a much cleaner way.
-DAZEL_COMMAND="/usr/bin/bazel"
+DAZEL_COMMAND="/usr/local/bin/bazel"
 
 # Add any additional volumes you want to share between the host and the docker
 # container, in the normal "hostdir:dockerdir" format.
 # This can be a python iterable, or a comma-separated string.
 # If working on windows add drive name to avoid conflicts, e.g.
 # DAZEL_VOLUMES = ["C:\\tmp:/C/tmp"]
-DAZEL_VOLUMES=["/home/$(whoami)/:/home/$(whoami)/"]
+DAZEL_VOLUMES=["%s:%s" % (os.path.expanduser("~"), os.path.expanduser("~"))]
 
 # Add any ports you want to publish from the dazel container to the host, in the
 # normal "interface:dockerport:hostport" (e.g. "0.0.0.0:80:80").

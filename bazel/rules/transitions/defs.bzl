@@ -1,3 +1,6 @@
+load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
+
 def _build_variant_transition_impl(settings, attr):
     if settings["//bazel/flags/agents:agents"] != "simulation":
         fail("Overwriting explicitly set variant {} with {}".format(

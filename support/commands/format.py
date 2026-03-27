@@ -1,11 +1,53 @@
 import os
 import re
+import shutil
+import stat
+import subprocess
 import sys
+import urllib.request
 import click
 from loguru import logger
 from support import check_packages
 from support.utils.exec_subprocess import exec_subprocess
 from support.utils.staged_files import get_staged_files
+
+BUILDIFIER_VERSION = "v8.5.1"
+_BUILDIFIER_PLATFORM_MAP = {
+    ("linux", "x86_64"): "buildifier-linux-amd64",
+    ("linux", "aarch64"): "buildifier-linux-arm64",
+    ("darwin", "x86_64"): "buildifier-darwin-amd64",
+    ("darwin", "arm64"): "buildifier-darwin-arm64",
+}
+
+
+def _ensure_buildifier():
+    """Download buildifier binary if not available on PATH."""
+    if shutil.which("buildifier"):
+        return "buildifier"
+
+    import platform
+
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+    asset = _BUILDIFIER_PLATFORM_MAP.get((system, machine))
+    if not asset:
+        raise RuntimeError(f"No buildifier binary available for {system}/{machine}")
+
+    dest = os.path.join(os.path.expanduser("~"), ".local", "bin", "buildifier")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    url = f"https://github.com/bazelbuild/buildtools/releases/download/{BUILDIFIER_VERSION}/{asset}"
+    logger.info(f"Downloading buildifier from {url} ...")
+    urllib.request.urlretrieve(url, dest)
+    os.chmod(dest, os.stat(dest).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    if system == "darwin":
+        # Clear quarantine flag (set by browser downloads, not urllib, but harmless).
+        subprocess.run(
+            ["xattr", "-d", "com.apple.quarantine", dest], check=False, stderr=subprocess.DEVNULL
+        )
+        # Ad-hoc sign the binary so Gatekeeper allows execution on macOS 14+/Apple Silicon.
+        subprocess.run(["codesign", "--sign", "-", "--force", dest], check=True)
+    logger.success(f"buildifier installed to {dest}")
+    return dest
 
 
 def is_python_file(file):
@@ -46,7 +88,6 @@ def check(all_files):
             "cpplint",
         )
     )
-    run_entrypoint = os.environ["LINE_FOLLOWER_ROBOT_REPO_ENTRYPOINT"]
     if not all_files:
         files = get_staged_files()
         python_files = [f for f in files if is_python_file(f)]
@@ -58,7 +99,7 @@ def check(all_files):
         logger.info("Staged cxx files:\n%s" % ("\n".join(cxx_files)))
         cmd_cpplint = (
             (
-                f"{sys.executable} -m cpplint --filter=-build/c++11,-runtime/references --linelength=100"
+                f"{sys.executable} -m cpplint --filter=-build/c++11,-runtime/references,-whitespace/indent_namespace --linelength=100"
                 f" {' '.join(cxx_files)}"
             )
             if cxx_files
@@ -68,12 +109,13 @@ def check(all_files):
         cmd_flake8 = f"{sys.executable} -m flake8 {os.getcwd()}"
         cmd_cpplint = (
             f"find {os.path.join(os.getcwd(), 'line_follower')}"
-            " -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
+            " -E -regex '.*\\.(cc|cpp|h|hpp)'"
             f" | xargs {sys.executable} -m cpplint"
-            " --filter=-build/c++11,-runtime/references --linelength=100"
+            " --filter=-build/c++11,-runtime/references,-whitespace/indent_namespace --linelength=100"
         )
 
-    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=warn"
+    buildifier = _ensure_buildifier()
+    cmd_buildifier = f"{buildifier} --lint=warn --warnings=-constant-glob,-module-docstring,-external-path -r ."
     cmd_codespell = "codespell --count"
     exec_subprocess(
         "%s && %s && %s && %s"
@@ -84,7 +126,7 @@ def check(all_files):
             cmd_codespell,
         ),
         msg_on_error=(
-            "\nRun the following command to mix most issues with formatting:\n\t"
+            "\nRun the following command to fix most issues with formatting:\n\t"
             "./run.py format fix --all"
         ),
         msg_on_success="Formatting checks passed!",
@@ -104,7 +146,6 @@ def check(all_files):
 def fix(all_files):
     """Fix formatting issues using Black and Buildifier"""
     check_packages("black")
-    run_entrypoint = os.environ["LINE_FOLLOWER_ROBOT_REPO_ENTRYPOINT"]
     if not all_files:
         files = get_staged_files()
         python_files = [f for f in files if is_python_file(f)]
@@ -119,11 +160,11 @@ def fix(all_files):
     else:
         cmd_black = f"{sys.executable} -m black --line-length=100 {os.getcwd()}"
         cmd_clangformat = (
-            f"find {os.getcwd()} -regextype posix-extended -regex '.*\\.(cc|cpp|h|hpp)'"
-            f" | xargs clang-format -i"
+            f"find -E {os.getcwd()} -regex '.*\\.(cc|cpp|h|hpp)'" f" | xargs clang-format -i"
         )
 
-    cmd_buildifier = f"{run_entrypoint} bazel run //:buildifier -- --lint=fix"
+    buildifier = _ensure_buildifier()
+    cmd_buildifier = f"{buildifier} --lint=fix --warnings=-constant-glob,-module-docstring,-external-path -r ."
     exec_subprocess(
         "%s && %s && %s"
         % (

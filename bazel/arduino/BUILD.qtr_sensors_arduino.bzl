@@ -4,8 +4,8 @@
 A module that builds the arduino-cli tool
 """
 
-load("@rules_pkg//pkg:pkg.bzl", "pkg_zip")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
+load("@rules_pkg//pkg:pkg.bzl", "pkg_zip")
 
 pkg_files(
     name = "library",

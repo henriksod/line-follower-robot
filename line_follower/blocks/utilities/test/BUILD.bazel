@@ -1,5 +1,7 @@
 # Copyright (c) 2023 Henrik Söderlund
 
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
 filegroup(
     name = "test_data",
     srcs = glob([

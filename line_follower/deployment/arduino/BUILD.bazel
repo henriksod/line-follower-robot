@@ -1,5 +1,7 @@
 # Copyright (c) 2024 Henrik Söderlund
 
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
 cc_library(
     name = "api",
     srcs = ["api.h"],
