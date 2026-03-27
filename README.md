@@ -26,3 +26,13 @@ sudo apt install arduino clang-format
 ```
 ./run.py --help
 ```
+
+## Running the simulator
+
+```
+./run.py bazel run //line_follower/deployment/simulator/ph0_line_follower:example -- \
+  --scenario $PWD/line_follower/scenarios/simple/trainer_scenario.json \
+  --calibration $PWD/line_follower/scenarios/calibration/example_calibration.json
+```
+
+> **Note:** Use `$PWD`-prefixed absolute paths for `--scenario` and `--calibration`. `bazel run` sets the working directory to the runfiles directory, so relative paths will not resolve correctly.
