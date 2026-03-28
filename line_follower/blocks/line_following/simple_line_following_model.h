@@ -28,6 +28,8 @@ namespace detail {
 class StartState;
 class LineTrackingState;
 class SharpTurnState;
+class LostLineState;
+class PerpendicularCrossingState;
 class StopState;
 
 /// @brief  A context used for line following state machine
@@ -45,10 +47,24 @@ struct LineFollowingContext {
     SystemTime time_at_last_update;
     LineFollowingStatistics line_following_statistics;
 
+    /// Last known normalised line position (sign gives sweep direction when line is lost)
+    double last_known_position{0.0};
+    /// EMA-filtered position from the previous step
+    double previous_position{0.0};
+    /// Timestamp when the line was lost (set on entry to LostLineState)
+    SystemTime lost_line_timestamp{};
+    /// Timestamp when a perpendicular crossing was first detected
+    SystemTime perpendicular_crossing_timestamp{};
+    /// Set to true when PerpendicularCrossingState completes; consumed by
+    /// LineTrackingState::transition to suppress one immediate re-entry.
+    bool perpendicular_crossing_cooldown{false};
+
     std::unique_ptr<detail::StartState> start_state;
     std::unique_ptr<detail::LineTrackingState> line_tracking_state;
     std::unique_ptr<detail::SharpTurnState> sharp_turn_right_state;
     std::unique_ptr<detail::SharpTurnState> sharp_turn_left_state;
+    std::unique_ptr<detail::LostLineState> lost_line_state;
+    std::unique_ptr<detail::PerpendicularCrossingState> perpendicular_crossing_state;
     std::unique_ptr<detail::StopState> stop_state;
 
     LineFollowingContext(LineFollowingCharacteristics characteristics_,
@@ -57,6 +73,9 @@ struct LineFollowingContext {
                          std::unique_ptr<detail::LineTrackingState> line_tracking_state_,
                          std::unique_ptr<detail::SharpTurnState> sharp_turn_right_state_,
                          std::unique_ptr<detail::SharpTurnState> sharp_turn_left_state_,
+                         std::unique_ptr<detail::LostLineState> lost_line_state_,
+                         std::unique_ptr<detail::PerpendicularCrossingState>
+                             perpendicular_crossing_state_,
                          std::unique_ptr<detail::StopState> stop_state_)
         : characteristics{characteristics_},
           dead_reckoning_model{dead_reckoning_model_},
@@ -70,10 +89,16 @@ struct LineFollowingContext {
           right_encoder_data{},
           time_at_last_update{},
           line_following_statistics{},
+          last_known_position{0.0},
+          previous_position{0.0},
+          lost_line_timestamp{},
+          perpendicular_crossing_timestamp{},
           start_state{std::move(start_state_)},
           line_tracking_state{std::move(line_tracking_state_)},
           sharp_turn_right_state{std::move(sharp_turn_right_state_)},
           sharp_turn_left_state{std::move(sharp_turn_left_state_)},
+          lost_line_state{std::move(lost_line_state_)},
+          perpendicular_crossing_state{std::move(perpendicular_crossing_state_)},
           stop_state{std::move(stop_state_)} {}
 };
 
@@ -182,6 +207,66 @@ class StopState : public LineFollowerState {
     StopState(StopState&&) = delete;
     StopState& operator=(StopState const&) = delete;
     StopState& operator=(StopState&&) = delete;
+
+    /// @brief Enter function
+    ///
+    /// @param[in, out] context A state machine context
+    void enter(LineFollowingContext& context);
+
+    /// @brief State step function
+    ///
+    /// @param[in] context A state machine context
+    void step(LineFollowingContext& context);
+
+    /// @brief State transition function
+    ///
+    /// @param[in] context A state machine context
+    /// @returns A new state or noop
+    Maybe<LineFollowerState*> transition(LineFollowingContext& context);
+};
+
+/// @brief Lost-line recovery state: sweeps in the last-known line direction until the
+///        line is re-acquired or a timeout elapses (then stops).
+class LostLineState : public LineFollowerState {
+ public:
+    LostLineState() {}
+
+    ~LostLineState() noexcept = default;
+
+    LostLineState(LostLineState const&) = delete;
+    LostLineState(LostLineState&&) = delete;
+    LostLineState& operator=(LostLineState const&) = delete;
+    LostLineState& operator=(LostLineState&&) = delete;
+
+    /// @brief Enter function
+    ///
+    /// @param[in, out] context A state machine context
+    void enter(LineFollowingContext& context);
+
+    /// @brief State step function
+    ///
+    /// @param[in] context A state machine context
+    void step(LineFollowingContext& context);
+
+    /// @brief State transition function
+    ///
+    /// @param[in] context A state machine context
+    /// @returns A new state or noop
+    Maybe<LineFollowerState*> transition(LineFollowingContext& context);
+};
+
+/// @brief Perpendicular-crossing state: drives straight forward at a configurable
+///        velocity for a configurable duration, then returns to line tracking.
+class PerpendicularCrossingState : public LineFollowerState {
+ public:
+    PerpendicularCrossingState() {}
+
+    ~PerpendicularCrossingState() noexcept = default;
+
+    PerpendicularCrossingState(PerpendicularCrossingState const&) = delete;
+    PerpendicularCrossingState(PerpendicularCrossingState&&) = delete;
+    PerpendicularCrossingState& operator=(PerpendicularCrossingState const&) = delete;
+    PerpendicularCrossingState& operator=(PerpendicularCrossingState&&) = delete;
 
     /// @brief Enter function
     ///

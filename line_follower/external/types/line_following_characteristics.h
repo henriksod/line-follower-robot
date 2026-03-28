@@ -34,6 +34,21 @@ struct LineFollowingCharacteristics final {
 
     /// The angular velocity to apply when performing a sharp turn
     double sharp_turn_angular_velocity;
+
+    /// Timeout in seconds before transitioning from lost-line recovery to stop
+    double lost_line_timeout_seconds{5.0};
+
+    /// Forward velocity when crossing a perpendicular line
+    double perpendicular_crossing_forward_velocity{0.2};
+
+    /// Duration in seconds to drive forward when crossing a perpendicular line
+    double perpendicular_crossing_duration_seconds{0.3};
+
+    /// EMA filter coefficient for position measurement (1.0 = no filtering, 0.0 = frozen)
+    double position_filter_alpha{1.0};
+
+    /// Fraction of LEDs from each side used to detect a sharp turn (default: 1/3)
+    double sharp_turn_detection_ratio{1.0 / 3.0};
 };
 }  // namespace line_follower
 
