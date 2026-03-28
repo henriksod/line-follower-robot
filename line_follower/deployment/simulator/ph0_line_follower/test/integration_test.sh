@@ -58,18 +58,26 @@ import sys
 
 output_path = sys.argv[1]
 
+stats = []
 with open(output_path) as f:
-    stats = [
-        json.loads(line)["line_following_statistics"]
-        for line in f
-        if "line_following_statistics" in line
-    ]
+    for line in f:
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if "line_following_statistics" in entry:
+            stats.append(entry["line_following_statistics"])
 
 if not stats:
     print("FAIL: no line_following_statistics entries found in event log")
     sys.exit(1)
 
-time_on_line = stats[-1]["time_spent_on_line"]
+last = stats[-1]
+if "time_spent_on_line" not in last:
+    print("FAIL: 'time_spent_on_line' field missing from line_following_statistics")
+    sys.exit(1)
+
+time_on_line = last["time_spent_on_line"]
 print(f"Logged entries: {len(stats)}, time_spent_on_line: {time_on_line:.4f} s")
 
 if time_on_line <= 0:
