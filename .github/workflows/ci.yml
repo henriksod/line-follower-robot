@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  pre-commit:
+    name: Run pre-commit checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache dazel Docker image layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-dazel-${{ hashFiles('support/dazel/Dockerfile.dazel') }}
+          restore-keys: |
+            ${{ runner.os }}-dazel-
+
+      - name: Pre-build dazel Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: support/dazel/Dockerfile.dazel
+          push: false
+          load: true
+          tags: dazel:latest
+          build-args: |
+            UID=1001
+            GID=1001
+            USER=runner
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Move Docker layer cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
