@@ -1,0 +1,5 @@
+filegroup(
+    name = "trainer_scenario",
+    srcs = ["trainer_scenario.json"],
+    visibility = ["//visibility:public"],
+)
