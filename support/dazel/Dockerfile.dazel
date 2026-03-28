@@ -22,12 +22,13 @@ RUN apt-get install -y --no-install-recommends gcc g++ clang cmake lld build-ess
 RUN apt-get install -y --no-install-recommends ca-certificates curl patch \
  && ARCH=$(uname -m) \
  && BAZEL_ARCH=$([ "$ARCH" = "aarch64" ] && echo "arm64" || echo "x86_64") \
+ && BUILDIFIER_ARCH=$([ "$ARCH" = "aarch64" ] && echo "arm64" || echo "amd64") \
  && curl -fsSL \
          "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-linux-${BAZEL_ARCH}" \
          -o /usr/local/bin/bazel \
  && chmod +x /usr/local/bin/bazel \
  && curl -fsSL \
-         "https://github.com/bazelbuild/buildtools/releases/download/v8.5.1/buildifier-linux-${BAZEL_ARCH}" \
+         "https://github.com/bazelbuild/buildtools/releases/download/v8.5.1/buildifier-linux-${BUILDIFIER_ARCH}" \
          -o /usr/local/bin/buildifier \
  && chmod +x /usr/local/bin/buildifier \
  && apt-get purge --auto-remove -y curl \
