@@ -16,6 +16,8 @@ struct PIDConfiguration final {
     double max_value;
     /// Minimum value of output from controller
     double min_value;
+    /// Enable anti-windup via conditional integration (default: true)
+    bool anti_windup{true};
 };
 }  // namespace line_follower
 
