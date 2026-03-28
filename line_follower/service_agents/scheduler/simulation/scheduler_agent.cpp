@@ -38,10 +38,10 @@ class SchedulerProducerAgent::Impl final {
         SystemTime system_time{time_agent_->getSystemTime()};
 
         for (ScheduledItem& item : scheduled_items_) {
-            if (system_time.system_time_us - item.system_time_on_last_update >
+            if (system_time.system_time_us - item.system_time_on_last_update >=
                 item.time_interval_us) {
                 sender_queue_.push(item.unique_id);
-                item.system_time_on_last_update = system_time.system_time_us;
+                item.system_time_on_last_update += item.time_interval_us;
             }
         }
 
