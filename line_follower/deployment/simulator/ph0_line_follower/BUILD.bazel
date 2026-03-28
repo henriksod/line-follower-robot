@@ -4,6 +4,7 @@ cc_binary_with_variant(
     name = "example",
     srcs = ["example.cpp"],
     variant = "simulation",
+    visibility = ["//line_follower/deployment/simulator/ph0_line_follower/test:__pkg__"],
     deps = [
         "//line_follower/external/api:logging_api",
         "//line_follower/external/types",
