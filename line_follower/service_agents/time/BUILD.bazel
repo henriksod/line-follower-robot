@@ -5,11 +5,21 @@ load("@rules_cc//cc:cc_library.bzl", "cc_library")
 cc_library(
     name = "time_agent_simulation",
     srcs = ["simulation/time_agent.cpp"],
+    hdrs = ["simulation/simulation_clock.h"],
     visibility = ["__subpackages__"],
     deps = [
         "//line_follower/external/api:time_agent_api",
         "//line_follower/external/types",
     ],
+)
+
+# Exposes the virtual-clock API (simulation_clock.h) with public visibility so
+# the simulator binary can call advance_simulation_clock() from its main loop.
+cc_library(
+    name = "simulation_clock",
+    hdrs = ["simulation/simulation_clock.h"],
+    visibility = ["//visibility:public"],
+    deps = [":time_agent_simulation"],
 )
 
 cc_library(

@@ -7,6 +7,9 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 // clang-format off
 #include <cxxopts.hpp>
@@ -47,6 +50,7 @@
 #include "line_follower/blocks/utilities/event_logger.h"
 #include "line_follower/blocks/utilities/should_exit.h"
 #include "line_follower/blocks/utilities/track_loader.h"
+#include "line_follower/service_agents/time/simulation/simulation_clock.h"
 
 namespace {
 
@@ -356,7 +360,12 @@ int main(int argc, char* argv[]) {
         "events_log_json", "Json file to store event logs",
         cxxopts::value<std::string>()->default_value(""))(
         "calibration", "Json file to store calibration values",
-        cxxopts::value<std::string>()->default_value(""));
+        cxxopts::value<std::string>()->default_value(""))(
+        "time_step_us",
+        "Virtual time step per simulation loop iteration (µs). "
+        "Use 10001 for maximum-speed deterministic simulation (recommended for training). "
+        "Default 0 means use 10001 automatically.",
+        cxxopts::value<uint32_t>()->default_value("0"));
 
     auto result = options.parse(argc, argv);
 
@@ -373,6 +382,16 @@ int main(int argc, char* argv[]) {
     std::string events_log_json{result["events_log_json"].as<std::string>()};
     std::string calibration_json{result["calibration"].as<std::string>()};
 
+    // Configure the virtual simulation clock.  A step of kUpdateRateMicros+1
+    // fires every scheduled callback on every outer-loop iteration, giving
+    // maximum deterministic speed without any wall-clock gating.
+    constexpr uint32_t kDefaultTimeStepUs{10001U};  // kUpdateRateMicros(10000) + 1
+    uint32_t time_step_us{result["time_step_us"].as<uint32_t>()};
+    if (time_step_us == 0U) {
+        time_step_us = kDefaultTimeStepUs;
+    }
+    line_follower::simulation::set_time_step_us(time_step_us);
+
     auto scenario_file = result["scenario"].as<std::string>();
     auto verbosity = result["verbosity"].as<std::string>();
     auto verbosity_level = line_follower::parseVerbosityLevel(verbosity);
@@ -382,7 +401,10 @@ int main(int argc, char* argv[]) {
 
     robot.setup();
 
-    while (!should_exit) robot.loop();
+    while (!should_exit) {
+        line_follower::simulation::advance_simulation_clock();
+        robot.loop();
+    }
     std::cerr << "Exiting..." << std::endl;
     return 0;
 }
