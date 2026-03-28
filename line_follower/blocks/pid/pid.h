@@ -27,6 +27,7 @@ class PID {
     double _pre_error;
     double _integral;
     bool _anti_windup;
+    bool _is_first_step{false};
 };
 
 }  // namespace line_follower
