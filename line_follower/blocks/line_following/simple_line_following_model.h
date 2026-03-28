@@ -55,6 +55,9 @@ struct LineFollowingContext {
     SystemTime lost_line_timestamp{};
     /// Timestamp when a perpendicular crossing was first detected
     SystemTime perpendicular_crossing_timestamp{};
+    /// Set to true when PerpendicularCrossingState completes; consumed by
+    /// LineTrackingState::transition to suppress one immediate re-entry.
+    bool perpendicular_crossing_cooldown{false};
 
     std::unique_ptr<detail::StartState> start_state;
     std::unique_ptr<detail::LineTrackingState> line_tracking_state;

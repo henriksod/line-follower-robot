@@ -397,8 +397,12 @@ void LineTrackingState::step(LineFollowingContext& context) {
 
 Maybe<LineFollowerState*> LineTrackingState::transition(LineFollowingContext& context) {
     if (isPerpendicularLine(context.ir_array_data)) {
-        LineFollowerState* new_state = context.perpendicular_crossing_state.get();
-        return Just(new_state);
+        if (context.perpendicular_crossing_cooldown) {
+            context.perpendicular_crossing_cooldown = false;
+        } else {
+            LineFollowerState* new_state = context.perpendicular_crossing_state.get();
+            return Just(new_state);
+        }
     }
 
     if (noLineDetected(context.ir_array_data)) {
@@ -486,6 +490,7 @@ Maybe<LineFollowerState*> PerpendicularCrossingState::transition(LineFollowingCo
                             context.perpendicular_crossing_timestamp.system_time_us) *
         kMicrosToSeconds};
     if (elapsed_seconds >= context.characteristics.perpendicular_crossing_duration_seconds) {
+        context.perpendicular_crossing_cooldown = true;
         LineFollowerState* new_state = context.line_tracking_state.get();
         return Just(new_state);
     }

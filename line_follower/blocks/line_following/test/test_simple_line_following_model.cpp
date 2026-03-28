@@ -658,11 +658,6 @@ TEST(SimpleLineFollowingModelTest, TestEmaFilterSmoothesPositionEstimate) {
     // alpha = 0.5: the filtered position after one step from 0 should be half the raw.
     auto chars = createLineFollowingCharacteristics();
     chars.position_filter_alpha = 0.5;
-    // Disable steer PID so motor outputs directly reflect the filtered position
-    chars.pid_steer_parameters.proportional_gain = 0.0;
-    chars.pid_steer_parameters.integral_gain = 0.0;
-    chars.pid_steer_parameters.derivative_gain = 0.0;
-    chars.pid_speed_parameters.proportional_gain = 1.0;
 
     std::unique_ptr<DeadReckoningModel> drm_unfiltered{std::make_unique<DeadReckoningModel>(
         createRobotCharacteristics(), Pose{{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0, 0.0}})};
