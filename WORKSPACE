@@ -17,6 +17,7 @@ rules_foreign_cc_dependencies()
 
 http_archive(
     name = "com_google_googletest",
+    integrity = "sha256-dV+aObxyBfWgxCjpIN2tCSwzyKG0aZfe8/HUqCre1uE=",
     strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
     urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
 )
