@@ -17,6 +17,7 @@ rules_foreign_cc_dependencies()
 
 http_archive(
     name = "com_google_googletest",
+    integrity = "sha256-dV+aObxyBfWgxCjpIN2tCSwzyKG0aZfe8/HUqCre1uE=",
     strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
     urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
 )
@@ -124,6 +125,19 @@ http_archive(
     sha256 = "a22461d13119ac5c78f205d3df1db13403e58ce1bb1794edc9313677313f4a9d",
     url = "https://github.com/nlohmann/json/releases/download/v3.11.3/include.zip",
 )
+
+http_archive(
+    name = "rules_shell",
+    sha256 = "d8cd4a3a91fc1dc68d4c7d6b655f09def109f7186437e3f50a9b60ab436a0c53",
+    strip_prefix = "rules_shell-0.3.0",
+    url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.3.0/rules_shell-v0.3.0.tar.gz",
+)
+
+load("@rules_shell//shell:repositories.bzl", "rules_shell_dependencies", "rules_shell_toolchains")
+
+rules_shell_dependencies()
+
+rules_shell_toolchains()
 
 http_archive(
     name = "com_github_jarro2783_cxxopts",

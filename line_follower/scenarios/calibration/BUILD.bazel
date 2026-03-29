@@ -1,0 +1,5 @@
+filegroup(
+    name = "example_calibration",
+    srcs = ["example_calibration.json"],
+    visibility = ["//visibility:public"],
+)
